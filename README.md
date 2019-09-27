@@ -1,5 +1,7 @@
 # DeepRL
 
+## Forked to add generative capabilities to each algorithm contained. I'm not going to change anything from the original repo, including copyrights and licenses. 
+
 > If you have any question or want to report a bug, please open an issue instead of emailing me directly.
 
 Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games.
