@@ -15,21 +15,26 @@ class NatureConvHyperBody(nn.Module):
         super(NatureConvHyperBody, self).__init__()
         self.mixer = False
         self.feature_dim = 512
-        self.config = NatureConvBody_config(in_channels, self.feature_dim)
-        self.conv1 = ConvGenerator(self.config['conv1']).cuda()
-        self.conv2 = ConvGenerator(self.config['conv2']).cuda()
-        self.conv3 = ConvGenerator(self.config['conv3']).cuda()
-        self.fc4 = LinearGenerator(self.config['fc4']).cuda()
+        conf = NatureConvBody_config(in_channels, self.feature_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+
+        self.conv1 = ConvGenerator(conf['conv1'])
+        self.conv2 = ConvGenerator(conf['conv2'])
+        self.conv3 = ConvGenerator(conf['conv3'])
+        self.fc4 = LinearGenerator(conf['fc4'])
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
-        x = x.unsqueeze(0).repeat(particles, 1, 1)
+            z = torch.rand(self.n_gen, particles, self.z_dim)
+        ph = [1] * len(x.shape)
+        x = x.unsqueeze(0).repeat(particles, *ph)
         y = F.relu(self.conv1(z[0], x, stride=4))
         y = F.relu(self.conv2(z[1], y, stride=2))
         y = F.relu(self.conv3(z[2], y, stride=1))
-        y = y.view(y.size(0), -1)
+        y = y.view(particles, y.size(1), -1)
         y = F.relu(self.fc4(z[3], y))
+        print ('body return', x.shape)
         return y
 
 
@@ -38,13 +43,15 @@ class DDPGConvHyperBody(nn.Module):
         super(DDPGConvHyperBody, self).__init__()
         self.mixer = False
         self.feature_dim = 39 * 39 * 32
-        self.config = DDPGConvBody_config(in_channels, feature_dim)
-        self.conv1 = ConvGenerator(self.config['conv1'])
-        self.conv2 = ConvGenerator(self.config['conv2'])
+        conf = DDPGConvBody_config(in_channels, feature_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.conv1 = ConvGenerator(conf['conv1'])
+        self.conv2 = ConvGenerator(conf['conv2'])
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         x = x.unsqueeze(0).repeat(particles, 1, 1)
         y = F.elu(self.conv1(z[0], x, stride=2))
         y = F.elu(self.conv2(z[1], y, stride=1))
@@ -57,18 +64,21 @@ class FCHyperBody(nn.Module):
         super(FCHyperBody, self).__init__()
         self.mixer = False
         dims = (state_dim,) + hidden_units
-        self.config = FCBody_config(state_dim, hidden_units, gate)
+        conf = FCBody_config(state_dim, hidden_units, gate)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
         self.gate = gate
         self.feature_dim = dims[-1]
-        n_layers = self.config['n_gen']
-        self.layers = nn.ModuleList([LinearGenerator(self.config['fc{}'.format(i+1)]) for i in range(n_layers)])
+        n_layers = conf['n_gen']
+        self.layers = nn.ModuleList([LinearGenerator(conf['fc{}'.format(i+1)]) for i in range(n_layers)])
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         x = x.unsqueeze(0).repeat(particles, 1, 1)
         for i, layer in enumerate(self.layers):
             x = self.gate(layer(z[i], x))
+        print ('body return', x.shape)
         return x
 
 
@@ -77,15 +87,17 @@ class TwoLayerFCHyperBodyWithAction(nn.Module):
         super(TwoLayerFCHyperBodyWithAction, self).__init__()
         self.mixer = False
         hidden_size1, hidden_size2 = hidden_units
-        self.config = TwoLayerFCBodyWithAction_config(state_dim, action_dim, hidden_units, gate)
-        self.fc1 = LinearGenerator(self.config['fc1'])
-        self.fc2 = LinearGenerator(self.config['fc2'])
+        conf = TwoLayerFCBodyWithAction_config(state_dim, action_dim, hidden_units, gate)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc1 = LinearGenerator(conf['fc1'])
+        self.fc2 = LinearGenerator(conf['fc2'])
         self.gate = gate
         self.feature_dim = hidden_size2
 
     def forward(self, x, action):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         x = x.unsqueeze(0).repeat(particles, 1, 1)
         x = self.gate(self.fc1(z[0], x))
         if x.shape[0] != action.shape[0]:
@@ -98,15 +110,17 @@ class OneLayerFCHyperBodyWithAction(nn.Module):
     def __init__(self, state_dim, action_dim, hidden_units, gate=F.relu):
         super(OneLayerFCHyperBodyWithAction, self).__init__()
         self.mixer = False
-        self.config = OneLayerFCBodyWithAction_config(state_dim, action_dim, hidden_units, gate, self.mixer)
-        self.fc_s = LinearGenerator(self.config['fc_s'])
-        self.fc_a = LinearGenerator(self.config['fc_a'])
+        conf = OneLayerFCBodyWithAction_config(state_dim, action_dim, hidden_units, gate, self.mixer)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_s = LinearGenerator(conf['fc_s'])
+        self.fc_a = LinearGenerator(conf['fc_a'])
         self.gate = gate
         self.feature_dim = hidden_units * 2
 
     def forward(self, x, action):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         x = x.unsqueeze(0).repeat(particles, 1, 1)
         phi = self.gate(torch.cat([self.fc_s(z[0], x), self.fc_a(z[1], action)], dim=1))
         return phi

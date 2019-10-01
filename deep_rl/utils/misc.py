@@ -5,7 +5,7 @@
 #######################################################################
 
 import numpy as np
-import pickle
+import dill as pickle
 import os
 import datetime
 import torch

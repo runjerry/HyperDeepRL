@@ -7,6 +7,7 @@
 import torch
 import numpy as np
 from ..utils import *
+import dill as pickle
 import torch.multiprocessing as mp
 from collections import deque
 from skimage.io import imsave

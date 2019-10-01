@@ -15,14 +15,18 @@ class VanillaHyperNet(nn.Module, BaseNet):
     def __init__(self, output_dim, body):
         super(VanillaHyperNet, self).__init__()
         self.mixer = False
-        self.config = VanillaNet_config(body.feature_dim, output_dim)
-        self.fc_head = LinearGenerator(self.config['fc_head'])
+        conf = VanillaNet_config(body.feature_dim, output_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_head = LinearGenerator(conf['fc_head'])
+
         self.body = body
         self.to(Config.DEVICE)
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
+        print (x.shape)
         phi = self.body(tensor(x))
         y = self.fc_head(z[0], phi)
         return y
@@ -32,15 +36,17 @@ class DuelingHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, body):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
-        self.config = DuelingNet_config(body.feature_dim, action_dim)
-        self.fc_value = LinearGenerator(self.config['fc_value'])
-        self.fc_advantage = LinearGenerator(self.config['fc_advantage'])
+        conf = DuelingNet_config(body.feature_dim, action_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_value = LinearGenerator(conf['fc_value'])
+        self.fc_advantage = LinearGenerator(conf['fc_advantage'])
         self.body = body
         self.to(Config.DEVICE)
 
     def forward(self, x, to_numpy=False):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         phi = self.body(tensor(x))
         value = self.fc_value(z[0], phi)
         advantange = self.fc_advantage(z[1], phi)
@@ -52,8 +58,10 @@ class CategoricalHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, num_atoms, body):
         super(CategoricalHyperNet, self).__init__()
         self.mixer = False
-        self.config = CategoricalNet_config(body.feature_dim, action_dim, num_atoms)
-        self.fc_categorical = LinearGenerator(self.config['fc_categorical'])
+        conf = CategoricalNet_config(body.feature_dim, action_dim, num_atoms)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_categorical = LinearGenerator(conf['fc_categorical'])
         self.action_dim = action_dim
         self.num_atoms = num_atoms
         self.body = body
@@ -61,7 +69,7 @@ class CategoricalHyperNet(nn.Module, BaseNet):
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         phi = self.body(tensor(x))
         pre_prob = self.fc_categorical(z[0], phi).view((-1, self.action_dim, self.num_atoms))
         prob = F.softmax(pre_prob, dim=-1)
@@ -73,8 +81,10 @@ class QuantileHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, num_quantiles, body):
         super(QuantileHyperNet, self).__init__()
         self.mixer = False
-        self.config = QuantileNet_config(body.feature_dim, action_dim, num_quantiles)
-        self.fc_quantiles = LinearGenerator(self.config['fc_quantiles'])
+        conf = QuantileNet_config(body.feature_dim, action_dim, num_quantiles)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_quantiles = LinearGenerator(conf['fc_quantiles'])
         self.action_dim = action_dim
         self.num_quantiles = num_quantiles
         self.body = body
@@ -82,7 +92,7 @@ class QuantileHyperNet(nn.Module, BaseNet):
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         phi = self.body(tensor(x))
         quantiles = self.fc_quantiles(z[0], phi)
         quantiles = quantiles.view((-1, self.action_dim, self.num_quantiles))
@@ -93,10 +103,12 @@ class OptionCriticHyperNet(nn.Module, BaseNet):
     def __init__(self, body, action_dim, num_options):
         super(OptionCriticHyperNet, self).__init__()
         self.mixer = False
-        self.config = OptionCriticNet(body.features_dim, action_dim, num_options)
-        self.fc_q = LinearGenerator(self.config['fc_q'])
-        self.fc_pi = LinearGenerator(self.config['fc_pi_'])
-        self.fc_beta = LinearGenerator(self.config['fc_beta'])
+        conf = OptionCriticNet(body.features_dim, action_dim, num_options)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_q = LinearGenerator(conf['fc_q'])
+        self.fc_pi = LinearGenerator(conf['fc_pi_'])
+        self.fc_beta = LinearGenerator(conf['fc_beta'])
         self.num_options = num_options
         self.action_dim = action_dim
         self.body = body
@@ -104,7 +116,7 @@ class OptionCriticHyperNet(nn.Module, BaseNet):
 
     def forward(self, x):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         phi = self.body(tensor(x))
         q = self.fc_q(z[0], phi)
         pi = self.fc_pi(z[1], phi)
@@ -135,9 +147,11 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
         self.phi_body = phi_body
         self.actor_body = actor_body
         self.critic_body = critic_body
-        self.config = DeterministicActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
-        self.fc_action = LinearGenerator(self.config['fc_action'])
-        self.fc_critic = LinearGenerator(self.config['fc_critic'])
+        conf = DeterministicActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_action = LinearGenerator(conf['fc_action'])
+        self.fc_critic = LinearGenerator(conf['fc_critic'])
 
         self.actor_params = list(self.actor_body.parameters()) + list(self.fc_action.parameters())
         self.critic_params = list(self.critic_body.parameters()) + list(self.fc_critic.parameters())
@@ -158,12 +172,12 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
 
     def actor(self, phi):
         if not self.mixer:
-            z = torch.rand(1, particles, self.config['z_dim'])
+            z = torch.rand(1, particles, self.z_dim)
         return torch.tanh(self.fc_action(z[0], self.actor_body(phi)))
 
     def critic(self, phi, a):
         if not self.mixer:
-            z = torch.rand(1, particles, self.config['z_dim'])
+            z = torch.rand(1, particles, self.z_dim)
         return self.fc_critic(z[0], self.critic_body(phi, a))
 
 
@@ -182,9 +196,11 @@ class GaussianActorCriticHyperNet(nn.Module, BaseNet):
         self.phi_body = phi_body
         self.actor_body = actor_body
         self.critic_body = critic_body
-        self.config = GaussianActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
-        self.fc_action = LinearGenerator(self.config['fc_action'])
-        self.fc_critic = LinearGenerator(self.config['fc_critic'])
+        conf = GaussianActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_action = LinearGenerator(conf['fc_action'])
+        self.fc_critic = LinearGenerator(conf['fc_critic'])
 
         self.actor_params = list(self.actor_body.parameters()) + list(self.fc_action.parameters())
         self.critic_params = list(self.critic_body.parameters()) + list(self.fc_critic.parameters())
@@ -195,7 +211,7 @@ class GaussianActorCriticHyperNet(nn.Module, BaseNet):
 
     def forward(self, obs, action=None):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         obs = tensor(obs)
         phi = self.phi_body(obs)
         phi_a = self.actor_body(phi)
@@ -229,9 +245,11 @@ class CategoricalActorCriticHyperNet(nn.Module, BaseNet):
         self.phi_body = phi_body
         self.actor_body = actor_body
         self.critic_body = critic_body
-        self.config = CategoricalActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
-        self.fc_action = LinearGenerator(self.config['fc_action'])
-        self.fc_critic = LinearGenerator(self.config['fc_critic'])
+        conf = CategoricalActorCriticNet_config(actor_body.feature_dim, critic_body.feature_dim, action_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_action = LinearGenerator(conf['fc_action'])
+        self.fc_critic = LinearGenerator(conf['fc_critic'])
         
         self.actor_params = list(self.actor_body.parameters()) + list(self.fc_action.parameters())
         self.critic_params = list(self.critic_body.parameters()) + list(self.fc_critic.parameters())
@@ -241,7 +259,7 @@ class CategoricalActorCriticHyperNet(nn.Module, BaseNet):
 
     def forward(self, obs, action=None):
         if not self.mixer:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
+            z = torch.rand(self.n_gen, particles, self.z_dim)
         obs = tensor(obs)
         phi = self.phi_body(obs)
         phi_a = self.actor_body(phi)
@@ -273,10 +291,12 @@ class TD3HyperNet(nn.Module, BaseNet):
         self.critic_body_1 = critic_body_fn()
         self.critic_body_2 = critic_body_fn()
 
-        self.config = TD3Net_config(actor_body.feature_dim, critic_body_1.feature_dim, critic_body_2.feature_dim, action_dim)
-        self.fc_action = LinearGenerator(self.config['fc_action'])
-        self.fc_critic_1 = LinearGenerator(self.config['fc_critic1'])
-        self.fc_critic_2 = LinearGenerator(self.config['fc_critic2'])
+        conf = TD3Net_config(actor_body.feature_dim, critic_body_1.feature_dim, critic_body_2.feature_dim, action_dim)
+        self.n_gen = conf['n_gen']
+        self.z_dim = conf['z_dim']
+        self.fc_action = LinearGenerator(conf['fc_action'])
+        self.fc_critic_1 = LinearGenerator(conf['fc_critic1'])
+        self.fc_critic_2 = LinearGenerator(conf['fc_critic2'])
 
         self.actor_params = list(self.actor_body.parameters()) + list(self.fc_action.parameters())
         self.critic_params = list(self.critic_body_1.parameters()) + list(self.fc_critic_1.parameters()) +\
@@ -288,13 +308,13 @@ class TD3HyperNet(nn.Module, BaseNet):
 
     def forward(self, obs):
         if not self.mixer:
-            z = torch.rand(1, particles, self.config['z_dim'])
+            z = torch.rand(1, particles, self.z_dim)
         obs = tensor(obs)
         return torch.tanh(self.fc_action(z[0], self.actor_body(obs)))
 
     def q(self, obs, a):
         if not self.mixer:
-            z = torch.rand(2, particles, self.config['z_dim'])
+            z = torch.rand(2, particles, self.z_dim)
         obs = tensor(obs)
         a = tensor(a)
         x = torch.cat([obs, a], dim=1)
