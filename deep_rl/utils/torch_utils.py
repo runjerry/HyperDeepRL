@@ -15,6 +15,8 @@ def select_device(gpu_id):
         Config.DEVICE = torch.device('cuda:%d' % (gpu_id))
     else:
         Config.DEVICE = torch.device('cpu')
+    Config.DEVICE = torch.device('cuda:0')
+    print (Config.DEVICE)
 
 
 def tensor(x):
@@ -36,6 +38,10 @@ def to_np(t):
 def random_seed(seed=None):
     np.random.seed(seed)
     torch.manual_seed(np.random.randint(int(1e6)))
+
+
+def sample_seed(n_gen, particles, z_dim):
+    return torch.rand(n_gen, particles, z_dim)
 
 
 def set_one_thread():

@@ -1,4 +1,4 @@
-#######################################################################
+######################################################################
 # Copyright (C) 2017 Shangtong Zhang(zhangshangtong.cpp@gmail.com)    #
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
@@ -441,6 +441,7 @@ def ddpg_continuous(**kwargs):
     kwargs.setdefault('log_level', 0)
     config = Config()
     config.merge(kwargs)
+    config.tag = 'lowvar_highbs512'
     config.hyper = True
 
     config.task_fn = lambda: Task(config.game)
@@ -448,16 +449,17 @@ def ddpg_continuous(**kwargs):
     config.max_steps = int(1e6)
     config.eval_interval = int(1e4)
     config.eval_episodes = 20
+    print (config.state_dim, config.action_dim)
 
     config.network_fn = lambda: DeterministicActorCriticHyperNet(
         config.state_dim, config.action_dim,
         actor_body=FCHyperBody(config.state_dim, (400, 300), gate=F.relu),
-        critic_body=TwoLayerFCHyperBodyWithAction(
-            config.state_dim, config.action_dim, (400, 300), gate=F.relu),
-        actor_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-4),
-        critic_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-3))
+        #critic_body=TwoLayerFCHyperBodyWithAction(config.state_dim, config.action_dim, (400, 300), gate=F.relu),
+        critic_body=TwoLayerFCBodyWithAction(config.state_dim, config.action_dim, (400, 300), gate=F.relu),
+        actor_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-4),
+        critic_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-3))
 
-    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=64)
+    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=1024)
     config.discount = 0.99
     config.random_process_fn = lambda: OrnsteinUhlenbeckProcess(
         size=(config.action_dim,), std=LinearSchedule(0.2))
@@ -505,8 +507,8 @@ if __name__ == '__main__':
     mkdir('tf_log')
     set_one_thread()
     random_seed()
-    select_device(-1)
-    # select_device(0)
+    # select_device(-1)
+    select_device(0)
 
     # game = 'CartPole-v0'
     # dqn_feature(game=game)
@@ -523,11 +525,11 @@ if __name__ == '__main__':
     # game = 'InvertedPendulum-v2'
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
-    # ddpg_continuous(game=game)
+    ddpg_continuous(game=game)
     #td3_continuous(game=game)
 
-    game = 'BreakoutNoFrameskip-v4'
-    dqn_pixel(game=game)
+    # game = 'BreakoutNoFrameskip-v4'
+    #dqn_pixel(game=game)
     # quantile_regression_dqn_pixel(game=game)
     # categorical_dqn_pixel(game=game)
     # a2c_pixel(game=game)

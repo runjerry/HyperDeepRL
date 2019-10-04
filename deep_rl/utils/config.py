@@ -9,7 +9,7 @@ import torch
 
 
 class Config:
-    DEVICE = torch.device('cpu')
+    DEVICE = torch.device('cuda')
 
     def __init__(self):
         self.parser = argparse.ArgumentParser()
@@ -20,6 +20,7 @@ class Config:
         self.network_fn = None
         self.actor_network_fn = None
         self.critic_network_fn = None
+        self.target_network_fn = None
         self.replay_fn = None
         self.random_process_fn = None
         self.discount = None
@@ -58,7 +59,7 @@ class Config:
         self.eval_episodes = 10
         self.async_actor = True
         self.tasks = False
-        self.particles = 2
+        self.particles = 32
         self.hyper = False
 
     @property

@@ -1,0 +1,2 @@
+2019-10-02 10:09:49,394 - root - INFO: steps 0, 246723764.71 steps/s
+2019-10-02 10:09:55,304 - root - INFO: steps 0, episodic_return_test -0.09(0.15)

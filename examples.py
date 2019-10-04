@@ -487,8 +487,8 @@ if __name__ == '__main__':
     mkdir('tf_log')
     set_one_thread()
     random_seed()
-    select_device(-1)
-    # select_device(0)
+    # select_device(-1)
+    select_device(0)
 
     # game = 'CartPole-v0'
     # dqn_feature(game=game)
@@ -499,10 +499,10 @@ if __name__ == '__main__':
     # option_critic_feature(game=game)
     # ppo_feature(game=game)
     
-    #game = 'HalfCheetah-v2'
+    game = 'HalfCheetah-v2'
     # game = 'Ant-v2'
     # game = 'Reacher-v2'
-    game = 'InvertedPendulum-v2'
+    # game = 'InvertedPendulum-v2'
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
     ddpg_continuous(game=game)

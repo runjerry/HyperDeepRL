@@ -85,5 +85,16 @@ def OneLayerFCBodyWithAction_config(d_state, d_action, d_hidden, gate, mixer=Fal
 
     return net_config 
 
+def Dummy_config():
+    gen_config = namedtuple('OneLayerBodyWithAction', ' '.join(fields))
+    gen_config.__new__.__defaults__ = defaults # python 3.6
+    net_config = {
+            'fc_s': gen_config(d_input=0, d_output=0),
+            'fc_a': gen_config(d_input=0, d_output=0),
+            'z_dim': 0,
+            's_dim': 0,
+            'n_gen': 0
+            }
+    return net_config 
 
 

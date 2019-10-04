@@ -1,0 +1,3 @@
+2019-09-30 19:54:29,580 - root - INFO: steps 0, 419430400.00 steps/s
+2019-09-30 19:54:44,879 - root - INFO: steps 0, episodic_return_test -569.50(18.75)
+2019-09-30 19:54:45,224 - root - INFO: steps 999, episodic_return_train -331.0202909536977

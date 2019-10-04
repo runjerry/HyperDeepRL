@@ -9,7 +9,7 @@ fields = ('d_output', 'd_input', 'd_hidden', 'kernel', 'bias', 's_dim', 'z_dim',
 defaults = (100, 3, False, 64, 64, 'relu', None, 1) # python 3.6
 
 def VanillaNet_config(feature_dim, output_dim, mixer=False):
-    gen_config = namedtuple('VanillaHyperNet', ' '.join(fields))
+    gen_config = namedtuple('VanillaNet', ' '.join(fields))
     gen_config.__new__.__defaults__ = defaults # python 3.6
     net_config = {
             'fc_head': gen_config(d_input=feature_dim, d_output=output_dim),
