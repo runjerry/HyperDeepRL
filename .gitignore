@@ -1,0 +1,10 @@
+tf_log/
+log/
+*.pyc
+*.swn
+*.swp
+*.swm
+*.swo
+*.swq
+*.swl
+*.mp4
