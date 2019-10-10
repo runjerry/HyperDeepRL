@@ -62,7 +62,7 @@ class FCHyperBody(nn.Module):
         n_layers = self.config['n_gen']
         self.layers = nn.ModuleList([LinearGenerator(self.config['fc{}'.format(i+1)]).cuda() for i in range(n_layers)])
 
-    def forward(self, x=None, z=None):
+    def forward(self, x=None, z=None, theta=None):
         if x is None:
             weights = []
             for i, layer in enumerate(self.layers):
@@ -72,7 +72,10 @@ class FCHyperBody(nn.Module):
             return weights
         x = x.unsqueeze(0).repeat(particles, 1, 1)
         for i, layer in enumerate(self.layers):
-            x = self.gate(layer(z[i], x))
+            if theta:
+                x = self.gate(layer(z[i], x, theta[i*2:(i*2)+2]))
+            else:
+                x = self.gate(layer(z[i], x))
         return x
 
 

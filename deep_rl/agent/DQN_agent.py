@@ -55,6 +55,8 @@ class DQNAgent(BaseAgent):
 
         self.total_steps = 0
         self.batch_indices = range_tensor(self.replay.batch_size)
+        self.network.sample_model_seed()
+        self.target_network.set_model_seed(self.network.model_seed)
 
     def close(self):
         close_obj(self.replay)
@@ -70,6 +72,8 @@ class DQNAgent(BaseAgent):
 
     def step(self):
         config = self.config
+        self.network.sample_model_seed()
+        self.target_network.set_model_seed(self.network.model_seed)
         transitions = self.actor.step()
         experiences = []
         for state, action, reward, next_state, done, info in transitions:

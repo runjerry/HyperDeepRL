@@ -166,9 +166,9 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
     def set_model_seed(self, seed):
         self.model_seed = seed
 
-    def predict_action(self, obs, evaluation=False):
+    def predict_action(self, obs, evaluation=False, select_k=1, theta=None):
         phi = self.feature(obs)
-        actions = self.actor(phi).detach_()
+        actions = self.actor(phi, theta).detach_()
         q_vals = torch.stack([self.critic(phi, action) for action in actions])
         q_vals = q_vals.squeeze(-1).t()
         actions = actions.transpose(0, 1)
@@ -187,20 +187,27 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
         obs = tensor(obs)
         return self.phi_body(obs, self.model_seed['phi_body_z'])
 
-    def actor(self, phi):
-        a = self.actor_body(phi, self.model_seed['actor_body_z'])
-        return torch.tanh(self.fc_action(self.model_seed['action_z'], a))
+    def actor(self, phi, theta=None):
+        if theta:
+            a = self.actor_body(phi, self.model_seed['actor_body_z'], theta[:4])
+            res = torch.tanh(self.fc_action(self.model_seed['action_z'], a, theta[-2:]))
+        else:
+            a = self.actor_body(phi, self.model_seed['actor_body_z'])
+            res = torch.tanh(self.fc_action(self.model_seed['action_z'], a))
+        return res
 
     def critic(self, phi, a):
         return self.fc_critic(self.critic_body(phi, a))
 
-    def sample_model(self):
-        phi_body = self.phi_body(z=self.model_seed['phi_body_z'])
-        actor_body = self.actor_body(z=self.model_seed['actor_body_z'])
-        critic_body = self.critic_body(z=self.model_seed['critic_body_z'])
-        fc_action = self.fc_action(z=self.model_seed['action_z'])
-        fc_critic = self.fc_critic(z=self.model_seed['critic_z'])
-        return [*actor_body, *critic_body, *fc_action, *fc_critic]
+    def sample_model(self, component):
+        param_sets = []
+        if component == 'actor':
+            param_sets.extend(self.actor_body(z=self.model_seed['actor_body_z']))
+            param_sets.extend(self.fc_action(z=self.model_seed['action_z']))
+        elif component == 'critic':
+            param_sets.extend(*self.critic_body(z=self.model_seed['critic_body_z']))
+            param_sets.extend(*self.fc_critic(z=self.model_seed['critic_z']))
+        return param_sets
 
 
 class GaussianActorCriticHyperNet(nn.Module, BaseNet):

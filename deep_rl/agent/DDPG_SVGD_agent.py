@@ -13,9 +13,9 @@ from ..network import *
 from ..component import *
 from .BaseAgent import *
 import torchvision
+import torch.autograd as autograd
 
-
-class DDPGAgent(BaseAgent):
+class DDPG_SVGDAgent(BaseAgent):
     def __init__(self, config):
         BaseAgent.__init__(self, config)
         self.config = config
@@ -27,6 +27,7 @@ class DDPGAgent(BaseAgent):
         self.random_process = config.random_process_fn()
         self.total_steps = 0
         self.state = None
+        self.alpha_schedule = BaselinesLinearSchedule(2e5, final_p=0.1, initial_p=1)
         print (self.network)
         
     def soft_update(self, target, src):
@@ -42,11 +43,8 @@ class DDPGAgent(BaseAgent):
         self.config.state_normalizer.unset_read_only()
         return action
 
-        #return action.flatten()
-
     def step(self):
         config = self.config
-        head = np.random.choice(config.particles, 1)[0]              ## choose one network from the batch
         if config.hyper == True:
             self.network.sample_model_seed()                             ## sample from isotropic gaussian (new ensemble)
             self.target_network.set_model_seed(self.network.model_seed)
@@ -55,23 +53,26 @@ class DDPGAgent(BaseAgent):
             self.state = self.task.reset()
             self.state = config.state_normalizer(self.state)
 
+        """ Predict Action """
         if self.total_steps < config.warm_up:
             action = [self.task.action_space.sample()]
         else:
             action, _ = self.network.predict_action(self.state, evaluation=True) ## take mean action over ensemble
             action += self.random_process.sample()
+        """ Take Action """
         action = np.clip(action, self.task.action_space.low, self.task.action_space.high)
         next_state, reward, done, info = self.task.step(action)
         next_state = self.config.state_normalizer(next_state)
         self.record_online_return(info)
         reward = self.config.reward_normalizer(reward)
+        """ Store to Buffer """
         experiences = list(zip(self.state, action, reward, next_state, done))
         self.replay.feed_batch(experiences)
         if done[0]:
             self.random_process.reset_states()
         self.state = next_state
         self.total_steps += 1
-        
+        """ Learn """
         if self.replay.size() >= config.warm_up:
             experiences = self.replay.sample()
             states, actions, rewards, next_states, terminals = experiences
@@ -80,34 +81,59 @@ class DDPGAgent(BaseAgent):
             rewards = tensor(rewards).unsqueeze(-1)
             next_states = tensor(next_states)
             mask = tensor(1 - terminals).unsqueeze(-1)
-            
+            """ Update Critic """
             q_next = self.target_network.predict_action(next_states)
             q_next = config.discount * mask * q_next
             q_next.add_(rewards)
             q_next = q_next.detach()
             phi = self.network.feature(states)
             q = self.network.critic(phi, actions)
-            critic_loss = (q - q_next).pow(2).mul(0.5).sum(-1).mean()
 
+            critic_loss = (q - q_next).pow(2).mul(0.5).sum(-1).mean()
             self.network.zero_grad()
             critic_loss.backward()
             self.network.critic_opt.step()
 
+            """ Update Actor """
             phi = self.network.feature(states)
-            actions = self.network.actor(phi)
+            actor_theta_list = self.network.sample_model(component='actor')
+            actions = self.network.actor(phi, actor_theta_list)
+            
+            # SVGD Update """
+            alpha = self.alpha_schedule.value(self.total_steps)
             dead_actions  = []
             for action in actions:
                 dead_action = action.clone()
                 dead_action.detach_().requires_grad_()
                 dead_actions.append(dead_action)
-            q_vals = torch.stack([self.network.critic(phi.detach(), dead_action) for dead_action in dead_actions])
-            q_vals = q_vals.squeeze(-1).t().mean(0)
-            self.network.zero_grad()
-            print (q_vals.mean())
-            q_vals.backward(torch.tensor(np.ones(q_vals.size())).float().cuda())
-            action_grads = torch.stack([-dead_action.grad.detach() for dead_action in dead_actions])
-            self.network.zero_grad()
-            actions.backward(action_grads)
-            self.network.actor_opt.step()
+            q = torch.stack([self.network.critic(phi, a) for a in actions])
+            q_grad = autograd.grad(q.sum(), inputs=actions)[0]
+            q_grad = q_grad.transpose(0, 1).unsqueeze(2)
+
+            for i in range(len(actor_theta_list)):
+                actor_theta_list[i] = actor_theta_list[i].view(actor_theta_list[i].size(0), -1)
+            actor_theta = torch.cat(actor_theta_list, 1)
             
+            kappa = batch_rbf_nograd(actor_theta)  # [n, n], [n, theta]
+            grad_kappa = autograd.grad(kappa.sum(), actor_theta)[0]
+            q_grad = q_grad.mean(0).mean(-1)  # [n, 1] 
+            kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
+            svgd = (kernel_logp + alpha * grad_kappa) / actor_theta.size(0)  # [n, theta]
+            self.network.actor_opt.zero_grad()
+            autograd.backward(actor_theta, grad_tensors=svgd)
+            if not self.total_steps % 100: 
+                print (svgd.mean().item(), kappa.mean().item(), grad_kappa.mean().item(), q.mean().item())
+            
+            self.network.actor_opt.zero_grad()
+            # q.backward(torch.ones_like(q).float().cuda())
+            
+            #q_vals = q.squeeze(-1).t().mean(0)
+            #q_vals.backward(torch.tensor(np.ones(q_vals.size())).float().cuda())
+
+            #self.network.critic_opt.zero_grad()
+
+            #action_grads = torch.stack([-dead_action.grad.detach() for dead_action in dead_actions])
+            
+            #actions.backward(action_grads)
+            self.network.actor_opt.step()
             self.soft_update(self.target_network, self.network)

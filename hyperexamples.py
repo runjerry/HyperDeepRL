@@ -14,13 +14,13 @@ def dqn_feature(**kwargs):
     config = Config()
     config.merge(kwargs)
     config.hyper = True
-
+    config.tag = 'ddqn what'
     config.task_fn = lambda: Task(config.game)
     config.eval_env = config.task_fn()
 
     config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
-    # config.network_fn = lambda: DuelingHyperNet(config.action_dim, FCHyperBody(config.state_dim))
+    # config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
+    config.network_fn = lambda: DuelingHyperNet(config.action_dim, FCHyperBody(config.state_dim))
     # config.replay_fn = lambda: Replay(memory_size=int(1e4), batch_size=10)
     config.replay_fn = lambda: AsyncReplay(memory_size=int(1e4), batch_size=10)
 
@@ -28,8 +28,8 @@ def dqn_feature(**kwargs):
     config.discount = 0.99
     config.target_network_update_freq = 200
     config.exploration_steps = 1000
-    # config.double_q = True
-    config.double_q = False
+    config.double_q = True
+    # config.double_q = False
     config.sgd_update_frequency = 4
     config.gradient_clip = 5
     config.eval_interval = int(5e3)
@@ -441,7 +441,7 @@ def ddpg_continuous(**kwargs):
     kwargs.setdefault('log_level', 0)
     config = Config()
     config.merge(kwargs)
-    config.tag = 'lowvar_highbs512'
+    config.tag = 'CheetahAlphaAnneal3-1_to_1e1_over_2e5'
     config.hyper = True
 
     config.task_fn = lambda: Task(config.game)
@@ -459,13 +459,14 @@ def ddpg_continuous(**kwargs):
         actor_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-4),
         critic_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-3))
 
-    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=1024)
+    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=512)
     config.discount = 0.99
     config.random_process_fn = lambda: OrnsteinUhlenbeckProcess(
         size=(config.action_dim,), std=LinearSchedule(0.2))
     config.warm_up = int(1e4)
     config.target_network_mix = 1e-3
-    run_steps(DDPGAgent(config))
+    # run_steps(DDPGAgent(config))
+    run_steps(DDPG_SVGDAgent(config))
 
 
 # TD3
@@ -523,13 +524,16 @@ if __name__ == '__main__':
     # game = 'Ant-v2'
     # game = 'Reacher-v2'
     # game = 'InvertedPendulum-v2'
+    # game = 'Humanoid-v2'
+    # game = 'Hopper-v2'
+    # game = 'Walker2d-v1'
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
     ddpg_continuous(game=game)
     #td3_continuous(game=game)
 
     # game = 'BreakoutNoFrameskip-v4'
-    #dqn_pixel(game=game)
+    # dqn_pixel(game=game)
     # quantile_regression_dqn_pixel(game=game)
     # categorical_dqn_pixel(game=game)
     # a2c_pixel(game=game)

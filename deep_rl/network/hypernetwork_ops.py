@@ -51,16 +51,29 @@ class LinearGenerator(nn.Module):
         self.linear1 = nn.Linear(self.z, self.d_hidden, bias=self.bias)
         self.linear2 = nn.Linear(self.d_hidden, self.d_output * self.d_input, bias=self.bias)
     
-    def forward(self, z, x=None):
-        z = self.act(self.linear1(z))
-        z = self.act_out(self.linear2(z))
-        w, b = z[:, :self.d_output*self.d_input], z[:, -self.d_output:]
-        w = w.view(-1, self.d_output, self.d_input)
-        b = b.view(-1, 1, self.d_output)
+    def forward(self, z, x=None, theta=None):
+        """ HyperModel Core
+        inputs:
+            z: Random sample used to generate weights [n_particles x noise_dim]
+            x (optional): data to evaluate generated model on. If provided, weights are thrown away after use
+            theta (optional): previously generated weights. if provided, no additional weights are generated
+        outputs: 
+            if x: then f(x ; g(z)) 
+            if theta: then f(x ; theta)
+            else: g(z)
+        """
+        if theta is None:
+            z = self.act(self.linear1(z))
+            z = self.act_out(self.linear2(z))
+            w, b = z[:, :self.d_output*self.d_input], z[:, -self.d_output:]
+            w = w.view(-1, self.d_output, self.d_input)
+            b = b.view(-1, 1, self.d_output)
+        else:
+            w, b = theta
         if x is not None:
             x = torch.baddbmm(b, x, w.transpose(1,2)) # fused op is faster than list-comp over F.linear
             return x
-        return w, b.squeeze(1)
+        return w, b#.squeeze(1)
 
 class ConvGenerator(nn.Module):
     def __init__(self, config):
@@ -83,12 +96,15 @@ class ConvGenerator(nn.Module):
         self.linear1 = nn.Linear(self.z, self.d_hidden, bias=self.bias)
         self.linear2 = nn.Linear(self.d_hidden, self.d_output * self.d_input, bias=self.bias)
     
-    def forward(self, z, x=None, stride=1):
-        x = self.act(self.linear1(x))
-        x = self.act_out(self.linear2(x))
-        w, b = x[:, :self.d_output*self.d_input], x[:, -self.d_output:]
-        w = w.view(-1, self.d_output, self.d_input, self.k, self.k)
-        b = b.view(-1, self.d_output)
+    def forward(self, z, x=None, stride=1, theta=None):
+        if theta is None:
+            x = self.act(self.linear1(x))
+            x = self.act_out(self.linear2(x))
+            w, b = x[:, :self.d_output*self.d_input], x[:, -self.d_output:]
+            w = w.view(-1, self.d_output, self.d_input, self.k, self.k)
+            b = b.view(-1, self.d_output)
+        else:
+            w, b = theta
         if x is not None:
             x = torch.stack([F.conv2d(x[i], w[i], bias=b[i], stride=stride) for i in range(w.shape[0])])
             return x
