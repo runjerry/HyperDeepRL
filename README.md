@@ -1,5 +1,18 @@
 # DeepRL
 
+
+# HyperGAN structure differences
+
+In `deep_rl/utils` there are config definitions for specifying the hypergan structure
+
+`deep_rl/networks/hypergan_ops.py` there is the actual implementation of the Generator factory methods for Linear and Convolutional layers
+
+`deep_rl/networks/hyper_heads.py` has the actual implementation of DDPG and TD3 architectures which actually instantiate these layers
+
+`hyperexamples.py` has the top level calls to these methods. 
+
+==================
+
 > If you have any question or want to report a bug, please open an issue instead of emailing me directly.
 
 Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games.
