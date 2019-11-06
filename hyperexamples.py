@@ -6,6 +6,11 @@
 
 from deep_rl import *
 
+def load_args():
+    parser = argparse.ArgumentParser(description='main args')
+    parser.add_argument('--tb_tag', default='', type=str)
+    args = parser.parse_args()
+    return args
 
 # DQN
 def dqn_feature(**kwargs):
@@ -441,7 +446,7 @@ def ddpg_continuous(**kwargs):
     kwargs.setdefault('log_level', 0)
     config = Config()
     config.merge(kwargs)
-    config.tag = 'CheetahAlphaAnneal3-1_to_1e1_over_2e5'
+    config.tag = 'WalkerFinalHyper'
     config.hyper = True
 
     config.task_fn = lambda: Task(config.game)
@@ -465,8 +470,8 @@ def ddpg_continuous(**kwargs):
         size=(config.action_dim,), std=LinearSchedule(0.2))
     config.warm_up = int(1e4)
     config.target_network_mix = 1e-3
-    # run_steps(DDPGAgent(config))
-    run_steps(DDPG_SVGDAgent(config))
+    run_steps(DDPGAgent(config))
+    # run_steps(DDPG_SVGDAgent(config))
 
 
 # TD3
@@ -482,16 +487,17 @@ def td3_continuous(**kwargs):
     config.max_steps = int(1e6)
     config.eval_interval = int(1e4)
     config.eval_episodes = 20
+    config.tag = config.tb_tag
 
     config.network_fn = lambda: TD3HyperNet(
         config.action_dim,
         actor_body_fn=lambda: FCHyperBody(config.state_dim, (400, 300), gate=F.relu),
-        critic_body_fn=lambda: FCHyperBody(
+        critic_body_fn=lambda: FCBody(
             config.state_dim+config.action_dim, (400, 300), gate=F.relu),
-        actor_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-3),
+        actor_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-4),
         critic_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-3))
 
-    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=100)
+    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=512)
     config.discount = 0.99
     config.random_process_fn = lambda: GaussianProcess(
         size=(config.action_dim,), std=LinearSchedule(0.1))
@@ -510,6 +516,7 @@ if __name__ == '__main__':
     random_seed()
     # select_device(-1)
     select_device(0)
+    args = load_args()
 
     # game = 'CartPole-v0'
     # dqn_feature(game=game)
@@ -520,17 +527,31 @@ if __name__ == '__main__':
     # option_critic_feature(game=game)
     # ppo_feature(game=game)
     
-    game = 'HalfCheetah-v2'
+    # game = 'HalfCheetah-v2'
     # game = 'Ant-v2'
     # game = 'Reacher-v2'
     # game = 'InvertedPendulum-v2'
+    # game = 'InvertedDoublePendulum-v2'
     # game = 'Humanoid-v2'
     # game = 'Hopper-v2'
-    # game = 'Walker2d-v1'
+    # game = 'Swimmer-v2'
+    # game = 'Walker2d-v2'
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
-    ddpg_continuous(game=game)
+    # ddpg_continuous(game=game)
     #td3_continuous(game=game)
+    games = ['HalfCheetah-v2',
+            'Humanoid-v2',
+            'Ant-v2',
+            'Reacher-v2',
+            # 'InvertedDoublePendulum-v2',
+            #'Hopper-v2',
+            #'Swimmer-v2',
+            #'Walker2d-v2'
+    ]
+    for i in range(3):
+        for game in games:
+            td3_continuous(game=game, tb_tag='td3_{}-{}'.format(game, i))
 
     # game = 'BreakoutNoFrameskip-v4'
     # dqn_pixel(game=game)

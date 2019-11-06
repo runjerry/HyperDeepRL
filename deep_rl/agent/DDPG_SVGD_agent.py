@@ -27,8 +27,9 @@ class DDPG_SVGDAgent(BaseAgent):
         self.random_process = config.random_process_fn()
         self.total_steps = 0
         self.state = None
-        self.alpha_schedule = BaselinesLinearSchedule(2e5, final_p=0.1, initial_p=1)
+        self.alpha_schedule = BaselinesLinearSchedule(2e5, final_p=.1, initial_p=1.)
         print (self.network)
+        self.particles = config.particles
         
     def soft_update(self, target, src):
         for target_param, param in zip(target.parameters(), src.parameters()):
@@ -101,11 +102,6 @@ class DDPG_SVGDAgent(BaseAgent):
             
             # SVGD Update """
             alpha = self.alpha_schedule.value(self.total_steps)
-            dead_actions  = []
-            for action in actions:
-                dead_action = action.clone()
-                dead_action.detach_().requires_grad_()
-                dead_actions.append(dead_action)
             q = torch.stack([self.network.critic(phi, a) for a in actions])
             q_grad = autograd.grad(q.sum(), inputs=actions)[0]
             q_grad = q_grad.transpose(0, 1).unsqueeze(2)
@@ -114,13 +110,15 @@ class DDPG_SVGDAgent(BaseAgent):
                 actor_theta_list[i] = actor_theta_list[i].view(actor_theta_list[i].size(0), -1)
             actor_theta = torch.cat(actor_theta_list, 1)
             
-            kappa = batch_rbf_nograd(actor_theta)  # [n, n], [n, theta]
-            grad_kappa = autograd.grad(kappa.sum(), actor_theta)[0]
+            kappa = batch_rbf_nograd(actor_theta) / self.particles # [n, n], [n, theta]
+            grad_kappa = autograd.grad(kappa.sum(), actor_theta)[0] / self.particles
             q_grad = q_grad.mean(0).mean(-1)  # [n, 1] 
             kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
-            svgd = (kernel_logp + alpha * grad_kappa) / actor_theta.size(0)  # [n, theta]
+            svgd = (kernel_logp + alpha * grad_kappa)  # [n, theta]
             self.network.actor_opt.zero_grad()
+
             autograd.backward(actor_theta, grad_tensors=svgd)
+
             if not self.total_steps % 100: 
                 print (svgd.mean().item(), kappa.mean().item(), grad_kappa.mean().item(), q.mean().item())
             

@@ -103,7 +103,6 @@ class DDPGAgent(BaseAgent):
             q_vals = torch.stack([self.network.critic(phi.detach(), dead_action) for dead_action in dead_actions])
             q_vals = q_vals.squeeze(-1).t().mean(0)
             self.network.zero_grad()
-            print (q_vals.mean())
             q_vals.backward(torch.tensor(np.ones(q_vals.size())).float().cuda())
             action_grads = torch.stack([-dead_action.grad.detach() for dead_action in dead_actions])
             self.network.zero_grad()

@@ -59,7 +59,7 @@ class Config:
         self.eval_episodes = 10
         self.async_actor = True
         self.tasks = False
-        self.particles = 32
+        self.particles = 10
         self.hyper = False
 
     @property

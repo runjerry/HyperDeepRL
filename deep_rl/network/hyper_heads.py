@@ -154,19 +154,16 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
         self.to(Config.DEVICE)
 
     def sample_model_seed(self):
-        if not self.mixer:
-            self.model_seed = {
-                    'phi_body_z': torch.rand(self.phi_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
-                    'actor_body_z': torch.rand(self.actor_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
-                    'action_z': torch.rand(particles, self.z_dim).to(Config.DEVICE),
-            }
-        else:
-            self.model_seed = torch.rand(particles, self.s_dim)
+        self.model_seed = {
+                'phi_body_z': torch.rand(self.phi_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
+                'actor_body_z': torch.rand(self.actor_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
+                'action_z': torch.rand(particles, self.z_dim).to(Config.DEVICE),
+        }
    
     def set_model_seed(self, seed):
         self.model_seed = seed
 
-    def predict_action(self, obs, evaluation=False, select_k=1, theta=None):
+    def predict_action(self, obs, evaluation=False, theta=None):
         phi = self.feature(obs)
         actions = self.actor(phi, theta).detach_()
         q_vals = torch.stack([self.critic(phi, action) for action in actions])
@@ -312,27 +309,83 @@ class TD3HyperNet(nn.Module, BaseNet):
         self.critic_body_1 = critic_body_fn()
         self.critic_body_2 = critic_body_fn()
 
-        self.config = TD3Net_config(actor_body.feature_dim, critic_body_1.feature_dim, critic_body_2.feature_dim, action_dim)
-        self.fc_action = LinearGenerator(self.config['fc_action'])
-        self.fc_critic_1 = LinearGenerator(self.config['fc_critic1'])
-        self.fc_critic_2 = LinearGenerator(self.config['fc_critic2'])
+        self.config = TD3Net_config(self.actor_body.feature_dim, self.critic_body_1.feature_dim, self.critic_body_2.feature_dim, action_dim)
+        self.fc_action = LinearGenerator(self.config['fc_action']).cuda()
+        self.fc_critic_1 = layer_init(nn.Linear(self.critic_body_1.feature_dim, 1), 1e-3)
+        self.fc_critic_2 = layer_init(nn.Linear(self.critic_body_2.feature_dim, 1), 1e-3)
 
         self.actor_params = list(self.actor_body.parameters()) + list(self.fc_action.parameters())
         self.critic_params = list(self.critic_body_1.parameters()) + list(self.fc_critic_1.parameters()) +\
                              list(self.critic_body_2.parameters()) + list(self.fc_critic_2.parameters())
-
+        
+        self.s_dim = self.config['s_dim']
+        self.z_dim = self.config['z_dim']
+        self.n_gen = self.config['n_gen'] + self.actor_body.config['n_gen'] + 1
+        
         self.actor_opt = actor_opt_fn(self.actor_params)
         self.critic_opt = critic_opt_fn(self.critic_params)
+        
+        self.sample_model_seed()
+        
         self.to(Config.DEVICE)
+    
+    def sample_model_seed(self):
+        self.model_seed = {
+                'actor_body_z': torch.rand(self.actor_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
+                'action_z': torch.rand(particles, self.z_dim).to(Config.DEVICE),
+        }
+   
+    def set_model_seed(self, seed):
+        self.model_seed = seed
+
+    def predict_action(self, obs, evaluation=False, maxq=True, theta=None, numpy=True):
+        actions = self.actor(obs, theta).detach_()
+        q_vals = [self.q(obs, action) for action in actions]
+        q1 = torch.stack([q[0] for q in q_vals]).squeeze(-1).t()  # [particles]
+        q2 = torch.stack([q[1] for q in q_vals]).squeeze(-1).t()  # [particles]
+        actions = actions.transpose(0, 1)  # [1, particles, d_action]
+        ## get inddx of the best action
+        q1_max, q2_max = q1.max(1), q2.max(1)  # both [[1], [1]]
+        ## get best action betweeen them
+        if maxq:
+            q_max = torch.max(q1_max[0], q2_max[0])
+        else:
+            q_max = torch.min(q1_max[0], q2_max[0])
+
+        if evaluation:
+            if torch.equal(q_max, q1_max[0]):
+                q_max_idx = q1_max[1]  # [1]
+            else:
+                q_max_idx = q2_max[1]  # [1]
+            
+            actions = actions[torch.tensor(np.arange(actions.size(0))).long(), q_max_idx, :]
+
+            if numpy == True:
+                actions = actions.detach().cpu().numpy()
+                q_max_idx = q_max_idx.detach().cpu().numpy()
+            return actions, q_max_idx
+        
+        return q_max.unsqueeze(-1)
+
 
     def forward(self, obs):
+        action = self.actor(obs)
+        return action
+
+    def actor(self, obs, theta=None):
         obs = tensor(obs)
-        return torch.tanh(self.fc_action(z[0], self.actor_body(obs)))
+        if theta:
+            a = self.actor_body(obs, self.model_seed['actor_body_z'], theta[:4])
+            action = torch.tanh(self.fc_action(self.model_seed['action_z'], a, theta[-2:]))
+        else:
+            a = self.actor_body(obs, self.model_seed['actor_body_z'])
+            action = torch.tanh(self.fc_action(self.model_seed['action_z'], a))
+        return action
 
     def q(self, obs, a):
         obs = tensor(obs)
         a = tensor(a)
         x = torch.cat([obs, a], dim=1)
-        q_1 = self.fc_critic_1(z[0], self.critic_body_1(x))
-        q_2 = self.fc_critic_2(z[1], self.critic_body_2(x))
+        q_1 = self.fc_critic_1(self.critic_body_1(x))
+        q_2 = self.fc_critic_2(self.critic_body_2(x))
         return q_1, q_2

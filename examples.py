@@ -426,6 +426,7 @@ def ddpg_continuous(**kwargs):
     config = Config()
     config.merge(kwargs)
 
+    config.tag = 'Swimmer1'
     config.task_fn = lambda: Task(config.game)
     config.eval_env = config.task_fn()
     config.max_steps = int(1e6)
@@ -440,7 +441,7 @@ def ddpg_continuous(**kwargs):
         actor_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-4),
         critic_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-3))
 
-    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=64)
+    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=512)
     config.discount = 0.99
     config.random_process_fn = lambda: OrnsteinUhlenbeckProcess(
         size=(config.action_dim,), std=LinearSchedule(0.2))
@@ -503,7 +504,8 @@ if __name__ == '__main__':
     # game = 'Ant-v2'
     # game = 'Reacher-v2'
     # game = 'InvertedPendulum-v2'
-    game = 'Humanoid-v2'
+    # game = 'Humanoid-v2'
+    game = 'Swimmer-v2'
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
     ddpg_continuous(game=game)

@@ -41,7 +41,8 @@ def batch_rbf_nograd(x, min_norm=1e-3):
     x2e = x2.repeat(1, x.shape[0])
     H = torch.sub(torch.add(x2e, x2e.T), 2*xy)
     median = torch.median(H.view(-1))
-    norm = (median*.5 / np.log(x.shape[0] + 1.0)).pow(.5)
+    # norm = (median*.5 / np.log(x.shape[0] + 1.0)).pow(.5)
+    norm = median
     # norm = H.mean(0)
     norm = torch.clamp(norm, min=min_norm)
     kxy = torch.exp(-H / norm ** 2 / 2.0)
