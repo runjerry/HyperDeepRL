@@ -10,7 +10,6 @@ from .hyper_bodies import *
 from .hypernetwork_ops import *
 from ..utils.hypernet_heads_defs import *
 
-particles = 32
 
 class VanillaHyperNet(nn.Module, BaseNet):
     def __init__(self, output_dim, body):
@@ -40,18 +39,68 @@ class DuelingHyperNet(nn.Module, BaseNet):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
         self.config = DuelingNet_config(body.feature_dim, action_dim)
-        self.fc_value = LinearGenerator(self.config['fc_value'])
-        self.fc_advantage = LinearGenerator(self.config['fc_advantage'])
-        self.body = body
-        self.to(Config.DEVICE)
+        self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
+        self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
+        self.features = body
 
-    def forward(self, x, to_numpy=False):
-        phi = self.body(tensor(x))
-        value = self.fc_value(z[0], phi)
-        advantange = self.fc_advantage(z[1], phi)
-        q = value.expand_as(advantange) + (advantange - advantange.mean(1, keepdim=True).expand_as(advantange))
+        self.s_dim = self.config['s_dim']
+        self.z_dim = self.config['z_dim']
+        self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
+
+        self.particles = Config.particles
+        self.sample_model_seed()
+
+        self.to(Config.DEVICE)
+    
+    def sample_model_seed(self):
+        self.model_seed = {
+                'features_z': torch.rand(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
+                'value_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
+                'advantage_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
+        }
+   
+    def set_model_seed(self, seed):
+        self.model_seed = seed
+
+    def forward(self, x, to_numpy=False, theta=None):
+        x = tensor(x)
+        phi = self.body(x)
+        return self.head(phi)
+
+    def body(self, x=None):
+        return self.features(x, self.model_seed['features_z'])
+
+    def head(self, phi):
+        value = self.fc_value(self.model_seed['value_z'], phi)
+        advantage = self.fc_advantage(self.model_seed['advantage_z'], phi)
+        q = value.expand_as(advantage) + (advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
         return q
 
+    def sample_model(self, component):
+        param_sets = []
+        if component == 'q':
+            param_sets.extend(self.features(z=self.model_seed['features_z']))
+            param_sets.extend(self.fc_value(z=self.model_seed['value_z']))
+            param_sets.extend(self.fc_advantage(z=self.model_seed['advantage_z']))
+        return param_sets
+
+    def predict_action(self, x, pred, to_numpy=False):
+        x = tensor(x)
+        q = self(x)
+        if pred == 'max':
+            max_q, max_q_idx = q.max(-1)  # max over q values
+            max_actor = max_q.max(0)[1]  # max over particles
+            action = q[max_actor].argmax()
+        elif pred == 'rand':
+            idx = np.random.choice(self.particles, 1)[0]
+            action = q[idx].max(0)[1]
+        elif pred == 'mean':
+            action_means = q.mean(0)  #[actions]
+            action = action_means.argmax()
+
+        if to_numpy:
+            action = action.cpu().detach().numpy()
+        return action
 
 class CategoricalHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, num_atoms, body):
@@ -150,14 +199,15 @@ class DeterministicActorCriticHyperNet(nn.Module, BaseNet):
         self.critic_opt = critic_opt_fn(self.critic_params + self.phi_params)
         self.n_gen = self.config['n_gen'] + self.phi_body.config['n_gen'] + \
                      self.actor_body.config['n_gen'] + 1 #self.critic_body.config['n_gen'] + 1
+        self.particles = Config.particles
         self.sample_model_seed()
         self.to(Config.DEVICE)
 
     def sample_model_seed(self):
         self.model_seed = {
-                'phi_body_z': torch.rand(self.phi_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
-                'actor_body_z': torch.rand(self.actor_body.config['n_gen'], particles, self.z_dim).to(Config.DEVICE),
-                'action_z': torch.rand(particles, self.z_dim).to(Config.DEVICE),
+                'phi_body_z': torch.rand(self.phi_body.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
+                'actor_body_z': torch.rand(self.actor_body.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
+                'action_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
         }
    
     def set_model_seed(self, seed):

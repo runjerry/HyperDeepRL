@@ -5,6 +5,7 @@
 #######################################################################
 
 from deep_rl import *
+import envs
 
 def load_args():
     parser = argparse.ArgumentParser(description='main args')
@@ -19,15 +20,15 @@ def dqn_feature(**kwargs):
     config = Config()
     config.merge(kwargs)
     config.hyper = True
-    config.tag = 'ddqn what'
+    config.tag = 'ddqn_dist_meaneval512_16p'
     config.task_fn = lambda: Task(config.game)
     config.eval_env = config.task_fn()
 
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
+    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.0001)
     # config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
     config.network_fn = lambda: DuelingHyperNet(config.action_dim, FCHyperBody(config.state_dim))
-    # config.replay_fn = lambda: Replay(memory_size=int(1e4), batch_size=10)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e4), batch_size=10)
+    # config.replay_fn = lambda: Replay(memory_size=int(1e5), batch_size=100)
+    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e5), batch_size=512, hyperdqn=True)
 
     config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
     config.discount = 0.99
@@ -40,7 +41,9 @@ def dqn_feature(**kwargs):
     config.eval_interval = int(5e3)
     config.max_steps = 1e5
     config.async_actor = False
-    run_steps(DQNAgent(config))
+    # run_steps(DQNAgent(config))
+    # run_steps(DQN_SVGD_Agent(config))
+    run_steps(DQN_Dist_Agent(config))
 
 
 def dqn_pixel(**kwargs):
@@ -50,17 +53,17 @@ def dqn_pixel(**kwargs):
     config.merge(kwargs)
     config.hyper = True
 
-    config.task_fn = lambda: Task(config.game)
+    config.task_fn = lambda: Task(config.game, num_envs=1, single_process=True)
     config.eval_env = config.task_fn()
 
     config.optimizer_fn = lambda params: torch.optim.RMSprop(
         params, lr=0.00025, alpha=0.95, eps=0.01, centered=True)
-    config.network_fn = lambda: VanillaHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
-    # config.network_fn = lambda: DuelingHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
+    # config.network_fn = lambda: VanillaHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
+    config.network_fn = lambda: DuelingHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
     config.random_action_prob = LinearSchedule(1.0, 0.01, 1e6)
 
     # config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=32)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e6), batch_size=32)
+    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e6), batch_size=128)
 
     config.batch_size = 32
     config.state_normalizer = ImageNormalizer()
@@ -72,9 +75,9 @@ def dqn_pixel(**kwargs):
     config.gradient_clip = 5
     config.history_length = 4
     # config.double_q = True
-    config.double_q = False
-    config.max_steps = int(2e7)
-    run_steps(DQNAgent(config))
+    config.double_q = True
+    config.max_steps = int(200e7)
+    run_steps(DQN_Dist_Agent(config))
 
 
 # QR DQN
@@ -519,6 +522,7 @@ if __name__ == '__main__':
     args = load_args()
 
     # game = 'CartPole-v0'
+    # game = 'NChain-v3'
     # dqn_feature(game=game)
     # quantile_regression_dqn_feature(game=game)
     # categorical_dqn_feature(game=game)
@@ -539,22 +543,22 @@ if __name__ == '__main__':
     # a2c_continuous(game=game)
     # ppo_continuous(game=game)
     # ddpg_continuous(game=game)
-    #td3_continuous(game=game)
-    games = ['HalfCheetah-v2',
-            'Humanoid-v2',
-            'Ant-v2',
-            'Reacher-v2',
-            # 'InvertedDoublePendulum-v2',
-            #'Hopper-v2',
-            #'Swimmer-v2',
-            #'Walker2d-v2'
-    ]
-    for i in range(3):
-        for game in games:
-            td3_continuous(game=game, tb_tag='td3_{}-{}'.format(game, i))
+    # td3_continuous(game=game)
+    # games = ['HalfCheetah-v2',
+    #        'Humanoid-v2',
+    #        'Ant-v2',
+    #        'Reacher-v2',
+    #        'InvertedDoublePendulum-v2',
+    #        'Hopper-v2',
+    #        'Swimmer-v2',
+    #        'Walker2d-v2'
+    # ]
+    # for i in range(3):
+    #     for game in games:
+    #         td3_continuous(game=game, tb_tag='td3_{}-{}'.format(game, i))
 
-    # game = 'BreakoutNoFrameskip-v4'
-    # dqn_pixel(game=game)
+    game = 'BreakoutNoFrameskip-v4'
+    dqn_pixel(game=game)
     # quantile_regression_dqn_pixel(game=game)
     # categorical_dqn_pixel(game=game)
     # a2c_pixel(game=game)

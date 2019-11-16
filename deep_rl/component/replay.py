@@ -92,7 +92,7 @@ class AsyncReplay(mp.Process):
     EXIT = 2
     FEED_BATCH = 3
 
-    def __init__(self, memory_size, batch_size):
+    def __init__(self, memory_size, batch_size, hyperdqn=False):
         mp.Process.__init__(self)
         self.pipe, self.worker_pipe = mp.Pipe()
         self.memory_size = memory_size

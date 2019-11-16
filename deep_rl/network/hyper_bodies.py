@@ -9,8 +9,6 @@ from .hypernetwork_ops import *
 from ..utils.hypernet_bodies_defs import *
 import numpy as np
 
-particles = 32
-
 class NatureConvHyperBody(nn.Module):
     def __init__(self, in_channels=4):
         super(NatureConvHyperBody, self).__init__()
@@ -22,14 +20,13 @@ class NatureConvHyperBody(nn.Module):
         self.conv3 = ConvGenerator(self.config['conv3']).cuda()
         self.fc4 = LinearGenerator(self.config['fc4']).cuda()
 
-    def forward(self, x, z=None):
-        if not self.mixer and z is None:
-            z = torch.rand(self.config['n_gen'], particles, self.config['z_dim'])
-        x = x.unsqueeze(0).repeat(particles, 1, 1)
+    def forward(self, x=None, z=None, theta=None):
+        # incoming x is batch of frames  [n, 4, width, height]
+        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1, 1, 1)    
         y = F.relu(self.conv1(z[0], x, stride=4))
-        y = F.relu(self.conv2(z[1], y, stride=2))
+        y = F.relu(self.conv2(z[1], y, stride=4))
         y = F.relu(self.conv3(z[2], y, stride=1))
-        y = y.view(y.size(0), -1)
+        y = y.view(y.size(0), y.size(1), -1)
         y = F.relu(self.fc4(z[3], y))
         return y
 
@@ -70,7 +67,7 @@ class FCHyperBody(nn.Module):
                 weights.append(w)
                 weights.append(b)
             return weights
-        x = x.unsqueeze(0).repeat(particles, 1, 1)
+        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1)
         for i, layer in enumerate(self.layers):
             if theta:
                 x = self.gate(layer(z[i], x, theta[i*2:(i*2)+2]))
