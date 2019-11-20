@@ -35,29 +35,40 @@ class VanillaHyperNet(nn.Module, BaseNet):
 
 
 class DuelingHyperNet(nn.Module, BaseNet):
-    def __init__(self, action_dim, body):
+    def __init__(self, action_dim, body, toy=False):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
-        self.config = DuelingNet_config(body.feature_dim, action_dim)
+        if toy == True:
+            self.config = ToyDuelingNet_config(body.feature_dim, action_dim)
+        else:
+            self.config = DuelingNet_config(body.feature_dim, action_dim)
         self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
         self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
         self.features = body
-
         self.s_dim = self.config['s_dim']
         self.z_dim = self.config['z_dim']
         self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
-
         self.particles = Config.particles
         self.sample_model_seed()
 
         self.to(Config.DEVICE)
     
-    def sample_model_seed(self):
-        self.model_seed = {
+    def sample_model_seed(self, dist='normal'):
+        if dist == 'normal':
+            self.model_seed = {
                 'features_z': torch.rand(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
                 'value_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
                 'advantage_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
-        }
+            }
+        elif dist == 'categorical':
+            k = np.random.choice(self.z_dim, 1)[0]
+            z = torch.zeros(self.features.config['n_gen'], self.particles, self.z_dim)
+            z[:, :, k] += 1.
+            self.model_seed = {
+                'features_z': z.to(Config.DEVICE),
+                'value_z': z[0].to(Config.DEVICE),
+                'advantage_z': z[0].to(Config.DEVICE),
+            }
    
     def set_model_seed(self, seed):
         self.model_seed = seed
@@ -68,6 +79,8 @@ class DuelingHyperNet(nn.Module, BaseNet):
         return self.head(phi)
 
     def body(self, x=None):
+        if not isinstance(x, torch.cuda.FloatTensor):
+            x = tensor(x)
         return self.features(x, self.model_seed['features_z'])
 
     def head(self, phi):
@@ -101,6 +114,7 @@ class DuelingHyperNet(nn.Module, BaseNet):
         if to_numpy:
             action = action.cpu().detach().numpy()
         return action
+
 
 class CategoricalHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, num_atoms, body):

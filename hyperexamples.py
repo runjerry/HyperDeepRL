@@ -13,6 +13,37 @@ def load_args():
     args = parser.parse_args()
     return args
 
+# DQN Toy Example
+def dqn_toy_feature(**kwargs):
+    generate_tag(kwargs)
+    kwargs.setdefault('log_level', 0)
+    config = Config()
+    config.merge(kwargs)
+    config.hyper = True
+    config.tag = 'dqn_svgd_alpha_trial1_replay1e5_lr5e4_' + config.tb_tag
+    config.task_fn = lambda: Task(config.game, special_args=('NChain', config.chain_len))
+    config.eval_env = config.task_fn()
+
+    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=5e-4)
+    config.network_fn = lambda: DuelingHyperNet(config.action_dim, ToyFCHyperBody(config.state_dim), toy=True)
+    config.replay_fn = lambda: Replay(memory_size=int(1e5), batch_size=100)
+
+    config.random_action_prob = LinearSchedule(0.01, 0.001, 1e4)
+    config.discount = 0.8
+    config.target_network_update_freq = 10
+    config.exploration_steps = 0
+    config.double_q = True
+    config.sgd_update_frequency = 4
+    config.gradient_clip = 1
+    config.eval_interval = int(5e7)
+    config.max_steps = 2000 * (config.chain_len+9)
+    config.async_actor = False
+    config.particles = 24
+    
+    # run_steps(DQN_ToyDist_Agent(config))
+    run_steps(DQNDistToySVGD_Agent(config))
+
+
 # DQN
 def dqn_feature(**kwargs):
     generate_tag(kwargs)
@@ -521,9 +552,14 @@ if __name__ == '__main__':
     select_device(0)
     args = load_args()
 
-    # game = 'CartPole-v0'
-    # game = 'NChain-v3'
+    # game = 'CartPole-v0'  # MUST WORK
     # dqn_feature(game=game)
+    
+    game = 'NChain-v3'
+    for i in np.linspace(4, 100, 97):
+        i = int(i)
+        dqn_toy_feature(game=game, tb_tag='N{}'.format(i), chain_len=i)
+
     # quantile_regression_dqn_feature(game=game)
     # categorical_dqn_feature(game=game)
     # a2c_feature(game=game)
@@ -557,8 +593,8 @@ if __name__ == '__main__':
     #     for game in games:
     #         td3_continuous(game=game, tb_tag='td3_{}-{}'.format(game, i))
 
-    game = 'BreakoutNoFrameskip-v4'
-    dqn_pixel(game=game)
+    # game = 'BreakoutNoFrameskip-v4'
+    # dqn_pixel(game=game)
     # quantile_regression_dqn_pixel(game=game)
     # categorical_dqn_pixel(game=game)
     # a2c_pixel(game=game)

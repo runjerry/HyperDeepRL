@@ -40,6 +40,23 @@ def DDPGConvBody_config(in_channels, feature_dim, mixer=False):
 
     return net_config 
 
+
+toy_fc_body = namedtuple('toy_fc_body', ' '.join(fields))
+toy_fc_body.__new__.__defaults__ = defaults # python 3.6
+def ToyFCBody_config(d_state, d_hidden, gate, mixer=False):
+    net_config = {}
+    net_config['fc1'] = toy_fc_body(d_input=d_state, d_output=d_hidden[0], z_dim=24)
+    for i in range(1, len(d_hidden)):
+        net_config['fc{}'.format(i+1)] = toy_fc_body(d_input=d_hidden[i-1], d_output=d_hidden[i], z_dim=24)
+    if mixer:
+        net_config['mixer'] = toy_fc_body(d_hidden=64, d_output=None, n_gen=len(d_hidden))
+    net_config['z_dim'] = 24
+    net_config['s_dim'] = 24
+    net_config['n_gen'] = len(d_hidden)
+
+    return net_config 
+
+
 fc_body = namedtuple('fc_body', ' '.join(fields))
 fc_body.__new__.__defaults__ = defaults # python 3.6
 def FCBody_config(d_state, d_hidden, gate, mixer=False):

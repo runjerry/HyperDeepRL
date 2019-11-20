@@ -24,7 +24,7 @@ except ImportError:
 
 
 # adapted from https://github.com/ikostrikov/pytorch-a2c-ppo-acktr/blob/master/envs.py
-def make_env(env_id, seed, rank, episode_life=True):
+def make_env(env_id, seed, rank, episode_life=True, special_args=None):
     def _thunk():
         random_seed(seed)
         if env_id.startswith("dm"):
@@ -32,7 +32,12 @@ def make_env(env_id, seed, rank, episode_life=True):
             _, domain, task = env_id.split('-')
             env = dm_control2gym.make(domain_name=domain, task_name=task)
         else:
-            env = gym.make(env_id)
+            if special_args is not None:
+                if 'NChain' in special_args[0]:
+                    print ('starting chain N = ', special_args[1])
+                    env = gym.make(env_id, n=special_args[1])
+            else:
+                env = gym.make(env_id)
         is_atari = hasattr(gym.envs, 'atari') and isinstance(
             env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
         if is_atari:
@@ -157,10 +162,11 @@ class Task:
                  single_process=True,
                  log_dir=None,
                  episode_life=True,
-                 seed=np.random.randint(int(1e5))):
+                 seed=np.random.randint(int(1e5)),
+                 special_args=None):
         if log_dir is not None:
             mkdir(log_dir)
-        envs = [make_env(name, seed, i, episode_life) for i in range(num_envs)]
+        envs = [make_env(name, seed, i, episode_life, special_args) for i in range(num_envs)]
         if single_process:
             Wrapper = DummyVecEnv
         else:
@@ -169,7 +175,8 @@ class Task:
         self.name = name
         self.observation_space = self.env.observation_space
         self.state_dim = int(np.prod(self.env.observation_space.shape))
-
+        if 'Chain' in self.name:
+            self.state_dim = self.env.envs[0].n
         self.action_space = self.env.action_space
         if isinstance(self.action_space, Discrete):
             self.action_dim = self.action_space.n

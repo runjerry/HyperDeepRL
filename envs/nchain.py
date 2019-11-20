@@ -34,23 +34,23 @@ class NChainEnv(gym.Env):
         self.seed()
         self.actions = [np.random.choice(2, 1)[0] for i in range(self.n)]
         self.steps = 0
-        self.state1_reward = Normal(torch.tensor([0.]), torch.tensor([1.]))
-        self.stateN_reward = Normal(torch.tensor([1.]), torch.tensor([1.]))
-        print (self.state)
+        self.ep_reward = 0.
+        self.ep = 1
+        self.optim_policy_learned = 0
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
     
     def set_state(self, state, encoding='thermometer'):
-        if encoding == 'onehot'
+        if encoding == 'onehot':
             y = torch.eye(self.n)
             self.state = y[state]
         elif encoding == 'thermometer':
             ones = torch.ones(self.n)
             ones[self.state_int+1:] = 0.
             self.state = ones
-        
+        self.state = self.state.tolist()
         
     def step(self, action):
         assert self.action_space.contains(action)
@@ -67,7 +67,6 @@ class NChainEnv(gym.Env):
             else:
                 self.state_int += 1
                 self.set_state(self.state_int)
-                reward -= 1./self.n  # negative reward for moving right 
         else:
             if self.state_int <= 0:
                 pass
@@ -77,23 +76,39 @@ class NChainEnv(gym.Env):
 
         # handle reward
         if self.state_int == 0:
-            reward += self.state1_reward.sample().item()  # small reward for 1st state
+            reward += 0.001  # small reward for 1st state
+
         elif self.state_int == self.n - 1:
-            reward += self.stateN_reward.sample().item()  # large reward for end state
+            reward += 1.  # large reward for end state
 
         self.steps += 1
 
+        self.ep_reward += reward
+
+        info = {'terminate': False}
+        
+        # print ('state: {}, action: {}, reward: {}, state: {}'.format(old_state, action, reward, self.state))
+
+        if self.optim_policy_learned >= 100:
+            info['terminate'] = True
+            self.optim_policy_learned = 0
+            print ('Optimal Policy Learned in {} episodes'.format(self.ep))
+        
         if self.steps >= self.n + 9:
+            self.ep += 1
             done = True
-            print ('done')
+            # print ('done')
+            if self.ep_reward >= 10:  # optimal policy
+                self.optim_policy_learned += 1
         else:
             done = False
-        print ('state: {}, action: {}, reward: {}'.format(old_state, action, reward))
-        print (self.state)
-        return self.state, reward, done, {}
+
+        return self.state, reward, done, info
 
     def reset(self):
+        # print ('reset')
         self.state_int = 1
         self.set_state(self.state_int)
         self.steps = 0
+        self.ep_reward = 0.
         return self.state
