@@ -42,9 +42,15 @@ class NChainEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
     
-    def set_state(self, state):
-        y = torch.eye(self.n)
-        self.state = y[state]
+    def set_state(self, state, encoding='thermometer'):
+        if encoding == 'onehot'
+            y = torch.eye(self.n)
+            self.state = y[state]
+        elif encoding == 'thermometer':
+            ones = torch.ones(self.n)
+            ones[self.state_int+1:] = 0.
+            self.state = ones
+        
         
     def step(self, action):
         assert self.action_space.contains(action)

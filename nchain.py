@@ -22,19 +22,22 @@ class NChainEnv(gym.Env):
     A Bayesian Framework for Reinforcement Learning by Malcolm Strens (2000)
     http://ceit.aut.ac.ir/~shiry/lecture/machine-learning/papers/BRL-2000.pdf
     """
-    def __init__(self, n=50, slip=0.5):
+    def __init__(self, n=10, stochastic=False):
         self.n = n
-        self.slip = slip  # probability of 'slipping' an action
-        self.state = 1  # Start at beginning of the chain
+        self.stochastic = stochastic  # probability of 'slipping' an action
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Discrete(self.n)
         self.seed()
         self.actions = [np.random.choice(2, 1)[0] for i in range(self.n)]
         self.steps = 0
+        self.state_int = 1
+        self.state = self.get_state(1, encoding='thermometer')
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
+    
+    def get_state(self):
 
     def step(self, action):
         assert self.action_space.contains(action)
