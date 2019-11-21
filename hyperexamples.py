@@ -20,13 +20,13 @@ def dqn_toy_feature(**kwargs):
     config = Config()
     config.merge(kwargs)
     config.hyper = True
-    config.tag = 'dqn_svgd_alpha_trial1_replay1e5_lr5e4_' + config.tb_tag
+    config.tag = 'chain_' + config.tb_tag
     config.task_fn = lambda: Task(config.game, special_args=('NChain', config.chain_len))
     config.eval_env = config.task_fn()
 
-    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=5e-4)
+    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim, ToyFCHyperBody(config.state_dim), toy=True)
-    config.replay_fn = lambda: Replay(memory_size=int(1e5), batch_size=100)
+    config.replay_fn = lambda: Replay(memory_size=int(config.replay_memory), batch_size=int(config.replay_bs))
 
     config.random_action_prob = LinearSchedule(0.01, 0.001, 1e4)
     config.discount = 0.8
@@ -39,7 +39,9 @@ def dqn_toy_feature(**kwargs):
     config.max_steps = 2000 * (config.chain_len+9)
     config.async_actor = False
     config.particles = 24
-    
+    config.alpha_anneal = config.max_steps
+    config.alpha_init = config.alpha
+    config.alpha_final = config.alpha
     # run_steps(DQN_ToyDist_Agent(config))
     run_steps(DQNDistToySVGD_Agent(config))
 
@@ -554,11 +556,47 @@ if __name__ == '__main__':
 
     # game = 'CartPole-v0'  # MUST WORK
     # dqn_feature(game=game)
+    switch = 4
+
+    if switch == 1:
+        a = [1e2]   
+        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
+        replay_memory_size = [1e3, 1e5]
+        replay_batch_size = [32, 128]
+
+    if switch == 2:
+        a = [1e1]   
+        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
+        replay_memory_size = [1e3, 1e5]
+        replay_batch_size = [32, 128]
+
+    if switch == 3:
+        a = [1e-1]   
+        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
+        replay_memory_size = [1e3, 1e5]
+        replay_batch_size = [32, 128]
+
+    if switch == 4:
+        a = [1e-3, 1]   
+        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
+        replay_memory_size = [1e3, 1e5]
+        replay_batch_size = [32, 128]
     
+
     game = 'NChain-v3'
-    for i in np.linspace(4, 100, 97):
-        i = int(i)
-        dqn_toy_feature(game=game, tb_tag='N{}'.format(i), chain_len=i)
+    for alpha in a:
+        for lr in learning_rate:
+            for replay_memory in replay_memory_size:
+                for replay_bs in replay_batch_size:
+                    for i in np.linspace(20, 100, 81)[::2]:
+                        i = int(i)
+                        dqn_toy_feature(game=game,
+                                        tb_tag='alpha{}-lr{}-rm{}-bs{}N{}'.format(alpha,lr,replay_memory,replay_bs,i),
+                                        chain_len=i,
+                                        alpha=alpha,
+                                        lr=lr,
+                                        replay_memory=replay_memory,
+                                        replay_bs=replay_bs)
 
     # quantile_regression_dqn_feature(game=game)
     # categorical_dqn_feature(game=game)

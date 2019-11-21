@@ -78,7 +78,7 @@ class DQNDistToySVGD_Agent(BaseAgent):
         self.target_network = config.network_fn()
         self.target_network.load_state_dict(self.network.state_dict())
         self.optimizer = config.optimizer_fn(self.network.parameters())
-        self.alpha_schedule = BaselinesLinearSchedule(config.max_steps, final_p=1., initial_p=1.)
+        self.alpha_schedule = BaselinesLinearSchedule(config.alpha_anneal, config.alpha_final, config.alpha_init)
         self.actor.set_network(self.network)
 
         self.total_steps = 0
@@ -126,14 +126,12 @@ class DQNDistToySVGD_Agent(BaseAgent):
             rewards = tensor(rewards)
             
             ## Get target q values
-            # """
             q_next = self.target_network(next_states).detach()  # [particles, batch, action]
             if self.config.double_q:
                 ## Double DQN
                 q = self.network(next_states)  # choose random particle (Q function)  [batch, action]
                 best_actions = torch.argmax(q, dim=-1)  # get best action  [batch]
                 q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])
-                # q_next = q_next[:, self.batch_indices, best_actions]
             else:
                 q_next = q_next.max(1)[0]
             q_next = self.config.discount * q_next * (1 - terminals)
@@ -151,7 +149,7 @@ class DQNDistToySVGD_Agent(BaseAgent):
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
             
-            q, q_frozen = torch.split(q, self.config.particles//2, 1)  # [batch, particles//2, 1]
+            q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
             q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
             q_frozen.detach()
             q_next_frozen.detach()
@@ -161,17 +159,20 @@ class DQNDistToySVGD_Agent(BaseAgent):
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
             
+            # print ('q grad', q_grad.shape)
             q_eps = q + torch.rand_like(q) * 1e-8
             q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
-            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) # [n, n], [n, theta]
+            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            # print (kappa.shape, grad_kappa.shape)
             kappa = kappa.unsqueeze(-1)
             
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
+            # print ('klop', kernel_logp.shape)
             svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
             
             self.optimizer.zero_grad()
-            autograd.backward(q, grad_tensors=svgd)
+            autograd.backward(q, grad_tensors=svgd.detach())
             
             for param in self.network.parameters():
                 if param.grad is not None:

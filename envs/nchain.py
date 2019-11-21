@@ -77,9 +77,10 @@ class NChainEnv(gym.Env):
         # handle reward
         if self.state_int == 0:
             reward += 0.001  # small reward for 1st state
-
         elif self.state_int == self.n - 1:
             reward += 1.  # large reward for end state
+        else:
+            reward += 0
 
         self.steps += 1
 
@@ -89,20 +90,21 @@ class NChainEnv(gym.Env):
         
         # print ('state: {}, action: {}, reward: {}, state: {}'.format(old_state, action, reward, self.state))
 
-        if self.optim_policy_learned >= 100:
-            info['terminate'] = True
-            self.optim_policy_learned = 0
-            print ('Optimal Policy Learned in {} episodes'.format(self.ep))
-        
         if self.steps >= self.n + 9:
             self.ep += 1
             done = True
             # print ('done')
             if self.ep_reward >= 10:  # optimal policy
                 self.optim_policy_learned += 1
+            
+            if self.optim_policy_learned >= 100:
+                info['terminate'] = True
+                self.optim_policy_learned = 0
+                print ('Optimal Policy Learned in {} episodes'.format(self.ep))
         else:
             done = False
 
+        
         return self.state, reward, done, info
 
     def reset(self):
