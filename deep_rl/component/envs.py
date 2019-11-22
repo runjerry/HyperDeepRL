@@ -15,6 +15,9 @@ from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 from baselines.common.atari_wrappers import FrameStack as FrameStack_
 from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv, VecEnv
 
+import bsuite
+from bsuite.utils import gym_wrapper
+
 from ..utils import *
 
 try:
@@ -27,10 +30,16 @@ except ImportError:
 def make_env(env_id, seed, rank, episode_life=True, special_args=None):
     def _thunk():
         random_seed(seed)
-        if env_id.startswith("dm"):
+        if env_id.startswith('bsuite'):
+            id = env_id.split('bsuite-')[1]
+            bsuite_env = bsuite.load_from_id(id)
+            env = gym_wrapper.GymFromDMEnv(bsuite_env)
+        
+        elif env_id.startswith("dm"):
             import dm_control2gym
             _, domain, task = env_id.split('-')
             env = dm_control2gym.make(domain_name=domain, task_name=task)
+        
         else:
             if special_args is not None:
                 if 'NChain' in special_args[0]:

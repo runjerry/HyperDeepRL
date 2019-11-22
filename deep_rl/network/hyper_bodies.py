@@ -66,7 +66,8 @@ class ToyFCHyperBody(nn.Module):
                 weights.append(w)
                 weights.append(b)
             return weights
-        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1)
+        ones_mask = torch.ones(len(x))
+        x = x.unsqueeze(0).repeat(z.shape[1], *ones)
         for i, layer in enumerate(self.layers):
             if theta:
                 x = self.gate(layer(z[i], x, theta[i*2:(i*2)+2]))
@@ -94,7 +95,11 @@ class FCHyperBody(nn.Module):
                 weights.append(w)
                 weights.append(b)
             return weights
-        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1)
+        # x = x.unsqueeze(0).repeat(z.shape[1], 1, 1)
+        ones_mask = torch.ones(x.dim()).long().tolist()
+        x = x.unsqueeze(0).repeat(z.shape[1], *ones_mask)
+        if x.size(2) == 1:  # DM lab has incompatible sizing with gym
+            x = x.squeeze(2)
         for i, layer in enumerate(self.layers):
             if theta:
                 x = self.gate(layer(z[i], x, theta[i*2:(i*2)+2]))

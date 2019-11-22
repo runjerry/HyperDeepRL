@@ -75,6 +75,8 @@ class DuelingHyperNet(nn.Module, BaseNet):
 
     def forward(self, x, to_numpy=False, theta=None):
         x = tensor(x)
+        if x.shape[0] == 1 and x.shape[1] == 1: ## dm_env returns one too many dimensions
+            x = x[0]
         phi = self.body(x)
         return self.head(phi)
 

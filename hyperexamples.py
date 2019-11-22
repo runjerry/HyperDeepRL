@@ -6,6 +6,7 @@
 
 from deep_rl import *
 import envs
+import itertools
 
 def load_args():
     parser = argparse.ArgumentParser(description='main args')
@@ -53,30 +54,32 @@ def dqn_feature(**kwargs):
     config = Config()
     config.merge(kwargs)
     config.hyper = True
-    config.tag = 'ddqn_dist_meaneval512_16p'
+    config.tag = config.tb_tag
     config.task_fn = lambda: Task(config.game)
     config.eval_env = config.task_fn()
 
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.0001)
-    # config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
+    config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim, FCHyperBody(config.state_dim))
     # config.replay_fn = lambda: Replay(memory_size=int(1e5), batch_size=100)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e5), batch_size=512, hyperdqn=True)
+    config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_memory_size), batch_size=int(config.replay_bs))
 
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
+    config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)
     config.discount = 0.99
     config.target_network_update_freq = 200
-    config.exploration_steps = 1000
+    config.exploration_steps = 0
     config.double_q = True
     # config.double_q = False
     config.sgd_update_frequency = 4
     config.gradient_clip = 5
     config.eval_interval = int(5e3)
-    config.max_steps = 1e5
+    config.max_steps = 500e3
     config.async_actor = False
+    config.alpha_anneal = config.max_steps
+    config.alpha_init = config.alpha
+    config.alpha_final = config.alpha
     # run_steps(DQNAgent(config))
     # run_steps(DQN_SVGD_Agent(config))
-    run_steps(DQN_Dist_Agent(config))
+    run_steps(DQN_Dist_SVGD_Agent(config))
 
 
 def dqn_pixel(**kwargs):
@@ -554,49 +557,30 @@ if __name__ == '__main__':
     select_device(0)
     args = load_args()
 
+    # Grid search for HP
+    alphas = [1e-2, 1e-1, 1, 1e1, 1e2]   
+    #learning_rates = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
+    #replay_memory_sizes = [1e3, 1e5]
+    #replay_batch_sizes = [32, 64, 128]
+    learning_rates = [1e-3, 5e-4, 2e-4, 1e-4]
+    replay_memory_sizes = [1e6]
+    replay_batch_sizes = [32, 64, 128]
+    hyperparams = itertools.product(*[alphas, learning_rates, replay_memory_sizes, replay_batch_sizes])
     # game = 'CartPole-v0'  # MUST WORK
-    # dqn_feature(game=game)
-    switch = 4
-
-    if switch == 1:
-        a = [1e2]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 2:
-        a = [1e1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 3:
-        a = [1e-1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 4:
-        a = [1e-3, 1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-    
+    # game = 'bsuite-cartpole/0'
+    game = 'bsuite-cartpole_swingup/0'
+    for (alpha, lr, mem, bs) in hyperparams:
+        tag='alpha{}-lr{}-rm{}-bs{}'.format(alpha, lr, mem, bs),
+        print ('recording a={}, lr={}, mem={}, bs={}'.format(alpha, lr, mem, bs))
+        dqn_feature(game=game, tb_tag=tag, alpha=alpha, lr=lr, replay_memory_size=mem, replay_bs=bs)
 
     game = 'NChain-v3'
-    for alpha in a:
-        for lr in learning_rate:
-            for replay_memory in replay_memory_size:
-                for replay_bs in replay_batch_size:
-                    for i in np.linspace(20, 100, 81)[::2]:
-                        i = int(i)
-                        dqn_toy_feature(game=game,
-                                        tb_tag='alpha{}-lr{}-rm{}-bs{}N{}'.format(alpha,lr,replay_memory,replay_bs,i),
-                                        chain_len=i,
-                                        alpha=alpha,
-                                        lr=lr,
-                                        replay_memory=replay_memory,
-                                        replay_bs=replay_bs)
+    for (alpha, lr, mem, bs) in hyperparams:
+        for i in np.linspace(20, 100, 81)[::2]:
+            i = int(i)
+            print ('recording N={}, a={}, lr={}, mem={}, bs={}'.format(i, alpha, lr, mem, bs))
+            tag='alpha{}-lr{}-rm{}-bs{}N{}'.format(alpha,lr,replay_memory,replay_bs,i),
+            dqn_toy_feature(game=game,chain_len=i,tb_tag=tag,alpha=alpha,lr=lr,replay_memory=mem,replay_bs=bs)
 
     # quantile_regression_dqn_feature(game=game)
     # categorical_dqn_feature(game=game)
