@@ -1,4 +1,4 @@
-#######################################################################
+######################################################################
 # Copyright (C) 2017 Shangtong Zhang(zhangshangtong.cpp@gmail.com)    #
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
@@ -72,16 +72,39 @@ def make_env(env_id, seed, rank, episode_life=True, special_args=None):
 class OriginalReturnWrapper(gym.Wrapper):
     def __init__(self, env):
         gym.Wrapper.__init__(self, env)
+        self.episode_rewards = 0
         self.total_rewards = 0
-
+        self.ep = 0
+        self.ep_steps = 0
+        self.upright = 0
+        self.total_upright = 0
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
+        self.episode_rewards += reward
         self.total_rewards += reward
+        self.ep_steps += 1
+        if reward > 0.0005:
+            self.upright += 1
+            self.total_upright += 1
         if done:
-            info['episodic_return'] = self.total_rewards
-            self.total_rewards = 0
+            self.ep += 1
+            info['episodic_return'] = self.episode_rewards
+            info['episode'] = self.ep
+            info['episodic_upright'] = self.upright
+            info['ep_steps'] = self.ep_steps
+            info['total_return'] = self.total_rewards
+            info['total_upright'] = self.total_upright
+            self.episode_rewards = 0
+            self.ep_steps = 0
+            self.upright = 0
         else:
             info['episodic_return'] = None
+            info['episodic_upright'] = None
+            info['episode'] = self.ep
+            info['episodic_upright'] = self.upright
+            info['ep_steps'] = self.ep_steps
+            info['total_return'] = self.total_rewards
+            info['total_upright'] = None
         return obs, reward, done, info
 
     def reset(self):
@@ -138,7 +161,8 @@ class FrameStack(FrameStack_):
 
 # The original one in baselines is really bad
 class DummyVecEnv(VecEnv):
-    def __init__(self, env_fns):
+    def __init__(self, env_fns, name):
+        self.name = name
         self.envs = [fn() for fn in env_fns]
         env = self.envs[0]
         VecEnv.__init__(self, len(env_fns), env.observation_space, env.action_space)
@@ -156,9 +180,25 @@ class DummyVecEnv(VecEnv):
             data.append([obs, rew, done, info])
         obs, rew, done, info = zip(*data)
         return obs, np.asarray(rew), np.asarray(done), info
-
+    
     def reset(self):
         return [env.reset() for env in self.envs]
+    
+    def get_images(self):
+        if 'cartpole' in self.name:
+            mode = 'cartpole'
+        else:
+            mode = 'rgb_array'
+        print (mode)
+        return [env.render(mode=mode) for env in self.envs]
+    
+    def render(self, mode='human'):
+        if 'cartpole' in self.name:
+            mode='cartpole'
+        if self.num_envs == 1:
+            return self.envs[0].render(mode=mode)
+        else:
+            return super().render(mode=mode)
 
     def close(self):
         return
@@ -175,13 +215,13 @@ class Task:
                  special_args=None):
         if log_dir is not None:
             mkdir(log_dir)
+        self.name = name
         envs = [make_env(name, seed, i, episode_life, special_args) for i in range(num_envs)]
         if single_process:
             Wrapper = DummyVecEnv
         else:
             Wrapper = SubprocVecEnv
-        self.env = Wrapper(envs)
-        self.name = name
+        self.env = Wrapper(envs, self.name)
         self.observation_space = self.env.observation_space
         self.state_dim = int(np.prod(self.env.observation_space.shape))
         if 'Chain' in self.name:
@@ -196,6 +236,9 @@ class Task:
 
     def reset(self):
         return self.env.reset()
+
+    def render(self):
+        return self.env.render()
 
     def step(self, actions):
         if isinstance(self.action_space, Box):

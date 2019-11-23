@@ -45,11 +45,15 @@ class DQNDistSVGDActor(BaseActor):
             action = np.random.randint(0, len(q_max))
             actions_log = np.random.randint(0, len(q_max), size=(config.particles, 1))
         else:
-            action = np.argmax(q_max)
+            # action = np.argmax(q_max)  # Max Action
+            action = np.argmax(to_np(q_values.mean(0)))  # Mean Action
             actions_log = to_np(particle_max)
         
         next_state, reward, done, info = self._task.step([action])
+        if config.render:
+            self._task.render()
         if done:
+            # self._network.sample_model_seed(dist='categorical')
             self._network.sample_model_seed()
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
@@ -77,10 +81,10 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         self.total_steps = 0
         self.batch_indices = range_tensor(self.replay.batch_size)
         self.network.sample_model_seed()
+        # self.network.sample_model_seed(dist='categorical')
         self.target_network.set_model_seed(self.network.model_seed)
         self.head = np.random.choice(config.particles, 1)[0]
         print (self.network)
-
 
     def close(self):
         close_obj(self.replay)
@@ -148,6 +152,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_next_frozen.detach()
 
             td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
+            # print (td_loss.mean())
             
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
@@ -170,8 +175,9 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             for param in self.network.parameters():
                 if param.grad is not None:
                     param.grad.data *= 1./config.particles
-
-            nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
+            
+            if self.config.gradient_clip: 
+                nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
 
             with config.lock:
                 self.optimizer.step()

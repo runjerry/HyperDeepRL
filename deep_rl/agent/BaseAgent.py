@@ -51,7 +51,7 @@ class BaseAgent:
         for ep in range(self.config.eval_episodes):
             total_rewards = self.eval_episode()
             episodic_returns.append(np.sum(total_rewards))
-        self.logger.info('steps %d, episodic_return_test %.2f(%.2f)' % (
+        self.logger.info('steps %d, ep_return_test %.2f(%.2f)' % (
             self.total_steps, np.mean(episodic_returns), np.std(episodic_returns) / np.sqrt(len(episodic_returns))
         ))
         self.logger.add_scalar('episodic_return_test', np.mean(episodic_returns), self.total_steps)
@@ -60,11 +60,30 @@ class BaseAgent:
         }
 
     def record_online_return(self, info, offset=0):
+
         if isinstance(info, dict):
+            upright = info['episodic_upright']
+            total_upright = info['total_upright']
+            total_ret = info['total_return']
             ret = info['episodic_return']
+            ep = info['episode']
+            steps = info['ep_steps']
             if ret is not None:
                 self.logger.add_scalar('episodic_return_train', ret, self.total_steps + offset)
-                self.logger.info('steps %d, episodic_return_train %s' % (self.total_steps + offset, ret))
+                self.logger.add_scalar('episodic_steps', steps, self.total_steps + offset)
+                self.logger.add_scalar('total_return', total_ret, self.total_steps + offset)
+                self.logger.add_scalar('episodic_upright', upright, self.total_steps + offset)
+                self.logger.add_scalar('total_upright', total_upright, self.total_steps + offset)
+                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| ep_upright: %s| total_upright: %s| total_return: %.3f' % (
+                    ep,
+                    steps,
+                    self.total_steps + offset,
+                    ret, 
+                    upright,
+                    total_upright,
+                    total_ret,
+                ))
+
         elif isinstance(info, tuple):
             for i, info_ in enumerate(info):
                 self.record_online_return(info_, i)

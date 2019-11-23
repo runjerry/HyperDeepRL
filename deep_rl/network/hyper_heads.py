@@ -35,13 +35,17 @@ class VanillaHyperNet(nn.Module, BaseNet):
 
 
 class DuelingHyperNet(nn.Module, BaseNet):
-    def __init__(self, action_dim, body, toy=False):
+    def __init__(self, action_dim, body, toy=False, hidden=None, dist='normal'):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
+        self.dist = dist
         if toy == True:
             self.config = ToyDuelingNet_config(body.feature_dim, action_dim)
         else:
             self.config = DuelingNet_config(body.feature_dim, action_dim)
+        if hidden:
+            self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
+            self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
         self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
         self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
         self.features = body
@@ -54,13 +58,19 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.to(Config.DEVICE)
     
     def sample_model_seed(self, dist='normal'):
-        if dist == 'normal':
+        if self.dist == 'uniform':
             self.model_seed = {
                 'features_z': torch.rand(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
                 'value_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
                 'advantage_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
             }
-        elif dist == 'categorical':
+        if self.dist == 'normal':
+            self.model_seed = {
+                'features_z': torch.randn(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
+                'value_z': torch.randn(self.particles, self.z_dim).to(Config.DEVICE),
+                'advantage_z': torch.randn(self.particles, self.z_dim).to(Config.DEVICE),
+            }
+        elif self.dist == 'categorical':
             k = np.random.choice(self.z_dim, 1)[0]
             z = torch.zeros(self.features.config['n_gen'], self.particles, self.z_dim)
             z[:, :, k] += 1.
@@ -74,7 +84,8 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.model_seed = seed
 
     def forward(self, x, to_numpy=False, theta=None):
-        x = tensor(x)
+        if not isinstance(x, torch.cuda.FloatTensor):
+            x = tensor(x)
         if x.shape[0] == 1 and x.shape[1] == 1: ## dm_env returns one too many dimensions
             x = x[0]
         phi = self.body(x)
@@ -106,9 +117,11 @@ class DuelingHyperNet(nn.Module, BaseNet):
             max_q, max_q_idx = q.max(-1)  # max over q values
             max_actor = max_q.max(0)[1]  # max over particles
             action = q[max_actor].argmax()
+        
         elif pred == 'rand':
             idx = np.random.choice(self.particles, 1)[0]
             action = q[idx].max(0)[1]
+        
         elif pred == 'mean':
             action_means = q.mean(0)  #[actions]
             action = action_means.argmax()

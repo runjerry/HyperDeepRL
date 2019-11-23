@@ -6,7 +6,7 @@ from collections import namedtuple
 # defaults = (100, 3, False, 64, 64, 'relu', None, 6) # python 3.7
 
 fields = ('d_output', 'd_input', 'd_hidden', 'kernel', 'bias', 's_dim', 'z_dim', 'act', 'act_out', 'n_gen')
-defaults = (100, 3, False, 64, 64, 'relu', None, 4) # python 3.6
+defaults = (64, 3, False, 64, 64, 'relu', None, 4) # python 3.6
 
 nature_conv_body = namedtuple('nature_conv_body', ' '.join(fields))
 nature_conv_body.__new__.__defaults__ = defaults # python 3.6
@@ -48,8 +48,7 @@ def ToyFCBody_config(d_state, d_hidden, gate, mixer=False):
     net_config['fc1'] = toy_fc_body(d_input=d_state, d_output=d_hidden[0], z_dim=24)
     for i in range(1, len(d_hidden)):
         net_config['fc{}'.format(i+1)] = toy_fc_body(d_input=d_hidden[i-1], d_output=d_hidden[i], z_dim=24)
-    if mixer:
-        net_config['mixer'] = toy_fc_body(d_hidden=64, d_output=None, n_gen=len(d_hidden))
+    
     net_config['z_dim'] = 24
     net_config['s_dim'] = 24
     net_config['n_gen'] = len(d_hidden)

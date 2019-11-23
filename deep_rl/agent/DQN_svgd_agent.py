@@ -15,7 +15,7 @@ import torchvision
 import torch.autograd as autograd
 import sys
 
-class DQNActor(BaseActor):
+class DQNSVGDActor(BaseActor):
     def __init__(self, config):
         BaseActor.__init__(self, config)
         self.config = config
@@ -44,11 +44,16 @@ class DQNActor(BaseActor):
                 or np.random.rand() < config.random_action_prob():
             action = np.random.randint(0, len(q_max))
             actions_log = np.random.randint(0, len(q_max), size=(config.particles, 1))
-        else:
-            action = np.argmax(q_max)
+        else:  # max over mean
+            action = np.argmax(to_np(q_values.mean(0)))
             actions_log = to_np(particle_max)
-
+        
         next_state, reward, done, info = self._task.step([action])
+        if config.render:
+            self._task.render()
+        if done:
+            # self._network.sample_model_seed(dist='categorical')
+            self._network.sample_model_seed()
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state
@@ -62,24 +67,23 @@ class DQN_SVGD_Agent(BaseAgent):
         config.lock = mp.Lock()
 
         self.replay = config.replay_fn()
-        self.actor = DQNActor(config)
+        self.actor = DQNSVGDActor(config)
 
         self.network = config.network_fn()
         self.network.share_memory()
         self.target_network = config.network_fn()
         self.target_network.load_state_dict(self.network.state_dict())
         self.optimizer = config.optimizer_fn(self.network.parameters())
-
+        self.alpha_schedule = BaselinesLinearSchedule(config.alpha_anneal, config.alpha_final, config.alpha_init)
         self.actor.set_network(self.network)
 
         self.total_steps = 0
         self.batch_indices = range_tensor(self.replay.batch_size)
         self.network.sample_model_seed()
+        # self.network.sample_model_seed(dist='categorical')
         self.target_network.set_model_seed(self.network.model_seed)
         self.head = np.random.choice(config.particles, 1)[0]
-        self.alpha_schedule = BaselinesLinearSchedule(1e5, final_p=10e-8, initial_p=1e-5)
         print (self.network)
-
 
     def close(self):
         close_obj(self.replay)
@@ -88,17 +92,17 @@ class DQN_SVGD_Agent(BaseAgent):
     def eval_step(self, state):
         self.config.state_normalizer.set_read_only()
         state = self.config.state_normalizer(state)
-        action = self.network.predict_action(state, pred='mean', to_numpy=True)
+        action = self.network.predict_action(state, pred='max', to_numpy=True)
         action = np.array([action])
         self.config.state_normalizer.unset_read_only()
         return action
 
     def step(self):
         config = self.config
-        if self.total_steps % 100 == 0:
-            self.head = np.random.choice(config.particles, 1)[0]
-        self.network.sample_model_seed()
-        self.target_network.set_model_seed(self.network.model_seed)
+       
+        if not torch.equal(self.network.model_seed['value_z'], 
+                           self.target_network.model_seed['value_z']):
+            self.target_network.set_model_seed(self.network.model_seed)
         transitions = self.actor.step()
         experiences = []
         for state, action, reward, next_state, done, info in transitions:
@@ -133,37 +137,48 @@ class DQN_SVGD_Agent(BaseAgent):
 
             ## Get main Q values
             phi = self.network.body(states)
-            q_theta_list = self.network.sample_model(component='q')
             q = self.network.head(phi)
             actions = actions.transpose(0, 1).squeeze(-1)
             q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
             
-            ## SVGD update
             alpha = self.alpha_schedule.value(self.total_steps)
-            td_loss = (q_next - q).pow(2).mul(0.5)# .mean()
+            q_full = q.transpose(0, 1).unsqueeze(-1)
+            q_next_full = q_next.transpose(0, 1).unsqueeze(-1)
             
+            q, q_frozen = torch.split(q_full, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            q_next, q_next_frozen = torch.split(q_next_full, self.config.particles//2, dim=1) # [batch, particles/2, 1]
+            q_frozen.detach()
+            q_next_frozen.detach()
+
+            q_td = q_full.transpose(0, 1).mean(0)
+            q_target_td = q_next_full.transpose(0, 1).mean(0)
+
+            td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
-            q_grad = q_grad.transpose(0, 1).unsqueeze(2)
+            q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
             
-            """
-            for i in range(len(q_theta_list)):
-                q_theta_list[i] = q_theta_list[i].view(q_theta_list[i].size(0), -1)
-            q_theta = torch.cat(q_theta_list, 1)
+            # print ('q grad', q_grad.shape)
+            q_eps = q + torch.rand_like(q) * 1e-8
+            q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
-            kappa = batch_rbf_nograd(q_theta) / config.particles  # [particles, particles]
-            grad_kappa = autograd.grad(kappa.sum(), q_theta)[0] / config.particles   # [particles, d_theta]
-            q_grad = q_grad.mean(0).mean(-1)
-            kernel_logp = torch.matmul(kappa.detach(), q_grad).unsqueeze(1)  # [particles, 1]
-            svgd = (kernel_logp)# + alpha * grad_kappa)
-            """
-
+            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            # print (kappa.shape, grad_kappa.shape)
+            kappa = kappa.unsqueeze(-1)
+            
+            kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
+            # print ('klop', kernel_logp.shape)
+            svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
+            
             self.optimizer.zero_grad()
-            autograd.backward(q_theta, grad_tensors=svgd.detach())
+            autograd.backward(q, grad_tensors=svgd.detach())
             
+            for param in self.network.parameters():
+                if param.grad is not None:
+                    param.grad.data *= 1./config.particles
             
-            #self.optimizer.zero_grad()
-            #td_loss.backward()
-            nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
+            if self.config.gradient_clip: 
+                nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
+
             with config.lock:
                 self.optimizer.step()
 
