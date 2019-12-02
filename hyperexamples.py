@@ -26,7 +26,8 @@ def sweep(game, tag, model_fn, trials=10, manual=False):
         'replay_size': [int(1e5), int(1e6)],
         'replay_bs': [128, 64],
         # 'dist': ['categorical', 'multinomial', 'normal', 'multivariate_normal', 'uniform']
-        'dist': ['bernoulli', 'multinomial', 'multivariate_normal']
+        # 'dist': ['bernoulli', 'multinomial', 'multivariate_normal']
+        'dist': ['bernoulli']
     }
     search_space = list(product_dict(hyperparams))
     ordering = list(range(len(search_space)))

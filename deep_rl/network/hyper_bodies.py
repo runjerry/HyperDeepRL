@@ -84,7 +84,7 @@ class CartFCHyperBody(nn.Module):
         if hidden:
             hidden_units=(hidden, hidden)
         dims = (state_dim,) + hidden_units
-        self.config = ToyFCBody_config(state_dim, hidden_units, gate)
+        self.config = FCBody_config(state_dim, hidden_units, gate)
         self.gate = gate
         self.feature_dim = dims[-1]
         n_layers = self.config['n_gen']

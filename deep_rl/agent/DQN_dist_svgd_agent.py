@@ -79,6 +79,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         self.target_network.set_model_seed(self.network.model_seed)
         self.head = np.random.choice(config.particles, 1)[0]
         self.save_net_arch_to_file()
+        print (self.network)
 
 
     def save_net_arch_to_file(self):
