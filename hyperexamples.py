@@ -5,7 +5,6 @@
 #######################################################################
 
 from deep_rl import *
-import envs
 import itertools
 import pprint
 
