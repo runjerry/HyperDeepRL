@@ -5,9 +5,8 @@ class NoiseSampler(object):
     def __init__(self, dist_type, shape, p1=None, p2=None):
         self.dist_type = dist_type
         self.shape = shape
-        self.n_gen= shape[0]
-        self.particles = shape[1]
-        self.z_dim = shape[2]
+        self.particles = shape[0]
+        self.z_dim = shape[1]
         self.p1 = p1
         self.p2 = p2
         self.set_base_sampler()
@@ -45,5 +44,6 @@ class NoiseSampler(object):
             sample = self.base_dist.sample(sample_shape=shape)
         else:
             sample = self.base_dist.sample()
+        print (sample.shape)
         return sample
 
