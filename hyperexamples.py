@@ -105,5 +105,5 @@ if __name__ == '__main__':
 
     tag = 'new_dist_trials'
     game = 'bsuite-cartpole_swingup/0'
-    sweep(game, tag, dqn_feature)
+    sweep(game, tag, dqn_feature, trials=50)
 
