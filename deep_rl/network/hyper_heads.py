@@ -9,7 +9,7 @@ from .network_bodies import *
 from .hyper_bodies import * 
 from .hypernetwork_ops import *
 from ..utils.hypernet_heads_defs import *
-
+from ..component.samplers import *
 
 class VanillaHyperNet(nn.Module, BaseNet):
     def __init__(self, output_dim, body):
@@ -35,50 +35,31 @@ class VanillaHyperNet(nn.Module, BaseNet):
 
 
 class DuelingHyperNet(nn.Module, BaseNet):
-    def __init__(self, action_dim, body, toy=False, hidden=None, dist='normal'):
+    def __init__(self, action_dim, body, hidden, dist):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
-        self.dist = dist
-        if toy == True:
-            self.config = ToyDuelingNet_config(body.feature_dim, action_dim)
-        else:
-            self.config = DuelingNet_config(body.feature_dim, action_dim)
-        if hidden:
-            self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
-            self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
+        
+        self.config = DuelingNet_config(body.feature_dim, action_dim)
+        self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
+        self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
         self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
         self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
         self.features = body
+        
         self.s_dim = self.config['s_dim']
         self.z_dim = self.config['z_dim']
         self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
         self.particles = Config.particles
+        self.noise_sampler = NoiseSampler(dist, (self.features.config['n_gen'], self.particles, self.z_dim))
         self.sample_model_seed()
-
         self.to(Config.DEVICE)
     
-    def sample_model_seed(self, dist='normal'):
-        if self.dist == 'uniform':
-            self.model_seed = {
-                'features_z': torch.rand(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
-                'value_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
-                'advantage_z': torch.rand(self.particles, self.z_dim).to(Config.DEVICE),
-            }
-        if self.dist == 'normal':
-            self.model_seed = {
-                'features_z': torch.randn(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE),
-                'value_z': torch.randn(self.particles, self.z_dim).to(Config.DEVICE),
-                'advantage_z': torch.randn(self.particles, self.z_dim).to(Config.DEVICE),
-            }
-        elif self.dist == 'categorical':
-            k = np.random.choice(self.z_dim, 1)[0]
-            z = torch.zeros(self.features.config['n_gen'], self.particles, self.z_dim)
-            z[:, :, k] += 1.
-            self.model_seed = {
-                'features_z': z.to(Config.DEVICE),
-                'value_z': z[0].to(Config.DEVICE),
-                'advantage_z': z[0].to(Config.DEVICE),
-            }
+    def sample_model_seed(self):
+        self.model_seed = {
+            'features_z': self.noise_sampler.sample().to(Config.DEVICE),
+            'value_z': self.noise_sampler.sample((self.particles, self.z_dim)).to(Config.DEVICE),
+            'advantage_z': self.noise_sampler.sample((self.particles, self.z_dim)).to(Config.DEVICE),
+        }
    
     def set_model_seed(self, seed):
         self.model_seed = seed

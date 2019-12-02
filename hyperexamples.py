@@ -14,7 +14,7 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, trials=10):
+def sweep(game, tag, model_fn, trials=10, manual=False):
     hyperparams = {
         'alpha_i': [10, 100],
         'alpha_f': [.1],
@@ -25,7 +25,8 @@ def sweep(game, tag, model_fn, trials=10):
         'hidden': [256, 512],
         'replay_size': [int(1e5), int(1e6)],
         'replay_bs': [128, 64],
-        'dist': ['categorical', 'binomial', 'multinomial', 'normal', 'multivariateN', 'uniform']
+        # 'dist': ['categorical', 'multinomial', 'normal', 'multivariate_normal', 'uniform']
+        'dist': ['bernoulli', 'multinomial', 'multivariate_normal']
     }
     search_space = list(product_dict(hyperparams))
     ordering = list(range(len(search_space)))
@@ -42,19 +43,20 @@ def sweep(game, tag, model_fn, trials=10):
             print ('{} : {}'.format(k, v))
         dqn_feature(**setting)
     
-    # manually define 
-    dqn_feature(game=game,
-                tb_tag=tag,
-                alpha_i=10,
-                alpha_f=.1,
-                anneal=500e3,
-                lr=1e-4,
-                freq=100,
-                grad_clip=None,
-                hidden=256,
-                replay_size=int(1e5),
-                replay_bs=128,
-                dist='categorical')
+    # manually define
+    if manual:
+        dqn_feature(game=game,
+                    tb_tag=tag,
+                    alpha_i=10,
+                    alpha_f=.1,
+                    anneal=500e3,
+                    lr=1e-4,
+                    freq=100,
+                    grad_clip=None,
+                    hidden=256,
+                    replay_size=int(1e5),
+                    replay_bs=128,
+                    dist='categorical')
 
 
 def dqn_feature(**kwargs):
@@ -71,7 +73,7 @@ def dqn_feature(**kwargs):
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
                                     CartFCHyperBody(config.state_dim, hidden=config.hidden),
-                                toy=True, hidden=config.hidden, dist=config.dist)
+                                hidden=config.hidden, dist=config.dist)
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
     # config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_memory_size), batch_size=int(config.replay_bs))
 
@@ -101,7 +103,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'multivariate_trials'
+    tag = 'new_dist_trials'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature)
 
