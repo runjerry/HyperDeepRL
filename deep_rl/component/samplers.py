@@ -39,11 +39,8 @@ class NoiseSampler(object):
             cov = psd_mat
             self.base_dist = torch.distributions.MultivariateNormal(loc, cov)
 
-    def sample(self, shape=None):
-        if shape is not None:
-            sample = self.base_dist.sample(sample_shape=shape)
-        else:
-            sample = self.base_dist.sample()
+    def sample(self, batch_shape):
+        sample = self.base_dist.sample(sample_shape=batch_shape)
         print (sample.shape)
         return sample
 
