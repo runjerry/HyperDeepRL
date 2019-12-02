@@ -1,5 +1,7 @@
 # DeepRL
 
+<div style="text-align:center"><img src="/images/RLpaper_hypergan.png" /></div>
+
 
 # HyperGAN structure differences
 
