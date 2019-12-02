@@ -1,4 +1,6 @@
 tf_log/
+past_runs/
+*.ubuntu-MS-7B48
 log/
 *.pyc
 *.swn
@@ -8,3 +10,4 @@ log/
 *.swq
 *.swl
 *.mp4
+

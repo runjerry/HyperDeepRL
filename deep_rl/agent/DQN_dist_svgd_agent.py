@@ -32,12 +32,6 @@ class DQNDistSVGDActor(BaseActor):
             abs_max = q_values.max(2)[0].argmax()
             q_max = q_values[abs_max]
             
-            ## DEBUG 
-            # print ('q values', q_values)                      # [particles, n_actions]
-            # print ('best action per particle', particle_max)  # [particles, 1]
-            # print ('best particle', abs_max)                  # [1]
-            # print ('best q particle values', q_max)           # [n_actions]
-
         q_max = to_np(q_max).flatten()
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
@@ -65,6 +59,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
     def __init__(self, config):
         BaseAgent.__init__(self, config)
         self.config = config
+        self.config.save_config_to_yaml()
         config.lock = mp.Lock()
 
         self.replay = config.replay_fn()
@@ -81,10 +76,17 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         self.total_steps = 0
         self.batch_indices = range_tensor(self.replay.batch_size)
         self.network.sample_model_seed()
-        # self.network.sample_model_seed(dist='categorical')
         self.target_network.set_model_seed(self.network.model_seed)
         self.head = np.random.choice(config.particles, 1)[0]
-        print (self.network)
+        self.save_net_arch_to_file()
+
+
+    def save_net_arch_to_file(self):
+        network_str = str(self.network)
+        save_fn = '/model_arch.txt'
+        save_dir = self.config.tf_log_handle
+        with open(save_dir+save_fn, 'w') as f:
+            f.write(network_str+'\n\n')
 
     def close(self):
         close_obj(self.replay)
@@ -104,6 +106,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         if not torch.equal(self.network.model_seed['value_z'], 
                            self.target_network.model_seed['value_z']):
             self.target_network.set_model_seed(self.network.model_seed)
+
         transitions = self.actor.step()
         experiences = []
         for state, action, reward, next_state, done, info in transitions:

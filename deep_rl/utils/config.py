@@ -4,9 +4,12 @@
 # declaration at the top                                              #
 #######################################################################
 from .normalizer import *
+import datetime
 import argparse
 import torch
-
+import yaml
+import os
+import json
 
 class Config:
     DEVICE = torch.device('cuda')
@@ -28,6 +31,7 @@ class Config:
         self.target_network_update_freq = None
         self.exploration_steps = None
         self.log_level = 0
+        self.logger = None
         self.history_length = None
         self.double_q = False
         self.tag = 'vanilla'
@@ -73,9 +77,24 @@ class Config:
         self.state_dim = env.state_dim
         self.action_dim = env.action_dim
         self.task_name = env.name
+    
+    def generate_log_handles(self):
+        ts = datetime.datetime.now().strftime("%y%m%d-%H%M%S")
+        self.log_handle = './tf_log/%s-%s/log.txt' % (self.tag, ts)
+        self.tf_log_handle = './tf_log/%s-%s' % (self.tag, ts)
+        if not os.path.exists(self.tf_log_handle):
+            os.makedirs(self.tf_log_handle)
+
+    def save_config_to_yaml(self):
+        items = vars(self)
+        itemstr = {k: str(v) for (k, v) in items.items()}
+        save_fn = '/config.json'
+        with open(self.tf_log_handle+save_fn, 'w') as f:
+            json.dump(itemstr, f, indent=2)
 
     def add_argument(self, *args, **kwargs):
         self.parser.add_argument(*args, **kwargs)
+        self.save_config_to_yaml()
 
     def merge(self, config_dict=None):
         if config_dict is None:

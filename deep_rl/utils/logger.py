@@ -14,15 +14,15 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s: %(message)s'
 from .misc import *
 
 
-def get_logger(tag='default', log_level=0):
+def get_logger(log_dir='default', tf_log_dir='default', log_level=0):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    if tag is not None:
-        fh = logging.FileHandler('./log/%s-%s.txt' % (tag, get_time_str()))
+    if log_dir is not None:
+        fh = logging.FileHandler(log_dir)
         fh.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s'))
         fh.setLevel(logging.INFO)
         logger.addHandler(fh)
-    return Logger(logger, './tf_log/logger-%s-%s' % (tag, get_time_str()), log_level)
+    return Logger(logger, tf_log_dir, log_level)
 
 
 class Logger(object):
