@@ -25,8 +25,8 @@ def sweep(game, tag, model_fn, trials=50, manual=False):
         'hidden': [256],
         'replay_size': [int(1e5)],
         'replay_bs': [128],
-        'dist': ['categorical', 'multinomial', 'normal', 'uniform']
-        # 'dist': ['categorical', 'bernoulli', 'multinomial', 'multivariate_normal']
+        # 'dist': ['categorical', 'multinomial', 'normal', 'uniform']
+        'dist': ['multivariate_normal']
     }
     # manually define
     if manual:
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'new_dist_trials'
+    tag = 'multivar_trials'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

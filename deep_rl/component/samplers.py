@@ -32,7 +32,7 @@ class NoiseSampler(object):
             probs = torch.ones(self.z_dim)
             self.base_dist = torch.distributions.Multinomial(total_count, probs)
         elif self.dist_type == 'multivariate_normal':
-            loc = torch.zeros(*self.shape)
+            loc = torch.zeros(self.z_dim)
             rng_mat = torch.rand(self.z_dim, self.z_dim)
             psd_mat = torch.mm(rng_mat, rng_mat.t())
             cov = psd_mat
