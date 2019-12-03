@@ -14,19 +14,19 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, trials=10, manual=True):
+def sweep(game, tag, model_fn, trials=50, manual=False):
     hyperparams = {
         'alpha_i': [10, 100],
         'alpha_f': [.1],
         'anneal': [500e3],
         'lr': [2e-4, 1e-4],
-        'freq' : [100, 250],
+        'freq' : [100],
         'grad_clip': [None, 5],
-        'hidden': [256, 512],
-        'replay_size': [int(1e5), int(1e6)],
+        'hidden': [256],
+        'replay_size': [int(1e5)],
         'replay_bs': [128],
-        # 'dist': ['categorical', 'multinomial', 'normal', 'multivariate_normal', 'uniform']
-        'dist': ['categorical', 'bernoulli', 'multinomial', 'multivariate_normal']
+        'dist': ['categorical', 'multinomial', 'normal', 'uniform']
+        # 'dist': ['categorical', 'bernoulli', 'multinomial', 'multivariate_normal']
     }
     # manually define
     if manual:
