@@ -14,7 +14,7 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, trials=10, manual=False):
+def sweep(game, tag, model_fn, trials=10, manual=True):
     hyperparams = {
         'alpha_i': [10, 100],
         'alpha_f': [.1],
@@ -28,6 +28,24 @@ def sweep(game, tag, model_fn, trials=10, manual=False):
         # 'dist': ['categorical', 'multinomial', 'normal', 'multivariate_normal', 'uniform']
         'dist': ['categorical', 'bernoulli', 'multinomial', 'multivariate_normal']
     }
+    # manually define
+    if manual:
+        print ('=========================================================')
+        print ('Running Manually Defined Single Trial, [1/1]')
+        dqn_feature(game=game,
+                    tb_tag=tag,
+                    alpha_i=10,
+                    alpha_f=.1,
+                    anneal=500e3,
+                    lr=1e-4,
+                    freq=100,
+                    grad_clip=None,
+                    hidden=256,
+                    replay_size=int(1e5),
+                    replay_bs=128,
+                    dist='categorical')
+        return
+
     search_space = list(product_dict(hyperparams))
     ordering = list(range(len(search_space)))
     np.random.shuffle(ordering)
@@ -43,22 +61,7 @@ def sweep(game, tag, model_fn, trials=10, manual=False):
             print ('{} : {}'.format(k, v))
         dqn_feature(**setting)
     
-    # manually define
-    if manual:
-        dqn_feature(game=game,
-                    tb_tag=tag,
-                    alpha_i=10,
-                    alpha_f=.1,
-                    anneal=500e3,
-                    lr=1e-4,
-                    freq=100,
-                    grad_clip=None,
-                    hidden=256,
-                    replay_size=int(1e5),
-                    replay_bs=128,
-                    dist='categorical')
-
-
+   
 def dqn_feature(**kwargs):
     generate_tag(kwargs)
     kwargs.setdefault('log_level', 0)

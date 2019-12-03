@@ -5,8 +5,7 @@ class NoiseSampler(object):
     def __init__(self, dist_type, shape, p1=None, p2=None):
         self.dist_type = dist_type
         self.shape = shape
-        self.particles = shape[0]
-        self.z_dim = shape[1]
+        self.z_dim = shape[0]
         self.p1 = p1
         self.p2 = p2
         self.set_base_sampler()
@@ -23,17 +22,17 @@ class NoiseSampler(object):
         elif self.dist_type == 'bernoulli':
             k_classes = torch.ones(self.z_dim)
             probs = k_classes/float(len(k_classes))
-            probs = probs.unsqueeze(0).repeat(len(k_classes), 1)
+            #probs = probs.unsqueeze(0).repeat(len(k_classes), 1)
             self.base_dist = torch.distributions.Bernoulli(probs=probs)
         elif self.dist_type == 'categorical':
             k_classes = self.z_dim
             probs = torch.ones(k_classes)/float(k_classes)
-            probs = probs.unsqueeze(0).repeat(k_classes, 1)
+            #probs = probs.unsqueeze(0).repeat(k_classes, 1)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
         elif self.dist_type == 'multinomial':
             total_count = self.z_dim
             probs = torch.ones(self.z_dim)
-            probs = probs.unsqueeze(0).repeat(total_count, 1)
+            #probs = probs.unsqueeze(0).repeat(total_count, 1)
             self.base_dist = torch.distributions.Multinomial(total_count, probs)
         elif self.dist_type == 'multivariate_normal':
             loc = torch.zeros(*self.shape)
