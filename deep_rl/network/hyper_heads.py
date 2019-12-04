@@ -55,8 +55,6 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.to(Config.DEVICE)
     
     def sample_model_seed(self):
-        print ('sampling')
-        
         sample_z = self.noise_sampler.sample().to(Config.DEVICE)
         sample_z = sample_z.unsqueeze(0).unsqueeze(0).repeat(self.features.config['n_gen'], self.particles, 1)
         self.model_seed = {
@@ -64,6 +62,7 @@ class DuelingHyperNet(nn.Module, BaseNet):
             'value_z': sample_z[0],
             'advantage_z': sample_z[0],
         }
+        print (sample_z[0])
         """
         sample_z = torch.zeros(self.features.config['n_gen'], self.particles, self.z_dim).to(Config.DEVICE)
         k = np.random.choice(self.z_dim, 1)[0]

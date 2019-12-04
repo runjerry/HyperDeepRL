@@ -8,6 +8,8 @@ class NoiseSampler(object):
         self.z_dim = shape[0]
         self.p1 = p1
         self.p2 = p2
+        self.aux_dist = None
+        self.base_dist = None
         self.set_base_sampler()
 
     def set_base_sampler(self):
@@ -21,12 +23,19 @@ class NoiseSampler(object):
             self.base_dist = torch.distributions.Normal(loc, scale)
         elif self.dist_type == 'bernoulli':
             k_classes = torch.ones(self.z_dim)
-            probs = k_classes/float(len(k_classes))
+            probs = k_classes * .5
             self.base_dist = torch.distributions.Bernoulli(probs=probs)
         elif self.dist_type == 'categorical':
             k_classes = self.z_dim
             probs = torch.ones(k_classes)/float(k_classes)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
+        elif self.dist_type == 'softmax':
+            k_classes = self.z_dim
+            probs = torch.ones(k_classes)/float(k_classes)
+            self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
+            high = torch.ones(self.z_dim) * .1
+            low = torch.zeros(self.z_dim)
+            self.aux_dist = torch.distributions.Uniform(low, high)
         elif self.dist_type == 'multinomial':
             total_count = self.z_dim
             probs = torch.ones(self.z_dim)
@@ -40,5 +49,8 @@ class NoiseSampler(object):
 
     def sample(self):
         sample = self.base_dist.sample()
+        if self.aux_dist is not None:
+            sample_aux = self.aux_dist.sample()
+            sample += sample_aux
         return sample
 

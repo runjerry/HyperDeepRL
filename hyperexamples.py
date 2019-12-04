@@ -16,34 +16,40 @@ def product_dict(kwargs):
 
 def sweep(game, tag, model_fn, trials=50, manual=False):
     hyperparams = {
-        'alpha_i': [10, 100],
-        'alpha_f': [.1],
+        'alpha_i': [1, 10, 100],
+        'alpha_f': [.1, 0.01],
         'anneal': [500e3],
         'lr': [2e-4, 1e-4],
-        'freq' : [100],
+        'freq' : [100, 150],
         'grad_clip': [None, 5],
-        'hidden': [256],
+        'hidden': [256, 128, 512],
         'replay_size': [int(1e5)],
         'replay_bs': [128],
         # 'dist': ['categorical', 'multinomial', 'normal', 'uniform']
-        'dist': ['multivariate_normal']
+        'dist': ['multinomial']
     }
     # manually define
     if manual:
         print ('=========================================================')
         print ('Running Manually Defined Single Trial, [1/1]')
-        dqn_feature(game=game,
-                    tb_tag=tag,
-                    alpha_i=10,
-                    alpha_f=.1,
-                    anneal=500e3,
-                    lr=1e-4,
-                    freq=100,
-                    grad_clip=None,
-                    hidden=256,
-                    replay_size=int(1e5),
-                    replay_bs=128,
-                    dist='categorical')
+        setting = {
+            'game': game,
+            'tb_tag': tag,
+            'alpha_i': 10,
+            'alpha_f': .1,
+            'anneal': 500e3,
+            'lr': 1e-4,
+            'freq': 100,
+            'grad_clip': None,
+            'hidden': 256,
+            'replay_size': int(1e5),
+            'replay_bs': 128,
+            'dist': 'bernoulli'
+        }
+        print ('Running Config: ')
+        for (k, v) in setting.items():
+            print ('{} : {}'.format(k, v))
+        model_fn(**setting)
         return
 
     search_space = list(product_dict(hyperparams))
@@ -106,7 +112,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'multivar_trials'
+    tag = 'bernoulli-trials'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 
