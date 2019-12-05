@@ -96,7 +96,7 @@ def dqn_feature(**kwargs):
     config.gradient_clip = config.grad_clip  # max gradient norm
     config.eval_interval = int(5e3) 
     config.max_steps = 500e3
-    config.particles = 10
+    config.particles = 24
     config.async_actor = False
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'test_multinet_softmax'
+    tag = 'test_aux_vsmall'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

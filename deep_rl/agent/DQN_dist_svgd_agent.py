@@ -130,10 +130,9 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_next = self.target_network(next_states).detach()  # [particles, batch, action]
             if self.config.double_q:
                 ## Double DQN
-                q = self.network(next_states)  # choose random particle (Q function)  [batch, action]
-                best_actions = torch.argmax(q, dim=-1)  # get best action  [batch]
-                q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])
-                # q_next = q_next[:, self.batch_indices, best_actions]
+                q = self.network(next_states)  # using all particles (Q functions)  [particles, batch, action]
+                best_actions = torch.argmax(q, dim=-1)  # get best action  [particles, batch]
+                q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])  # [particles, batch]
             else:
                 q_next = q_next.max(1)[0]
             q_next = self.config.discount * q_next * (1 - terminals)
@@ -144,8 +143,8 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             phi = self.network.body(states)
             q = self.network.head(phi)
             actions = actions.transpose(0, 1).squeeze(-1)
-            q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
-            
+            q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])  # [particles, batch]
+
             alpha = self.alpha_schedule.value(self.total_steps)
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
@@ -156,7 +155,6 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_next_frozen.detach()
 
             td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
-            # print (td_loss.mean())
             
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
@@ -166,6 +164,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
             kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            print (grad_kappa)
             # print (kappa.shape, grad_kappa.shape)
             kappa = kappa.unsqueeze(-1)
             

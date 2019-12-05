@@ -13,7 +13,7 @@ import json
 
 class Config:
     DEVICE = torch.device('cuda')
-    particles = 10
+    particles = 24
 
     def __init__(self):
         self.parser = argparse.ArgumentParser()
@@ -64,7 +64,7 @@ class Config:
         self.eval_episodes = 10
         self.async_actor = True
         self.tasks = False
-        self.particles = 10
+        self.particles = 24
         self.hyper = False
 
     @property

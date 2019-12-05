@@ -33,7 +33,7 @@ class NoiseSampler(object):
             k_classes = self.z_dim
             probs = torch.ones(k_classes)/float(k_classes)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
-            high = torch.ones(self.particles, self.z_dim) * .05
+            high = torch.ones(self.particles, self.z_dim) * .0001
             low = torch.zeros(self.particles, self.z_dim)
             self.aux_dist = torch.distributions.Uniform(low, high)
         elif self.dist_type == 'multinomial':
@@ -56,6 +56,6 @@ class NoiseSampler(object):
     def combine_aux(self, sample):
         sample_aux = self.aux_dist.sample()
         sample = sample.unsqueeze(0).repeat(self.particles, 1)
-        sample += sample_aux
+        sample += sample_aux * 0
         return sample
 
