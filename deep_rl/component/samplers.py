@@ -2,12 +2,12 @@ import torch
 
 # returns a sampler which we can use to sample from a given prior dsitribution
 class NoiseSampler(object):
-    def __init__(self, dist_type, shape, p1=None, p2=None):
+    def __init__(self, dist_type, z_dim, particles=None, p1=None, p2=None):
         self.dist_type = dist_type
-        self.shape = shape
-        self.z_dim = shape[0]
-        self.p1 = p1
-        self.p2 = p2
+        self.z_dim = z_dim
+        self.particles = particles
+        self.p1 = p1  # optional first moment
+        self.p2 = p2  # optional second moment
         self.aux_dist = None
         self.base_dist = None
         self.set_base_sampler()
@@ -29,12 +29,12 @@ class NoiseSampler(object):
             k_classes = self.z_dim
             probs = torch.ones(k_classes)/float(k_classes)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
-        elif self.dist_type == 'softmax':
+        elif self.dist_type == 'softmax':  # Aux dist affects across particles
             k_classes = self.z_dim
             probs = torch.ones(k_classes)/float(k_classes)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
-            high = torch.ones(self.z_dim) * .05
-            low = torch.zeros(self.z_dim)
+            high = torch.ones(self.particles, self.z_dim) * .05
+            low = torch.zeros(self.particles, self.z_dim)
             self.aux_dist = torch.distributions.Uniform(low, high)
         elif self.dist_type == 'multinomial':
             total_count = self.z_dim
@@ -46,11 +46,16 @@ class NoiseSampler(object):
             psd_mat = torch.mm(rng_mat, rng_mat.t())
             cov = psd_mat
             self.base_dist = torch.distributions.MultivariateNormal(loc, cov)
-
-    def sample(self):
+    
+    def sample(self, batch=None):
         sample = self.base_dist.sample()
         if self.aux_dist is not None:
-            sample_aux = self.aux_dist.sample()
-            sample += sample_aux
+            sample = self.combine_aux(sample)
+        return sample
+    
+    def combine_aux(self, sample):
+        sample_aux = self.aux_dist.sample()
+        sample = sample.unsqueeze(0).repeat(self.particles, 1)
+        sample += sample_aux
         return sample
 

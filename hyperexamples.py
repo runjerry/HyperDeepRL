@@ -76,7 +76,7 @@ def dqn_feature(**kwargs):
     config.hyper = True
     config.tag = config.tb_tag
     config.generate_log_handles()
-    config.task_fn = lambda: Task(config.game, video=False, gif=True, log_dir=config.tf_log_handle)
+    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
@@ -96,6 +96,7 @@ def dqn_feature(**kwargs):
     config.gradient_clip = config.grad_clip  # max gradient norm
     config.eval_interval = int(5e3) 
     config.max_steps = 500e3
+    config.particles = 10
     config.async_actor = False
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'gif_rendering_trials'
+    tag = 'test_multinet_softmax'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

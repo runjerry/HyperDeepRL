@@ -31,7 +31,6 @@ class DQNDistSVGDActor(BaseActor):
             particle_max = q_values.argmax(-1)
             abs_max = q_values.max(2)[0].argmax()
             q_max = q_values[abs_max]
-            
         q_max = to_np(q_max).flatten()
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \

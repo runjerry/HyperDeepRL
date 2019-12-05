@@ -256,7 +256,9 @@ class Task:
         self.video_enabled = video
         self.gif_enabled = gif
         self.videos_logged = 0
-        self.video = video
+        if video == False and gif == False:
+            self.record = False
+
         if self.gif_enabled:
             self.gif_logger = GIFlogger(log_dir, video_logging_freq)
         self.record_now = False
@@ -331,6 +333,8 @@ class Task:
         return self.env.reset()
     
     def record_or_not(self, info):
+        if self.record == False:
+            return
         if info[0]['episode'] % self.video_freq == 0:
             self.record_now = True
             self.start_record()
