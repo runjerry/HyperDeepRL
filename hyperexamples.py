@@ -14,7 +14,7 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, trials=50, manual=False):
+def sweep(game, tag, model_fn, trials=50, manual=True):
     hyperparams = {
         'alpha_i': [1, 10, 100],
         'alpha_f': [.1, 0.01],
@@ -44,7 +44,7 @@ def sweep(game, tag, model_fn, trials=50, manual=False):
             'hidden': 256,
             'replay_size': int(1e5),
             'replay_bs': 128,
-            'dist': 'bernoulli'
+            'dist': 'softmax'
         }
         print ('Running Config: ')
         for (k, v) in setting.items():
@@ -76,7 +76,7 @@ def dqn_feature(**kwargs):
     config.hyper = True
     config.tag = config.tb_tag
     config.generate_log_handles()
-    config.task_fn = lambda: Task(config.game)
+    config.task_fn = lambda: Task(config.game, video=False, gif=True, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
@@ -86,7 +86,7 @@ def dqn_feature(**kwargs):
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
     # config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_memory_size), batch_size=int(config.replay_bs))
 
-    config.render = False  # Render environment at every train step
+    config.render = True  # Render environment at every train step
     config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'bernoulli-trials'
+    tag = 'gif_rendering_trials'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

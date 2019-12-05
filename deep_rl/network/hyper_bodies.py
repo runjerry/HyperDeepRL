@@ -78,11 +78,12 @@ class ToyFCHyperBody(nn.Module):
         return x
 
 class CartFCHyperBody(nn.Module):
-    def __init__(self, state_dim, hidden_units=(64, 64), gate=F.relu, hidden=None):
+    def __init__(self, state_dim, hidden_units=(256, 256), gate=F.relu, hidden=None):
         super(CartFCHyperBody, self).__init__()
         self.mixer = False
         if hidden:
             hidden_units=(hidden, hidden)
+        print (hidden_units)
         dims = (state_dim,) + hidden_units
         self.config = FCBody_config(state_dim, hidden_units, gate)
         self.gate = gate
