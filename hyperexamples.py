@@ -101,7 +101,7 @@ def dqn_feature(**kwargs):
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
     # run_steps(DQN_SVGD_Agent(config))
-    # run_steps(DQN_Dist_SVGD_Agent(config))
+    #run_steps(DQN_Dist_SVGD_Agent(config))
     run_steps(DQN_Agent(config))
 
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'gif_rendering_trials'
+    tag = 'svgd-check-removed_detach'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

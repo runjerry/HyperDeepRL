@@ -151,32 +151,30 @@ class DQN_Agent(BaseAgent):
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
             
-            q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
-            q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
-            q_frozen.detach()
-            q_next_frozen.detach()
+            #q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            #q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
+            #q_frozen.detach()
+            #q_next_frozen.detach()
 
-            td_loss = (q_next - q).pow(2).mul(0.5)#.mean()
-            #td_loss.backward()
-            q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
-            q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
+            td_loss = (q_next - q).pow(2).mul(0.5).mean()
+            #q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
+            #q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
             
             # print ('q grad', q_grad.shape)
-            q_eps = q + torch.rand_like(q) * 1e-8
-            q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
+            #q_eps = q + torch.rand_like(q) * 1e-8
+            #q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
-            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
-            print (kappa, grad_kappa)
+            #kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            #print (kappa, grad_kappa)
             # print (kappa.shape, grad_kappa.shape)
-            kappa = kappa.unsqueeze(-1)
+            #kappa = kappa.unsqueeze(-1)
             
-            kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
+            #kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
-            svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
-            print (q_grad)
-            print (svgd)
+            #svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
             self.optimizer.zero_grad()
-            autograd.backward(q, grad_tensors=svgd.detach())
+            td_loss.backward()
+            #autograd.backward(q, grad_tensors=svgd.detach())
             
             for param in self.network.parameters():
                 if param.grad is not None:
