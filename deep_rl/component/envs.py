@@ -256,9 +256,13 @@ class Task:
         self.video_enabled = video
         self.gif_enabled = gif
         self.videos_logged = 0
-        self.video = video
         if self.gif_enabled:
             self.gif_logger = GIFlogger(log_dir, video_logging_freq)
+        if video == False and gif == False:
+            self.record = False
+        else:
+            self.record = True
+
         self.record_now = False
     
         self.name = name

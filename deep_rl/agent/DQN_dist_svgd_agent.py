@@ -48,7 +48,8 @@ class DQNDistSVGDActor(BaseActor):
             self._task.render()
         if done:
             self._network.sample_model_seed()
-            self._task.record_or_not(info)
+            if self._task.record:
+                self._task.record_or_not(info)
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
