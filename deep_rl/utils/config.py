@@ -13,7 +13,6 @@ import json
 
 class Config:
     DEVICE = torch.device('cuda')
-    particles = 24
 
     def __init__(self):
         self.parser = argparse.ArgumentParser()

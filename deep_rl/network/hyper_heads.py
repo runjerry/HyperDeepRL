@@ -35,7 +35,7 @@ class VanillaHyperNet(nn.Module, BaseNet):
 
 
 class DuelingHyperNet(nn.Module, BaseNet):
-    def __init__(self, action_dim, body, hidden, dist):
+    def __init__(self, action_dim, body, hidden, dist, particles):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
         
@@ -48,19 +48,19 @@ class DuelingHyperNet(nn.Module, BaseNet):
         
         self.s_dim = self.config['s_dim']
         self.z_dim = self.config['z_dim']
-        self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
-        self.particles = Config.particles
-        self.noise_sampler = NoiseSampler(dist, self.z_dim, particles)
+        self.n_gen = self.config['n_gen']
+        self.particles = particles
+        self.noise_sampler = NoiseSampler(dist, self.z_dim, self.particles)
         # self.sample_model_seed()
         self.to(Config.DEVICE)
     
     def sample_model_seed(self):
         sample_z = self.noise_sampler.sample().to(Config.DEVICE)
-        sample_z = sample_z.unsqueeze(0).repeat(self.features.config['n_gen'], 1, 1)
+        # sample_z = sample_z.unsqueeze(0).repeat(self.features.config['n_gen'], 1, 1)
+        sample_z = sample_z.unsqueeze(0).repeat(self.particles, 1)
         self.model_seed = {
-            'features_z': sample_z,
-            'value_z': sample_z[0],
-            'advantage_z': sample_z[0],
+            'value_z': sample_z,
+            'advantage_z': sample_z,
         }
     
     def set_model_seed(self, seed):
@@ -77,9 +77,10 @@ class DuelingHyperNet(nn.Module, BaseNet):
     def body(self, x=None):
         if not isinstance(x, torch.cuda.FloatTensor):
             x = tensor(x)
-        return self.features(x, self.model_seed['features_z'])
+        return self.features(x)
 
     def head(self, phi):
+        phi = phi.repeat(self.particles, 1, 1)  # since we have a deterministic body with many heads
         value = self.fc_value(self.model_seed['value_z'], phi)
         advantage = self.fc_advantage(self.model_seed['advantage_z'], phi)
         q = value.expand_as(advantage) + (advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
@@ -88,7 +89,6 @@ class DuelingHyperNet(nn.Module, BaseNet):
     def sample_model(self, component):
         param_sets = []
         if component == 'q':
-            param_sets.extend(self.features(z=self.model_seed['features_z']))
             param_sets.extend(self.fc_value(z=self.model_seed['value_z']))
             param_sets.extend(self.fc_advantage(z=self.model_seed['advantage_z']))
         return param_sets
