@@ -33,6 +33,8 @@ class DQNDistSVGDActor(BaseActor):
             q_max = q_values[abs_max]
             
         q_max = to_np(q_max).flatten()
+        q_var = to_np(q_values.var(0))
+        q_mean = to_np(q_values.mean(0))
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
@@ -40,7 +42,7 @@ class DQNDistSVGDActor(BaseActor):
             actions_log = np.random.randint(0, len(q_max), size=(config.particles, 1))
         else:
             # action = np.argmax(q_max)  # Max Action
-            action = np.argmax(to_np(q_values.mean(0)))  # Mean Action
+            action = np.argmax(q_mean)  # Mean Action
             actions_log = to_np(particle_max)
         
         next_state, reward, done, info = self._task.step([action])
@@ -50,6 +52,10 @@ class DQNDistSVGDActor(BaseActor):
             self._network.sample_model_seed()
             if self._task.record:
                 self._task.record_or_not(info)
+        
+        # Add Q value estimates to info
+        info[0]['q_mean'] = q_mean.mean()
+        info[0]['q_var'] = q_var.mean()
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1

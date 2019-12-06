@@ -114,7 +114,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'recheck_thompson_sampling'
+    tag = 'comparing_q_values'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 
