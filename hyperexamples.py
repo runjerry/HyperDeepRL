@@ -76,15 +76,16 @@ def dqn_feature(**kwargs):
     config.hyper = True
     config.tag = config.tb_tag
     config.generate_log_handles()
-    config.task_fn = lambda: Task(config.game, video=False, gif=True, log_dir=config.tf_log_handle)
+    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
+    config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
                                     CartFCHyperBody(config.state_dim, hidden=config.hidden),
-                                hidden=config.hidden, dist=config.dist)
+                                hidden=config.hidden, dist=config.dist, particles=config.particles)
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
-    # config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_memory_size), batch_size=int(config.replay_bs))
+    #config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_size), batch_size=int(config.replay_bs))
 
     config.render = True  # Render environment at every train step
     config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)  # eps greedy params
@@ -101,8 +102,8 @@ def dqn_feature(**kwargs):
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
     # run_steps(DQN_SVGD_Agent(config))
-    #run_steps(DQN_Dist_SVGD_Agent(config))
-    run_steps(DQN_Agent(config))
+    run_steps(DQN_Dist_SVGD_Agent(config))
+    # run_steps(DQN_Agent(config))
 
 
 if __name__ == '__main__':
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'svgd-check-removed_detach'
+    tag = 'recheck_thompson_sampling'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

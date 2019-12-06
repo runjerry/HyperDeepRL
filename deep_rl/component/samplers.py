@@ -4,7 +4,6 @@ import torch
 class NoiseSampler(object):
     def __init__(self, dist_type, z_dim, particles=None, p1=None, p2=None):
         self.dist_type = dist_type
-        self.shape = shape
         self.z_dim = z_dim
         self.particles = particles
         self.p1 = p1
@@ -36,7 +35,7 @@ class NoiseSampler(object):
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
             #high = torch.ones(self.z_dim) * .05
             #low = torch.zeros(self.z_dim)
-            high = torch.ones(self.particles, self.z_dim) * .01
+            high = torch.ones(self.particles, self.z_dim) * .005
             low = torch.zeros(self.particles, self.z_dim)
             self.aux_dist = torch.distributions.Uniform(low, high)
         elif self.dist_type == 'multinomial':

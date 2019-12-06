@@ -35,7 +35,7 @@ class VanillaHyperNet(nn.Module, BaseNet):
 
 
 class DuelingHyperNet(nn.Module, BaseNet):
-    def __init__(self, action_dim, body, hidden, dist):
+    def __init__(self, action_dim, body, hidden, dist, particles):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
         
@@ -49,9 +49,9 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.s_dim = self.config['s_dim']
         self.z_dim = self.config['z_dim']
         self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
-        self.particles = Config.particles
-        self.noise_sampler = NoiseSampler(dist, self.z_dim, particles)
-        # self.sample_model_seed()
+        self.particles = particles
+        self.noise_sampler = NoiseSampler(dist, self.z_dim, self.particles)
+        self.sample_model_seed()
         self.to(Config.DEVICE)
     
     def sample_model_seed(self):
