@@ -44,11 +44,13 @@ class DQNDistSVGDActor(BaseActor):
             actions_log = to_np(particle_max)
         
         next_state, reward, done, info = self._task.step([action])
-        if config.render:
+        if config.render and self._task.record_now:
             self._task.render()
         if done:
-            # self._network.sample_model_seed(dist='categorical')
             self._network.sample_model_seed()
+            if self._task.record:
+                self._task.record_or_not(info)
+
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state

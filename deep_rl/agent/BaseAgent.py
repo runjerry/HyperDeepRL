@@ -60,7 +60,15 @@ class BaseAgent:
         return {
             'episodic_return_test': np.mean(episodic_returns),
         }
-
+    
+    def record_or_not(self, info):
+        if info['episode'] % 5 == 0:
+            record_episode = True
+            print ('recording episode')
+        else:
+            record_episode = False
+        self.task.record_now = record_episode
+    
     def record_online_return(self, info, offset=0):
 
         if isinstance(info, dict):
@@ -76,6 +84,7 @@ class BaseAgent:
                 self.logger.add_scalar('total_return', total_ret, self.total_steps + offset)
                 self.logger.add_scalar('episodic_upright', upright, self.total_steps + offset)
                 self.logger.add_scalar('total_upright', total_upright, self.total_steps + offset)
+                self.logger.add_scalar('episode', ep, self.total_steps + offset)
                 self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| ep_upright: %s| total_upright: %s| total_return: %.3f' % (
                     ep,
                     steps,

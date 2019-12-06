@@ -11,6 +11,7 @@ import torch
 from gym.spaces.box import Box
 from gym.spaces.discrete import Discrete
 
+from gym.wrappers import Monitor
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 from baselines.common.atari_wrappers import FrameStack as FrameStack_
 from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv, VecEnv
@@ -25,10 +26,12 @@ try:
 except ImportError:
     pass
 
-
+import imageio
+import matplotlib.pyplot as plt
 # adapted from https://github.com/ikostrikov/pytorch-a2c-ppo-acktr/blob/master/envs.py
 def make_env(env_id, seed, rank, episode_life=True, special_args=None):
     def _thunk():
+        random_seed(seed)
         random_seed(seed)
         if env_id.startswith('bsuite'):
             id = env_id.split('bsuite-')[1]
@@ -63,7 +66,7 @@ def make_env(env_id, seed, rank, episode_life=True, special_args=None):
             if len(obs_shape) == 3:
                 env = TransposeImage(env)
             env = FrameStack(env, 4)
-
+        
         return env
 
     return _thunk
@@ -189,7 +192,6 @@ class DummyVecEnv(VecEnv):
             mode = 'cartpole'
         else:
             mode = 'rgb_array'
-        print (mode)
         return [env.render(mode=mode) for env in self.envs]
     
     def render(self, mode='human'):
@@ -204,6 +206,38 @@ class DummyVecEnv(VecEnv):
         return
 
 
+class GIFlogger(object):
+    def __init__(self, log_dir, record_freq=10, max_len=None):
+        self.log_dir = log_dir
+        self.record_freq = record_freq
+        self.max_gif_len = max_len
+        self.stored_frames = []
+        self.base_name = 'Episode_'
+        self.videos_logged = 1
+        self.create_gif_directory()
+
+    def reset_frames(self):
+        self.stored_frames = []
+    
+    def add_frame(self, frame):
+        self.stored_frames.append(frame)
+
+    def __len__(self):
+        return len(self.stored_frames)
+    
+    def create_gif_directory(self):
+        self.save_dir = self.log_dir+'/episode_gif_recordings/'
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+    def create_and_save(self):
+        assert len(self) > 0, "Trying to record GIF with empty buffer"
+        fp = self.save_dir+self.base_name+str(self.record_freq*self.videos_logged)+'.gif'
+        np_frames = np.array(self.stored_frames)
+        imageio.mimsave(fp, np_frames, fps=60)
+        self.videos_logged += 1
+    
+
 class Task:
     def __init__(self,
                  name,
@@ -212,11 +246,27 @@ class Task:
                  log_dir=None,
                  episode_life=True,
                  seed=np.random.randint(int(1e5)),
+                 video=False,
+                 gif=False,
+                 video_logging_freq=10,
                  special_args=None):
-        if log_dir is not None:
-            mkdir(log_dir)
+
+        self.log_dir = log_dir
+        self.video_freq = video_logging_freq
+        self.video_enabled = video
+        self.gif_enabled = gif
+        self.videos_logged = 0
+        if self.gif_enabled:
+            self.gif_logger = GIFlogger(log_dir, video_logging_freq)
+        if video == False and gif == False:
+            self.record = False
+        else:
+            self.record = True
+
+        self.record_now = False
+    
         self.name = name
-        envs = [make_env(name, seed, i, episode_life, special_args) for i in range(num_envs)]
+        envs = [self.make_env(name, seed, i, episode_life, special_args) for i in range(num_envs)]
         if single_process:
             Wrapper = DummyVecEnv
         else:
@@ -234,11 +284,77 @@ class Task:
         else:
             assert 'unknown action space'
 
+    # adapted from https://github.com/ikostrikov/pytorch-a2c-ppo-acktr/blob/master/envs.py
+    def make_env(self, env_id, seed, rank, episode_life=True, special_args=None):
+        def _thunk():
+            random_seed(seed)
+            if env_id.startswith('bsuite'):
+                id = env_id.split('bsuite-')[1]
+                self.video_enabled = False
+                bsuite_env = bsuite.load_from_id(id)
+                env = gym_wrapper.GymFromDMEnv(bsuite_env)
+            
+            elif env_id.startswith("dm"):
+                import dm_control2gym
+                _, domain, task = env_id.split('-')
+                env = dm_control2gym.make(domain_name=domain, task_name=task)
+            
+            else:
+                if special_args is not None:
+                    if 'NChain' in special_args[0]:
+                        print ('starting chain N = ', special_args[1])
+                        env = gym.make(env_id, n=special_args[1])
+                else:
+                    env = gym.make(env_id)
+
+            if self.video_enabled:
+                env = Monitor(env, self.log_dir, video_callable=self.video_callable)
+
+            is_atari = hasattr(gym.envs, 'atari') and isinstance(
+                env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
+            if is_atari:
+                env = make_atari(env_id)
+            env.seed(seed + rank)
+            env = OriginalReturnWrapper(env)
+            if is_atari:
+                env = wrap_deepmind(env,
+                                    episode_life=episode_life,
+                                    clip_rewards=False,
+                                    frame_stack=False,
+                                    scale=False)
+                obs_shape = env.observation_space.shape
+                if len(obs_shape) == 3:
+                    env = TransposeImage(env)
+                env = FrameStack(env, 4)
+            return env
+
+        return _thunk
+
+
     def reset(self):
         return self.env.reset()
+    
+    def record_or_not(self, info):
+        if info[0]['episode'] % self.video_freq == 0:
+            self.record_now = True
+            self.start_record()
+        else:
+            self.record_now = False
+            self.end_record()
+
+    def start_record(self):
+        self.gif_logger.reset_frames()
+
+    def end_record(self):
+        if len(self.gif_logger) > 0:
+            self.gif_logger.create_and_save()
+            self.gif_logger.reset_frames()
 
     def render(self):
-        return self.env.render()
+        if self.record_now and self.gif_enabled:
+            frame = self.env.render()
+            self.gif_logger.add_frame(frame)
+        return frame
 
     def step(self, actions):
         if isinstance(self.action_space, Box):
