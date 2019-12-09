@@ -47,34 +47,6 @@ class DDPGConvHyperBody(nn.Module):
         y = y.view(y.size(0), -1)
         return y
 
-class ToyFCHyperBody(nn.Module):
-    def __init__(self, state_dim, hidden_units=(64, 64), gate=F.relu):
-        super(ToyFCHyperBody, self).__init__()
-        self.mixer = False
-        dims = (state_dim,) + hidden_units
-        self.config = ToyFCBody_config(state_dim, hidden_units, gate)
-        self.gate = gate
-        self.feature_dim = dims[-1]
-        n_layers = self.config['n_gen']
-        self.layers = nn.ModuleList([LinearGenerator(self.config['fc{}'.format(i+1)]).cuda() for i in range(n_layers)])
-
-    def forward(self, x=None, z=None, theta=None):
-        if x is None:
-            weights = []
-            for i, layer in enumerate(self.layers):
-                w, b = layer(z[i])
-                weights.append(w)
-                weights.append(b)
-            return weights
-        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1)
-        for i, layer in enumerate(self.layers):
-            if theta:
-                x = self.gate(layer(z[i], x, theta[i*2:(i*2)+2]))
-            else:
-                x = self.gate(layer(z[i], x))
-        return x
-
-
 class FCHyperBody(nn.Module):
     def __init__(self, state_dim, hidden_units=(64, 64), gate=F.relu):
         super(FCHyperBody, self).__init__()
@@ -124,24 +96,6 @@ class TwoLayerFCHyperBodyWithAction(nn.Module):
         if x.dim() != action.dim():
             action = action.unsqueeze(0).repeat(particles, 1, 1)
         phi = self.gate(self.fc2(z[1], torch.cat([x, action], dim=2)))
-        return phi
-
-
-class OneLayerFCHyperBodyWithAction(nn.Module):
-    def __init__(self, state_dim, action_dim, hidden_units, gate=F.relu):
-        super(OneLayerFCHyperBodyWithAction, self).__init__()
-        self.mixer = False
-        self.config = OneLayerFCBodyWithAction_config(state_dim, action_dim, hidden_units, gate, self.mixer)
-        self.fc_s = LinearGenerator(self.config['fc_s'])
-        self.fc_a = LinearGenerator(self.config['fc_a'])
-        self.gate = gate
-        self.feature_dim = hidden_units * 2
-
-    def forward(self, x=None, action=None, z=None):
-        if x is None:
-            return (self.fc_s(z[0]), self.fc_a(z[1]))
-        x = x.unsqueeze(0).repeat(particles, 1, 1)
-        phi = self.gate(torch.cat([self.fc_s(z[0], x), self.fc_a(z[1], action)], dim=1))
         return phi
 
 

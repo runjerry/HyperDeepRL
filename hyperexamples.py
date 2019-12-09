@@ -5,476 +5,66 @@
 #######################################################################
 
 from deep_rl import *
-import envs
-
-def load_args():
-    parser = argparse.ArgumentParser(description='main args')
-    parser.add_argument('--tb_tag', default='', type=str)
-    args = parser.parse_args()
-    return args
-
-# DQN Toy Example
-def dqn_toy_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-    config.tag = 'chain_' + config.tb_tag
-    config.task_fn = lambda: Task(config.game, special_args=('NChain', config.chain_len))
-    config.eval_env = config.task_fn()
-
-    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=config.lr)
-    config.network_fn = lambda: DuelingHyperNet(config.action_dim, ToyFCHyperBody(config.state_dim), toy=True)
-    config.replay_fn = lambda: Replay(memory_size=int(config.replay_memory), batch_size=int(config.replay_bs))
-
-    config.random_action_prob = LinearSchedule(0.01, 0.001, 1e4)
-    config.discount = 0.8
-    config.target_network_update_freq = 10
-    config.exploration_steps = 0
-    config.double_q = True
-    config.sgd_update_frequency = 4
-    config.gradient_clip = 1
-    config.eval_interval = int(5e7)
-    config.max_steps = 2000 * (config.chain_len+9)
-    config.async_actor = False
-    config.particles = 24
-    config.alpha_anneal = config.max_steps
-    config.alpha_init = config.alpha
-    config.alpha_final = config.alpha
-    # run_steps(DQN_ToyDist_Agent(config))
-    run_steps(DQNDistToySVGD_Agent(config))
-
-
-# DQN
-def dqn_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-    config.tag = 'ddqn_dist_meaneval512_16p'
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.0001)
-    # config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
-    config.network_fn = lambda: DuelingHyperNet(config.action_dim, FCHyperBody(config.state_dim))
-    # config.replay_fn = lambda: Replay(memory_size=int(1e5), batch_size=100)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e5), batch_size=512, hyperdqn=True)
-
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.exploration_steps = 1000
-    config.double_q = True
-    # config.double_q = False
-    config.sgd_update_frequency = 4
-    config.gradient_clip = 5
-    config.eval_interval = int(5e3)
-    config.max_steps = 1e5
-    config.async_actor = False
-    # run_steps(DQNAgent(config))
-    # run_steps(DQN_SVGD_Agent(config))
-    run_steps(DQN_Dist_Agent(config))
-
-
-def dqn_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game, num_envs=1, single_process=True)
-    config.eval_env = config.task_fn()
-
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(
-        params, lr=0.00025, alpha=0.95, eps=0.01, centered=True)
-    # config.network_fn = lambda: VanillaHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
-    config.network_fn = lambda: DuelingHyperNet(config.action_dim, NatureConvHyperBody(in_channels=config.history_length))
-    config.random_action_prob = LinearSchedule(1.0, 0.01, 1e6)
-
-    # config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=32)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e6), batch_size=128)
-
-    config.batch_size = 32
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.target_network_update_freq = 10000
-    config.exploration_steps = 50000
-    config.sgd_update_frequency = 4
-    config.gradient_clip = 5
-    config.history_length = 4
-    # config.double_q = True
-    config.double_q = True
-    config.max_steps = int(200e7)
-    run_steps(DQN_Dist_Agent(config))
-
-
-# QR DQN
-def quantile_regression_dqn_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: QuantileHyperNet(config.action_dim, config.num_quantiles, FCHyperBody(config.state_dim))
-
-    # config.replay_fn = lambda: Replay(memory_size=int(1e4), batch_size=10)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e4), batch_size=10)
-
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.exploration_steps = 100
-    config.num_quantiles = 20
-    config.gradient_clip = 5
-    config.sgd_update_frequency = 4
-    config.eval_interval = int(5e3)
-    config.max_steps = 1e5
-    run_steps(QuantileRegressionDQNAgent(config))
-
-
-def quantile_regression_dqn_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-
-    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=0.00005, eps=0.01 / 32)
-    config.network_fn = lambda: QuantileHyperNet(config.action_dim, config.num_quantiles, NatureConvHyperBody())
-    config.random_action_prob = LinearSchedule(1.0, 0.01, 1e6)
-
-    # config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=32)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e6), batch_size=32)
-
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.target_network_update_freq = 10000
-    config.exploration_steps = 50000
-    config.sgd_update_frequency = 4
-    config.gradient_clip = 5
-    config.num_quantiles = 200
-    config.max_steps = int(2e7)
-    run_steps(QuantileRegressionDQNAgent(config))
-
-
-# C51
-def categorical_dqn_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: CategoricalHyperNet(config.action_dim, config.categorical_n_atoms, FCHyperBody(config.state_dim))
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
-
-    # config.replay_fn = lambda: Replay(memory_size=10000, batch_size=10)
-    config.replay_fn = lambda: AsyncReplay(memory_size=10000, batch_size=10)
-
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.exploration_steps = 100
-    config.categorical_v_max = 100
-    config.categorical_v_min = -100
-    config.categorical_n_atoms = 50
-    config.gradient_clip = 5
-    config.sgd_update_frequency = 4
-
-    config.eval_interval = int(5e3)
-    config.max_steps = 1e5
-    run_steps(CategoricalDQNAgent(config))
-
-
-def categorical_dqn_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-    config.optimizer_fn = lambda params: torch.optim.Adam(params, lr=0.00025, eps=0.01 / 32)
-    config.network_fn = lambda: CategoricalHyperNet(config.action_dim, config.categorical_n_atoms, NatureConvHyperBody())
-    config.random_action_prob = LinearSchedule(1.0, 0.01, 1e6)
-
-    # config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=32)
-    config.replay_fn = lambda: AsyncReplay(memory_size=int(1e6), batch_size=32)
-
-    config.discount = 0.99
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.target_network_update_freq = 10000
-    config.exploration_steps = 50000
-    config.categorical_v_max = 10
-    config.categorical_v_min = -10
-    config.categorical_n_atoms = 51
-    config.sgd_update_frequency = 4
-    config.gradient_clip = 0.5
-    config.max_steps = int(2e7)
-    run_steps(CategoricalDQNAgent(config))
-
-
-# A2C
-def a2c_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.num_workers = 5
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: CategoricalActorCriticHyperNet(
-        config.state_dim, config.action_dim, FCHyperBody(config.state_dim, gate=F.tanh))
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 0.95
-    config.entropy_weight = 0.01
-    config.rollout_length = 5
-    config.gradient_clip = 0.5
-    run_steps(A2CAgent(config))
-
-
-def a2c_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.num_workers = 16
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=1e-4, alpha=0.99, eps=1e-5)
-    config.network_fn = lambda: CategoricalActorCriticHyperNet(config.state_dim, config.action_dim, NatureConvHyperBody())
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 1.0
-    config.entropy_weight = 0.01
-    config.rollout_length = 5
-    config.gradient_clip = 5
-    config.max_steps = int(2e7)
-    run_steps(A2CAgent(config))
-
-
-def a2c_continuous(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.num_workers = 16
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=0.0007)
-    config.network_fn = lambda: GaussianActorCriticHyperNet(
-        config.state_dim, config.action_dim,
-        actor_body=FCHyperBody(config.state_dim), critic_body=FCHyperBody(config.state_dim))
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 1.0
-    config.entropy_weight = 0.01
-    config.rollout_length = 5
-    config.gradient_clip = 5
-    config.max_steps = int(2e7)
-    run_steps(A2CAgent(config))
-
-
-# N-Step DQN
-def n_step_dqn_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.num_workers = 5
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: VanillaHyperNet(config.action_dim, FCHyperBody(config.state_dim))
-    config.random_action_prob = LinearSchedule(1.0, 0.1, 1e4)
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.rollout_length = 5
-    config.gradient_clip = 5
-    run_steps(NStepDQNAgent(config))
-
-
-def n_step_dqn_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.num_workers = 16
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=1e-4, alpha=0.99, eps=1e-5)
-    config.network_fn = lambda: VanillaHyperNet(config.action_dim, NatureConvHyperBody())
-    config.random_action_prob = LinearSchedule(1.0, 0.05, 1e6)
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.target_network_update_freq = 10000
-    config.rollout_length = 5
-    config.gradient_clip = 5
-    config.max_steps = int(2e7)
-    run_steps(NStepDQNAgent(config))
-
-
-# Option-Critic
-def option_critic_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.num_workers = 5
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: OptionCriticHyperNet(FCHyperBody(config.state_dim), config.action_dim, num_options=2)
-    config.random_option_prob = LinearSchedule(1.0, 0.1, 1e4)
-    config.discount = 0.99
-    config.target_network_update_freq = 200
-    config.rollout_length = 5
-    config.termination_regularizer = 0.01
-    config.entropy_weight = 0.01
-    config.gradient_clip = 5
-    run_steps(OptionCriticAgent(config))
-
-
-def option_critic_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.num_workers = 16
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=1e-4, alpha=0.99, eps=1e-5)
-    config.network_fn = lambda: OptionCriticHyperNet(NatureConvHyperBody(), config.action_dim, num_options=4)
-    config.random_option_prob = LinearSchedule(0.1)
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.target_network_update_freq = 10000
-    config.rollout_length = 5
-    config.gradient_clip = 5
-    config.max_steps = int(2e7)
-    config.entropy_weight = 0.01
-    config.termination_regularizer = 0.01
-    run_steps(OptionCriticAgent(config))
-
-
-# PPO
-def ppo_feature(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.num_workers = 5
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, 0.001)
-    config.network_fn = lambda: CategoricalActorCriticHyperNet(config.state_dim, config.action_dim, FCHyperBody(config.state_dim))
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 0.95
-    config.entropy_weight = 0.01
-    config.gradient_clip = 5
-    config.rollout_length = 128
-    config.optimization_epochs = 10
-    config.mini_batch_size = 32 * 5
-    config.ppo_ratio_clip = 0.2
-    config.log_interval = 128 * 5 * 10
-    run_steps(PPOAgent(config))
-
-
-def ppo_pixel(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game, num_envs=config.num_workers)
-    config.eval_env = Task(config.game)
-    config.num_workers = 8
-    config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=0.00025, alpha=0.99, eps=1e-5)
-    config.network_fn = lambda: CategoricalActorCriticHyperNet(config.state_dim, config.action_dim, NatureConvHyperBody())
-    config.state_normalizer = ImageNormalizer()
-    config.reward_normalizer = SignNormalizer()
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 0.95
-    config.entropy_weight = 0.01
-    config.gradient_clip = 0.5
-    config.rollout_length = 128
-    config.optimization_epochs = 3
-    config.mini_batch_size = 32 * 8
-    config.ppo_ratio_clip = 0.1
-    config.log_interval = 128 * 8
-    config.max_steps = int(2e7)
-    run_steps(PPOAgent(config))
-
-
-def ppo_continuous(**kwargs):
-    generate_tag(kwargs)
-    kwargs.setdefault('log_level', 0)
-    config = Config()
-    config.merge(kwargs)
-    config.hyper = True
-
-    config.task_fn = lambda: Task(config.game)
-    config.eval_env = config.task_fn()
-
-    config.network_fn = lambda: GaussianActorCriticHyperNet(
-        config.state_dim, config.action_dim, actor_body=FCHyperBody(config.state_dim, gate=torch.tanh),
-        critic_body=FCHyperBody(config.state_dim, gate=torch.tanh))
-    config.optimizer_fn = lambda params: torch.optim.Adam(params, 3e-4, eps=1e-5)
-    config.discount = 0.99
-    config.use_gae = True
-    config.gae_tau = 0.95
-    config.gradient_clip = 0.5
-    config.rollout_length = 2048
-    config.optimization_epochs = 10
-    config.mini_batch_size = 64
-    config.ppo_ratio_clip = 0.2
-    config.log_interval = 2048
-    config.max_steps = 1e6
-    config.state_normalizer = MeanStdNormalizer()
-    run_steps(PPOAgent(config))
-
+import itertools
+
+def product_dict(kwargs):
+    keys = kwargs.keys()
+    vals = kwargs.values()
+    for instance in itertools.product(*vals):
+        yield dict(zip(keys, instance))
+
+def sweep(game, tag, model_fn, trials=50, manual=True):
+    hyperparams = {
+        'alpha_i': [1, 10, 100],
+        'alpha_f': [.1, 0.01],
+        'anneal': [500e3],
+        'lr_a': [1e-4],
+        'lr_c': [1e-3],
+        'freq' : [100, 150],
+        'hidden': [256, 128, 512],
+        'replay_size': [int(1e6), int(1e7)],
+        'replay_bs': [512],
+        'dist': ['categorical', 'multinomial', 'normal', 'uniform']
+        # 'dist': ['multinomial']
+    }
+    # manually define
+    if manual:
+        print ('=========================================================')
+        print ('Running Manually Defined Single Trial, [1/1]')
+        setting = {
+            'game': game,
+            'tb_tag': tag,
+            'alpha_i': 10,
+            'alpha_f': .1,
+            'anneal': 500e3,
+            'lr': 1e-4,
+            'freq': 100,
+            'hidden': 256,
+            'replay_size': int(1e6),
+            'replay_bs': 512,
+            'dist': 'softmax'
+        }
+        print ('Running Config: ')
+        for (k, v) in setting.items():
+            print ('{} : {}'.format(k, v))
+        model_fn(**setting)
+        return
+
+    search_space = list(product_dict(hyperparams))
+    ordering = list(range(len(search_space)))
+    np.random.shuffle(ordering)
+    for i, idx in enumerate(ordering):
+        setting = search_space[idx]
+        setting['game'] = game
+        setting['tb_tag'] = tag
+        print ('=========================================================')
+        print ('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
+            len(search_space), i+1, trials, int(float(i+1)/trials*100.)))
+        print ('Running Config: ')
+        for (k, v) in setting.items():
+            print ('{} : {}'.format(k, v))
+        dqn_feature(**setting)
+    
 
 # DDPG
 def ddpg_continuous(**kwargs):
@@ -490,22 +80,25 @@ def ddpg_continuous(**kwargs):
     config.max_steps = int(1e6)
     config.eval_interval = int(1e4)
     config.eval_episodes = 20
+    config.particles = 24
     print (config.state_dim, config.action_dim)
 
     config.network_fn = lambda: DeterministicActorCriticHyperNet(
         config.state_dim, config.action_dim,
         actor_body=FCHyperBody(config.state_dim, (400, 300), gate=F.relu),
-        #critic_body=TwoLayerFCHyperBodyWithAction(config.state_dim, config.action_dim, (400, 300), gate=F.relu),
         critic_body=TwoLayerFCBodyWithAction(config.state_dim, config.action_dim, (400, 300), gate=F.relu),
-        actor_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-4),
-        critic_opt_fn=lambda params: torch.optim.AdamW(params, lr=1e-3))
+        actor_opt_fn=lambda params: torch.optim.AdamW(params, lr=config.lr_a),
+        critic_opt_fn=lambda params: torch.optim.AdamW(params, lr=config.lr_c))
 
-    config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=512)
+    config.replay_fn = lambda: Replay(memory_size=config.replay_size, config.replay_bs)
     config.discount = 0.99
     config.random_process_fn = lambda: OrnsteinUhlenbeckProcess(
         size=(config.action_dim,), std=LinearSchedule(0.2))
     config.warm_up = int(1e4)
     config.target_network_mix = 1e-3
+    config.alpha_init = config.alpha_i
+    config.alpha_final = config.alpha_f
+    config.alpha_anneal = config.anneal
     run_steps(DDPGAgent(config))
     # run_steps(DDPG_SVGDAgent(config))
 
@@ -524,14 +117,15 @@ def td3_continuous(**kwargs):
     config.eval_interval = int(1e4)
     config.eval_episodes = 20
     config.tag = config.tb_tag
+    config.particles = 24
 
     config.network_fn = lambda: TD3HyperNet(
         config.action_dim,
         actor_body_fn=lambda: FCHyperBody(config.state_dim, (400, 300), gate=F.relu),
         critic_body_fn=lambda: FCBody(
             config.state_dim+config.action_dim, (400, 300), gate=F.relu),
-        actor_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-4),
-        critic_opt_fn=lambda params: torch.optim.Adam(params, lr=1e-3))
+        actor_opt_fn=lambda params: torch.optim.Adam(params, lr=config.lr_a),
+        critic_opt_fn=lambda params: torch.optim.Adam(params, lr=config.lr_c))
 
     config.replay_fn = lambda: Replay(memory_size=int(1e6), batch_size=512)
     config.discount = 0.99
@@ -542,6 +136,9 @@ def td3_continuous(**kwargs):
     config.td3_delay = 2
     config.warm_up = int(1e4)
     config.target_network_mix = 5e-3
+    config.alpha_init = config.alpha_i
+    config.alpha_final = config.alpha_f
+    config.alpha_anneal = config.anneal
     run_steps(TD3Agent(config))
 
 
@@ -552,59 +149,7 @@ if __name__ == '__main__':
     random_seed()
     # select_device(-1)
     select_device(0)
-    args = load_args()
-
-    # game = 'CartPole-v0'  # MUST WORK
-    # dqn_feature(game=game)
-    switch = 4
-
-    if switch == 1:
-        a = [1e2]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 2:
-        a = [1e1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 3:
-        a = [1e-1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-
-    if switch == 4:
-        a = [1e-3, 1]   
-        learning_rate = [1e-2, 1e-3, 5e-4, 2e-4, 1e-4]
-        replay_memory_size = [1e3, 1e5]
-        replay_batch_size = [32, 128]
-    
-
-    game = 'NChain-v3'
-    for alpha in a:
-        for lr in learning_rate:
-            for replay_memory in replay_memory_size:
-                for replay_bs in replay_batch_size:
-                    for i in np.linspace(20, 100, 81)[::2]:
-                        i = int(i)
-                        dqn_toy_feature(game=game,
-                                        tb_tag='alpha{}-lr{}-rm{}-bs{}N{}'.format(alpha,lr,replay_memory,replay_bs,i),
-                                        chain_len=i,
-                                        alpha=alpha,
-                                        lr=lr,
-                                        replay_memory=replay_memory,
-                                        replay_bs=replay_bs)
-
-    # quantile_regression_dqn_feature(game=game)
-    # categorical_dqn_feature(game=game)
-    # a2c_feature(game=game)
-    # n_step_dqn_feature(game=game)
-    # option_critic_feature(game=game)
-    # ppo_feature(game=game)
-    
+ 
     # game = 'HalfCheetah-v2'
     # game = 'Ant-v2'
     # game = 'Reacher-v2'
@@ -614,28 +159,10 @@ if __name__ == '__main__':
     # game = 'Hopper-v2'
     # game = 'Swimmer-v2'
     # game = 'Walker2d-v2'
-    # a2c_continuous(game=game)
-    # ppo_continuous(game=game)
-    # ddpg_continuous(game=game)
-    # td3_continuous(game=game)
-    # games = ['HalfCheetah-v2',
-    #        'Humanoid-v2',
-    #        'Ant-v2',
-    #        'Reacher-v2',
-    #        'InvertedDoublePendulum-v2',
-    #        'Hopper-v2',
-    #        'Swimmer-v2',
-    #        'Walker2d-v2'
-    # ]
-    # for i in range(3):
-    #     for game in games:
-    #         td3_continuous(game=game, tb_tag='td3_{}-{}'.format(game, i))
 
-    # game = 'BreakoutNoFrameskip-v4'
-    # dqn_pixel(game=game)
-    # quantile_regression_dqn_pixel(game=game)
-    # categorical_dqn_pixel(game=game)
-    # a2c_pixel(game=game)
-    # n_step_dqn_pixel(game=game)
-    # option_critic_pixel(game=game)
-    # ppo_pixel(game=game)
+    game = 'HalfCheetah-v2'
+    tag = 'ddpg_sweep'
+    algorithm = ddpg_continuous
+    # algorithm = td3_continuous
+    sweep(game, tag, algorithm, trials=50, manual=True
+
