@@ -16,7 +16,7 @@ In `deep_rl/utils` there are config definitions for specifying the hypergan stru
 
 ==================
 
-Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games. Framework implemented by ShongTang, modified by me for use in implicit ensmeble experiments. 
+Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games. Framework implemented by ShangTong, modified by me for use in implicit ensmeble experiments. 
 
 Implemented algorithms:
 
