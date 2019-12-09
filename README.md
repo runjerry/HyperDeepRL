@@ -16,12 +16,21 @@ In `deep_rl/utils` there are config definitions for specifying the hypergan stru
 
 ==================
 
-Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games.
+Modularized implementation of popular deep RL algorithms by PyTorch. Easy switch between toy tasks and challenging games. Framework implemented by ShongTang, modified by me for use in implicit ensmeble experiments. 
 
 Implemented algorithms:
+
 * Hyper - (Double/Dueling) Deep Q-Learning (DQN)
 * Hyper - Deep Deterministic Policy Gradient (DDPG, low-dim-state)
 * Hyper - Twined Delayed DDPG (TD3)
+
+Implemeted experiments:
+
+* Atari (branch: master)
+* Linear NChain toy experiments (branch: chain)
+* Sparse Cartpole Swingup (branch: sparse-cartpole)
+* Control Suite (branch: actor-critic)
+
 
 # Dependency
 * MacOS 10.12 or Ubuntu 16.04
@@ -30,24 +39,7 @@ Implemented algorithms:
 * OpenAI Baselines (commit ```8e56dd```)
 * Core dependencies: `pip install -e .`
 
-# Remarks
-* There is a super fast DQN implementation with an async actor for data generation and an async replay buffer to transfer data to GPU. Enable this implementation by setting `config.async_actor = True` and using `AsyncReplay`. However, with atari games this fast implementation may not work in macOS. Use Ubuntu or Docker instead.
-* TensorFlow is used only for logging. Open AI baselines is used very slightly. If you carefully read the code, you should be able to remove/replace them.
-
 # Usage
 
-```examples.py``` contains examples for all the implemented algorithms
+```hyperexamples.py``` contains examples for implemeneted algorithms in each branch
 
-```Dockerfile``` contains the environment for generating the curves below. 
-
-Please use this bibtex if you want to cite this repo
-```
-@misc{deeprl,
-  author = {Shangtong, Zhang},
-  title = {Modularized Implementation of Deep RL Algorithms in PyTorch},
-  year = {2018},
-  publisher = {GitHub},
-  journal = {GitHub Repository},
-  howpublished = {\url{https://github.com/ShangtongZhang/DeepRL}},
-}
-```
