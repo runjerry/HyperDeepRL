@@ -101,6 +101,7 @@ def dqn_feature(**kwargs):
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
+    config.uncertainty_bonus = True
     # run_steps(DQN_SVGD_Agent(config))
     run_steps(DQN_Dist_SVGD_Agent(config))
     # run_steps(DQN_Agent(config))
