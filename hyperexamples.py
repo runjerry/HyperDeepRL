@@ -66,7 +66,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         print ('Running Config: ')
         for (k, v) in setting.items():
             print ('{} : {}'.format(k, v))
-        dqn_feature(**setting)
+        model_fn(**setting)
     
 # DQN Toy Example
 def dqn_toy_feature(**kwargs):
