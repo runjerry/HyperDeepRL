@@ -20,6 +20,9 @@ class DQNDistSVGDActor(BaseActor):
         BaseActor.__init__(self, config)
         self.config = config
         self.start()
+        if self.config.nstep_explore > 1:
+            self.nstep = True
+            self.nstep_uncertainty = 0.
 
     def _transition(self):
         if self._state is None:
@@ -29,12 +32,25 @@ class DQNDistSVGDActor(BaseActor):
             state = config.state_normalizer(self._state)
             q_values = self._network(state)
             particle_max = q_values.argmax(-1)
-            abs_max = q_values.max(2)[0].argmax()
+            abs_max = q_values.max(2)[0].argmax( )
             q_max = q_values[abs_max]
             
         q_max = to_np(q_max).flatten()
         q_var = to_np(q_values.var(0))
         q_mean = to_np(q_values.mean(0))
+
+        # UBE takes sqrt of a standard normal centered at q_mean
+        # n step
+        if self.nstep:
+            self.nstep_uncertainty += q_var
+            if self._total_steps % self.config.nstep_explore == 0:
+                q_explore = q_mean + 0.01 * nstep_uncertainty
+            else:
+                q_explore = q_mean
+        # 1 step
+        else:
+            q_explore = q_mean + 0.01 * q_var
+
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
@@ -42,7 +58,8 @@ class DQNDistSVGDActor(BaseActor):
             actions_log = np.random.randint(0, len(q_max), size=(config.particles, 1))
         else:
             # action = np.argmax(q_max)  # Max Action
-            action = np.argmax(q_mean)  # Mean Action
+            # action = np.argmax(q_mean)  # Mean Action
+            action = np.argmax(q_explore)  # Exploration Bonus
             actions_log = to_np(particle_max)
         
         next_state, reward, done, info = self._task.step([action])
@@ -56,6 +73,7 @@ class DQNDistSVGDActor(BaseActor):
         # Add Q value estimates to info
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
+        info[0]['q_explore'] = q_explore.mean()
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
