@@ -170,29 +170,33 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             actions = tensor(actions).long()
 
             ## Get main Q values
-            phi = self.network.body(states)
-            q = self.network.head(phi)
-            actions = actions.transpose(0, 1).squeeze(-1)
+            phi = self.network.body(states)  # [particles, batch, hidden]
+            q = self.network.head(phi)  # [particles, batch, actions]
+            actions = actions.squeeze(-1).transpose(0, 1)
             q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
+            # all q are the same for categorical
 
-            alpha = self.alpha_schedule.value(self.total_steps)
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
 
             q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            #q = q.transpose(0, 1)
+            #q_frozen = q_frozen.transpose(0, 1)
             q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
             q_frozen.detach()
             q_next_frozen.detach()
 
-            td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
+            td_loss = (q_next - q).pow(2).mul(0.5).mean()
+            """
             # print (td_loss.mean())
 
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
 
             # print ('q grad', q_grad.shape)
-            q_eps = q + torch.rand_like(q) * 1e-8
-            q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
+            r = torch.rand_like(q) * 1e-8
+            q_eps = q + r
+            q_frozen_eps = q_frozen + r
 
             kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps)
             # print (kappa.shape, grad_kappa.shape)
@@ -200,13 +204,20 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
-            # svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
-
+            #print ('k', kappa, kappa.shape)
+            #print ('gk', grad_kappa, grad_kappa.shape)
+            alpha = self.alpha_schedule.value(self.total_steps)
+            svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
             #### Disable SVGD
-            svgd = (q_grad + alpha * 0).mean(1) # [n, theta]
-
+            #kappa.detach()
+            #kernel_logp = torch.matmul(torch.ones_like(kappa).cuda().detach(), q_grad) # [n, 1]
+            print (grad_kappa.max().item(), grad_kappa.min().item(), grad_kappa.mean().item())
+            print (kappa.max().item(), kappa.min().item(), kappa.mean().item())
+            #svgd = (kernel_logp + alpha * 0).mean(1)#grad_kappa).mean(1) # [n, theta]
+            """
+            td_loss.backward()
             self.optimizer.zero_grad()
-            autograd.backward(q, grad_tensors=svgd.detach())
+            #autograd.backward(q, grad_tensors=svgd.detach())
 
             for param in self.network.parameters():
                 if param.grad is not None:

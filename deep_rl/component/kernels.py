@@ -58,7 +58,7 @@ def batch_rbf_nonorm(x):
     return kxy
 
 
-def batch_rbf_xy(x, y, h_min=1e-3):
+def batch_rbf_xy(x, y, h_min=1e-8):
     """
         xs(`tf.Tensor`): A tensor of shape (N x Kx x D) containing N sets of Kx
             particles of dimension D. This is the first kernel argument.
@@ -89,6 +89,12 @@ def batch_rbf_xy(x, y, h_min=1e-3):
     kappa_expanded = kappa.unsqueeze(-1)  # ... x Kx x Ky x 1
 
     kappa_grad = -2 * diff / h_expanded_thrice * kappa_expanded
+    """
+    print ('diff', diff.mean().item())
+    print ('h_expa', h_expanded_thrice.mean().item())
+    print ('kappa_expa', kappa_expanded.mean().item())
+    print ('x-y', (x-y).mean().item())
+    """
     # ... x Kx x Ky x D
     return kappa, kappa_grad
 
