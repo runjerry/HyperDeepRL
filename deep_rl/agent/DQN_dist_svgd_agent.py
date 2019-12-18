@@ -23,6 +23,8 @@ class DQNDistSVGDActor(BaseActor):
         if self.config.nstep_explore > 1:
             self.nstep = True
             self.nstep_uncertainty = 0.
+        else:
+            self.nstep = False
 
     def _transition(self):
         if self._state is None:
@@ -34,7 +36,7 @@ class DQNDistSVGDActor(BaseActor):
             particle_max = q_values.argmax(-1)
             abs_max = q_values.max(2)[0].argmax( )
             q_max = q_values[abs_max]
-            
+
         q_max = to_np(q_max).flatten()
         q_var = to_np(q_values.var(0))
         q_mean = to_np(q_values.mean(0))
@@ -49,7 +51,8 @@ class DQNDistSVGDActor(BaseActor):
                 q_explore = q_mean
         # 1 step
         else:
-            q_explore = q_mean + 0.01 * q_var
+            q_explore = q_mean
+            # q_explore = q_mean + 0.01 * q_var
 
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
@@ -61,7 +64,7 @@ class DQNDistSVGDActor(BaseActor):
             # action = np.argmax(q_mean)  # Mean Action
             action = np.argmax(q_explore)  # Exploration Bonus
             actions_log = to_np(particle_max)
-        
+
         next_state, reward, done, info = self._task.step([action])
         if config.render and self._task.record_now:
             self._task.render()
@@ -69,7 +72,7 @@ class DQNDistSVGDActor(BaseActor):
             self._network.sample_model_seed()
             if self._task.record:
                 self._task.record_or_not(info)
-        
+
         # Add Q value estimates to info
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
@@ -129,8 +132,8 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
     def step(self):
         config = self.config
-       
-        if not torch.equal(self.network.model_seed['value_z'], 
+
+        if not torch.equal(self.network.model_seed['value_z'],
                            self.target_network.model_seed['value_z']):
             self.target_network.set_model_seed(self.network.model_seed)
 
@@ -150,7 +153,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             next_states = self.config.state_normalizer(next_states)
             terminals = tensor(terminals)
             rewards = tensor(rewards)
-            
+
             ## Get target q values
             # """
             q_next = self.target_network(next_states).detach()  # [particles, batch, action]
@@ -171,11 +174,11 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q = self.network.head(phi)
             actions = actions.transpose(0, 1).squeeze(-1)
             q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
-            
+
             alpha = self.alpha_schedule.value(self.total_steps)
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
-            
+
             q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
             q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
             q_frozen.detach()
@@ -183,30 +186,30 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
             td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
             # print (td_loss.mean())
-            
+
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
-            
+
             # print ('q grad', q_grad.shape)
             q_eps = q + torch.rand_like(q) * 1e-8
             q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
-            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps)
             # print (kappa.shape, grad_kappa.shape)
             kappa = kappa.unsqueeze(-1)
-            
+
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
             svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
-            
+
             self.optimizer.zero_grad()
             autograd.backward(q, grad_tensors=svgd.detach())
-            
+
             for param in self.network.parameters():
                 if param.grad is not None:
                     param.grad.data *= 1./config.particles
-            
-            if self.config.gradient_clip: 
+
+            if self.config.gradient_clip:
                 nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
 
             with config.lock:

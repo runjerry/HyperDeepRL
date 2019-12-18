@@ -65,6 +65,7 @@ class Config:
         self.tasks = False
         self.particles = 24
         self.hyper = False
+        self.render = False
 
     @property
     def eval_env(self):
@@ -76,7 +77,7 @@ class Config:
         self.state_dim = env.state_dim
         self.action_dim = env.action_dim
         self.task_name = env.name
-    
+
     def generate_log_handles(self):
         ts = datetime.datetime.now().strftime("%y%m%d-%H%M%S")
         self.log_handle = './tf_log/%s-%s/log.txt' % (self.tag, ts)

@@ -35,8 +35,10 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         setting = {
             'game': game,
             'tb_tag': tag,
-            'alpha_i': 10,
-            'alpha_f': .1,
+            'alpha_i': .1,
+            #'alpha_i': 10,
+            'alpha_f': .001,
+            #'alpha_f': .1,
             'anneal': 500e3,
             'lr': 1e-4,
             'freq': 100,
@@ -66,8 +68,8 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         for (k, v) in setting.items():
             print ('{} : {}'.format(k, v))
         dqn_feature(**setting)
-    
-   
+
+
 def dqn_feature(**kwargs):
     generate_tag(kwargs)
     kwargs.setdefault('log_level', 0)
@@ -87,7 +89,7 @@ def dqn_feature(**kwargs):
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
     #config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_size), batch_size=int(config.replay_bs))
 
-    config.render = True  # Render environment at every train step
+    config.render = False  # Render environment at every train step
     config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
@@ -95,7 +97,7 @@ def dqn_feature(**kwargs):
     config.double_q = True  # use double q update
     config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
-    config.eval_interval = int(5e3) 
+    config.eval_interval = int(5e3)
     config.max_steps = 500e3
     config.async_actor = False
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
@@ -116,7 +118,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'comparing_q_values_softmax'
+    tag = 'softmax9999_test_smallalpha2'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 
