@@ -40,7 +40,7 @@ class NoiseSampler(object):
             #high = torch.ones(self.z_dim) * .05
             #low = torch.zeros(self.z_dim)
             high = torch.ones(self.particles, self.z_dim) * 1.0
-            low = torch.ones(self.particles, self.z_dim) * 0.9999
+            low = torch.ones(self.particles, self.z_dim) * 0.9
             self.aux_dist = torch.distributions.Uniform(low, high)
 
         elif self.dist_type == 'multinomial':

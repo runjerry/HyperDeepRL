@@ -35,9 +35,9 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         setting = {
             'game': game,
             'tb_tag': tag,
-            'alpha_i': .1,
+            'alpha_i': 1e-5,
             #'alpha_i': 10,
-            'alpha_f': .001,
+            'alpha_f': 1e-8,
             #'alpha_f': .1,
             'anneal': 500e3,
             'lr': 1e-4,
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'softmax9999_test_smallalpha2'
+    tag = 'softmax9-1_disable_svgd1'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

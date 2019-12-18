@@ -200,7 +200,10 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
-            svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
+            # svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
+
+            #### Disable SVGD
+            svgd = (q_grad + alpha * 0).mean(1) # [n, theta]
 
             self.optimizer.zero_grad()
             autograd.backward(q, grad_tensors=svgd.detach())
