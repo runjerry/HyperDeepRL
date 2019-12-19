@@ -179,14 +179,14 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
 
-            q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
-            q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
-            q_frozen.detach()
-            q_next_frozen.detach()
+            #q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            #q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
+            #q_frozen.detach()
+            #q_next_frozen.detach()
 
-            td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
+            td_loss = (q_next - q).pow(2).mul(0.5).mean()
             # print (td_loss.mean())
-
+            """
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
 
@@ -204,13 +204,15 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
             #### Disable SVGD
             svgd = (q_grad + alpha * 0).mean(1) # [n, theta]
-
+            """
             self.optimizer.zero_grad()
-            autograd.backward(q, grad_tensors=svgd.detach())
+            td_loss.backward()
+
+            #autograd.backward(q, grad_tensors=svgd.detach())
 
             for param in self.network.parameters():
                 if param.grad is not None:
-                    param.grad.data *= 1./config.particles
+                    param.grad.data *= 1./16
 
             if self.config.gradient_clip:
                 nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)

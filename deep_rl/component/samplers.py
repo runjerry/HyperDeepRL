@@ -62,5 +62,6 @@ class NoiseSampler(object):
             sample_aux = self.aux_dist.sample()
             sample *= sample_aux
             # print (sample)
+        # print (sample)
         return sample
 
