@@ -90,7 +90,7 @@ def dqn_feature(**kwargs):
     #config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_size), batch_size=int(config.replay_bs))
 
     config.render = False  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(0.0, 0.000, 1e4)  # eps greedy params
+    config.random_action_prob = LinearSchedule(0, 0.000, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'try_sampler_again_1.0_2'
+    tag = '1step_10a_softmax1.0cat_var1_2'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 

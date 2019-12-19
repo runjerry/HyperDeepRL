@@ -32,27 +32,28 @@ class DQNDistSVGDActor(BaseActor):
         config = self.config
         with config.lock:
             state = config.state_normalizer(self._state)
-            q_values = self._network(state)
+            q_values = self._network(state)  # [particles, 1, actions]
             particle_max = q_values.argmax(-1)
             abs_max = q_values.max(2)[0].argmax( )
             q_max = q_values[abs_max]
 
         q_max = to_np(q_max).flatten()
-        q_var = to_np(q_values.var(0))
-        q_mean = to_np(q_values.mean(0))
+        q_var = to_np(q_values.var(0))  # [actions]
+        q_mean = to_np(q_values.mean(0))  # [actions]
 
         # UBE takes sqrt of a standard normal centered at q_mean
         # n step
         if self.nstep:
             self.nstep_uncertainty += q_var
             if self._total_steps % self.config.nstep_explore == 0:
-                q_explore = q_mean + 0.01 * nstep_uncertainty
+                q_explore = q_mean + self.nstep_uncertainty
+                self.nstep_uncertainty = 0
             else:
                 q_explore = q_mean
         # 1 step
         else:
-            q_explore = q_mean
-            # q_explore = q_mean + 0.01 * q_var
+            # q_explore = q_mean
+            q_explore = q_mean + 1 * q_var
 
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
@@ -108,6 +109,9 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         self.target_network.set_model_seed(self.network.model_seed)
         self.head = np.random.choice(config.particles, 1)[0]
         self.save_net_arch_to_file()
+        high = torch.ones(self.replay.batch_size, config.particles//2, 1) * 1e-8
+        low = torch.ones(self.replay.batch_size, config.particles//2, 1) * 1e-8
+        self.usampler = torch.distributions.Uniform(low, high)
         print (self.network)
 
 
@@ -186,17 +190,19 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_frozen.detach()
             q_next_frozen.detach()
 
-            td_loss = (q_next - q).pow(2).mul(0.5).mean()
-            """
+            td_loss = (q_next - q).pow(2).mul(0.5)# .mean()
+
             # print (td_loss.mean())
 
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
 
             # print ('q grad', q_grad.shape)
-            r = torch.rand_like(q) * 1e-8
+            # add random sample to q values to simulate random actions in the batch
+            r = self.usampler.sample().cuda()
+            rf = self.usampler.sample().cuda()
             q_eps = q + r
-            q_frozen_eps = q_frozen + r
+            q_frozen_eps = q_frozen + rf
 
             kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps)
             # print (kappa.shape, grad_kappa.shape)
@@ -211,13 +217,13 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             #### Disable SVGD
             #kappa.detach()
             #kernel_logp = torch.matmul(torch.ones_like(kappa).cuda().detach(), q_grad) # [n, 1]
-            print (grad_kappa.max().item(), grad_kappa.min().item(), grad_kappa.mean().item())
-            print (kappa.max().item(), kappa.min().item(), kappa.mean().item())
+            #print (grad_kappa.max().item(), grad_kappa.min().item(), grad_kappa.mean().item())
+            #print (kappa.max().item(), kappa.min().item(), kappa.mean().item())
             #svgd = (kernel_logp + alpha * 0).mean(1)#grad_kappa).mean(1) # [n, theta]
-            """
-            td_loss.backward()
+
+            # td_loss.backward()
             self.optimizer.zero_grad()
-            #autograd.backward(q, grad_tensors=svgd.detach())
+            autograd.backward(q, grad_tensors=svgd.detach())
 
             for param in self.network.parameters():
                 if param.grad is not None:

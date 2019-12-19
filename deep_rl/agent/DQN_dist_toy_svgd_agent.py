@@ -32,8 +32,8 @@ class DQNToySVGDActor(BaseActor):
             particle_max = q_values.argmax(-1)
             abs_max = q_values.max(2)[0].argmax()
             q_max = q_values[abs_max]
-            
-            ## DEBUG 
+
+            ## DEBUG
             # print ('q values', q_values)                      # [particles, n_actions]
             # print ('best action per particle', particle_max)  # [particles, 1]
             # print ('best particle', abs_max)                  # [1]
@@ -50,7 +50,7 @@ class DQNToySVGDActor(BaseActor):
             actions_log = to_np(particle_max)
 
         next_state, reward, done, info = self._task.step([action])
-        
+
         if done:
             self._network.sample_model_seed(dist='categorical')
 
@@ -101,14 +101,14 @@ class DQNDistToySVGD_Agent(BaseAgent):
     def step(self):
         config = self.config
         transitions = self.actor.step()
-        
+
         if self.actor.sigterm == True:
             self.close()
             self.total_steps = config.max_steps
 
         if not torch.equal(self.network.model_seed['value_z'], self.target_network.model_seed['value_z']):
-            self.target_network.set_model_seed(self.network.model_seed)    
-        
+            self.target_network.set_model_seed(self.network.model_seed)
+
         experiences = []
         for state, action, reward, next_state, done, info in transitions:
             self.record_online_return(info)
@@ -124,7 +124,7 @@ class DQNDistToySVGD_Agent(BaseAgent):
             next_states = self.config.state_normalizer(next_states)
             terminals = tensor(terminals)
             rewards = tensor(rewards)
-            
+
             ## Get target q values
             q_next = self.target_network(next_states).detach()  # [particles, batch, action]
             if self.config.double_q:
@@ -143,37 +143,37 @@ class DQNDistToySVGD_Agent(BaseAgent):
             q = self.network.head(phi)
             actions = actions.transpose(0, 1).squeeze(-1)
             q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
-            
+
             # SVGD Update
             alpha = self.alpha_schedule.value(self.total_steps)
             q = q.transpose(0, 1).unsqueeze(-1)
             q_next = q_next.transpose(0, 1).unsqueeze(-1)
-            
+
             q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
             q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
             q_frozen.detach()
             q_next_frozen.detach()
 
             td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
-            
+
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
-            
+
             # print ('q grad', q_grad.shape)
             q_eps = q + torch.rand_like(q) * 1e-8
             q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
-            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps)
             # print (kappa.shape, grad_kappa.shape)
             kappa = kappa.unsqueeze(-1)
-            
+
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
             svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
-            
+
             self.optimizer.zero_grad()
             autograd.backward(q, grad_tensors=svgd.detach())
-            
+
             for param in self.network.parameters():
                 if param.grad is not None:
                     param.grad.data *= 1./config.particles
