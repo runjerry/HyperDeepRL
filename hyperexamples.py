@@ -33,11 +33,9 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         print ('=========================================================')
         print ('Running Manually Defined Single Trial, [1/1]')
         setting = {
-            'game': game,
+                'game': game,
             'tb_tag': tag,
-            #'alpha_i': 1e-5,
-            'alpha_i': 10,
-            #'alpha_f': 1e-8,
+            'alpha_i': 1,
             'alpha_f': .1,
             'anneal': 500e3,
             'lr': 1e-4,
@@ -90,7 +88,7 @@ def dqn_feature(**kwargs):
     #config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_size), batch_size=int(config.replay_bs))
 
     config.render = False  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(0, 0.000, 1e4)  # eps greedy params
+    config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
@@ -118,7 +116,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = '1step_10a_softmax1.0cat_var1_2'
+    tag = '1step_1asoft_10cat_novar1_randomlog2'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 
