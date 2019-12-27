@@ -7,6 +7,7 @@
 from deep_rl import *
 import itertools
 import pprint
+import envs
 
 def product_dict(kwargs):
     keys = kwargs.keys()
@@ -14,7 +15,33 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, trials=50, manual=True):
+def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
+    # manually define
+    if manual:
+        print ('=========================================================')
+        print ('Running Manually Defined Single Trial, [1/1]')
+        setting = {
+            'game': game,
+            'tb_tag': tag,
+            'alpha_i': .1,
+            'alpha_f': .1,
+            'anneal': 500e3,
+            'lr': 1e-2,
+            'freq': 10,
+            'grad_clip': None,
+            'hidden': 256,
+            'replay_size': int(1e3),
+            'replay_bs': 32,
+            'dist': 'categorical'
+        }
+        print ('Running Config: ')
+        for (k, v) in setting.items():
+            print ('{} : {}'.format(k, v))
+        setting['chain_len'] = chain_len
+        setting['tb_tag'] = setting['tb_tag'] + 'len_{}'.format(chain_len)
+        model_fn(**setting)
+        return
+
     hyperparams = {
         'alpha_i': [1, 10, 100],
         'alpha_f': [.1, 0.01],
@@ -28,29 +55,6 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         # 'dist': ['categorical', 'multinomial', 'normal', 'uniform']
         'dist': ['multinomial']
     }
-    # manually define
-    if manual:
-        print ('=========================================================')
-        print ('Running Manually Defined Single Trial, [1/1]')
-        setting = {
-                'game': game,
-            'tb_tag': tag,
-            'alpha_i': 1,
-            'alpha_f': .1,
-            'anneal': 500e3,
-            'lr': 1e-4,
-            'freq': 100,
-            'grad_clip': None,
-            'hidden': 256,
-            'replay_size': int(1e5),
-            'replay_bs': 128,
-            'dist': 'softmax'
-        }
-        print ('Running Config: ')
-        for (k, v) in setting.items():
-            print ('{} : {}'.format(k, v))
-        model_fn(**setting)
-        return
 
     search_space = list(product_dict(hyperparams))
     ordering = list(range(len(search_space)))
@@ -59,6 +63,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         setting = search_space[idx]
         setting['game'] = game
         setting['tb_tag'] = tag
+        setting['chain_len'] = chain_len
         print ('=========================================================')
         print ('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
             len(search_space), i+1, trials, int(float(i+1)/trials*100.)))
@@ -76,7 +81,8 @@ def dqn_feature(**kwargs):
     config.hyper = True
     config.tag = config.tb_tag
     config.generate_log_handles()
-    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
+    # special_args is for chain environment: env_name, chain_len, multigoal
+    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle, special_args=('NChain', config.chain_len, True))
     config.eval_env = config.task_fn()
     config.particles = 24
 
@@ -88,13 +94,13 @@ def dqn_feature(**kwargs):
     #config.replay_fn = lambda: AsyncReplay(memory_size=int(config.replay_size), batch_size=int(config.replay_bs))
 
     config.render = False  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(0.1, 0.001, 1e4)  # eps greedy params
-    config.discount = 0.99  # horizon
+    config.random_action_prob = LinearSchedule(0.01, 0.001, 1e4)  # eps greedy params
+    config.discount = 0.8  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
-    config.sgd_update_frequency = 1  # how often to do learning
-    config.gradient_clip = config.grad_clip  # max gradient norm
+    config.sgd_update_frequency = 4  # how often to do learning
+    config.gradient_clip = 1  # max gradient norm
     config.eval_interval = int(5e3)
     config.max_steps = 500e3
     config.async_actor = False
@@ -103,9 +109,8 @@ def dqn_feature(**kwargs):
     config.alpha_final = config.alpha_f  # SVGD alpha end value
     config.nstep_explore = 1
 
-    # run_steps(DQN_SVGD_Agent(config))
     run_steps(DQN_Dist_SVGD_Agent(config))
-    # run_steps(DQN_Agent(config))
+    # run_steps(DQNDistToySVGD_Agent(config))
 
 
 if __name__ == '__main__':
@@ -116,7 +121,8 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = '1step_1asoft_10cat_novar1_randomlog2'
-    game = 'bsuite-cartpole_swingup/0'
-    sweep(game, tag, dqn_feature, trials=50)
+    tag = 'chain_retest3'
+    game = 'NChain-v3'
+    for c in list(range(4, 50)):
+        sweep(game, tag, dqn_feature, c, trials=50)
 

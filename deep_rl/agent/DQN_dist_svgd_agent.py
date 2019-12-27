@@ -20,6 +20,7 @@ class DQNDistSVGDActor(BaseActor):
         BaseActor.__init__(self, config)
         self.config = config
         self.start()
+        self.sigterm = False
         if self.config.nstep_explore > 1:
             self.nstep = True
             self.nstep_uncertainty = 0.
@@ -77,10 +78,15 @@ class DQNDistSVGDActor(BaseActor):
             if self._task.record:
                 self._task.record_or_not(info)
 
+        if info[0]['terminate'] == True:
+            self.sigterm = True
+            self.close()
+
         # Add Q value estimates to info
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
         info[0]['q_explore'] = q_explore.mean()
+        info[0]['network'] = self._network.model_seed['value_z'][0].argmax()
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
@@ -115,6 +121,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         high = torch.ones(self.replay.batch_size, config.particles//2, 1) * 1e-8
         low = torch.ones(self.replay.batch_size, config.particles//2, 1) * 1e-8
         self.usampler = torch.distributions.Uniform(low, high)
+        self.sigterm = False
         print (self.network)
 
 
@@ -145,6 +152,10 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             self.target_network.set_model_seed(self.network.model_seed)
 
         transitions = self.actor.step()
+        if self.actor.sigterm == True:
+            self.close()
+            self.total_steps = config.max_steps
+
         experiences = []
         for state, action, reward, next_state, done, info in transitions:
             self.record_online_return(info)

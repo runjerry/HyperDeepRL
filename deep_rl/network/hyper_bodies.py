@@ -22,7 +22,7 @@ class NatureConvHyperBody(nn.Module):
 
     def forward(self, x=None, z=None, theta=None):
         # incoming x is batch of frames  [n, 4, width, height]
-        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1, 1, 1)    
+        x = x.unsqueeze(0).repeat(z.shape[1], 1, 1, 1, 1)
         y = F.relu(self.conv1(z[0], x, stride=4))
         y = F.relu(self.conv2(z[1], y, stride=4))
         y = F.relu(self.conv3(z[2], y, stride=1))
@@ -78,7 +78,7 @@ class ToyFCHyperBody(nn.Module):
         return x
 
 class CartFCHyperBody(nn.Module):
-    def __init__(self, state_dim, hidden_units=(256, 256), gate=F.relu, hidden=None):
+    def __init__(self, state_dim, hidden_units=(64, 64), gate=F.relu, hidden=None):
         super(CartFCHyperBody, self).__init__()
         self.mixer = False
         if hidden:
@@ -94,10 +94,10 @@ class CartFCHyperBody(nn.Module):
     def forward(self, x=None, z=None, theta=None):
         ones_mask = torch.ones(x.dim()).long().tolist()
         x = x.unsqueeze(0).repeat(z.shape[1], *ones_mask)
-        
+
         if x.size(2) == 1:  # DM lab has incompatible sizing with gym
             x = x.squeeze(2)
-        
+
         for i, layer in enumerate(self.layers):
             x = self.gate(layer(z[i], x))
         return x

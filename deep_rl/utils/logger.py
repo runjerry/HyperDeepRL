@@ -65,8 +65,6 @@ class Logger(object):
 
     def add_histogram(self, tag, values, step=None, log_level=0):
         self.lazy_init_writer()
-        if log_level > self.log_level:
-            return
         values = self.to_numpy(values)
         if step is None:
             step = self.get_step(tag)

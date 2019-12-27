@@ -37,35 +37,24 @@ class OriginalReturnWrapper(gym.Wrapper):
         self.total_rewards = 0
         self.ep = 0
         self.ep_steps = 0
-        self.upright = 0
-        self.total_upright = 0
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         self.episode_rewards += reward
         self.total_rewards += reward
         self.ep_steps += 1
-        if reward > 0.0005:
-            self.upright += 1
-            self.total_upright += 1
         if done:
             self.ep += 1
             info['episodic_return'] = self.episode_rewards
             info['episode'] = self.ep
-            info['episodic_upright'] = self.upright
             info['ep_steps'] = self.ep_steps
             info['total_return'] = self.total_rewards
-            info['total_upright'] = self.total_upright
             self.episode_rewards = 0
             self.ep_steps = 0
-            self.upright = 0
         else:
             info['episodic_return'] = None
-            info['episodic_upright'] = None
             info['episode'] = self.ep
-            info['episodic_upright'] = self.upright
             info['ep_steps'] = self.ep_steps
             info['total_return'] = self.total_rewards
-            info['total_upright'] = None
         return obs, reward, done, info
 
     def reset(self):
@@ -141,17 +130,17 @@ class DummyVecEnv(VecEnv):
             data.append([obs, rew, done, info])
         obs, rew, done, info = zip(*data)
         return obs, np.asarray(rew), np.asarray(done), info
-    
+
     def reset(self):
         return [env.reset() for env in self.envs]
-    
+
     def get_images(self):
         if 'cartpole' in self.name:
             mode = 'cartpole'
         else:
             mode = 'rgb_array'
         return [env.render(mode=mode) for env in self.envs]
-    
+
     def render(self, mode='human'):
         if 'cartpole' in self.name:
             mode='cartpole'
@@ -176,13 +165,13 @@ class GIFlogger(object):
 
     def reset_frames(self):
         self.stored_frames = []
-    
+
     def add_frame(self, frame):
         self.stored_frames.append(frame)
 
     def __len__(self):
         return len(self.stored_frames)
-    
+
     def create_gif_directory(self):
         self.save_dir = self.log_dir+'/episode_gif_recordings/'
         if not os.path.exists(self.save_dir):
@@ -194,7 +183,7 @@ class GIFlogger(object):
         np_frames = np.array(self.stored_frames)
         imageio.mimsave(fp, np_frames, fps=60)
         self.videos_logged += 1
-    
+
 
 class Task:
     def __init__(self,
@@ -222,7 +211,7 @@ class Task:
             self.record = True
 
         self.record_now = False
-    
+
         self.name = name
         envs = [self.make_env(name, seed, i, episode_life, special_args) for i in range(num_envs)]
         if single_process:
@@ -251,17 +240,18 @@ class Task:
                 self.video_enabled = False
                 bsuite_env = bsuite.load_from_id(id)
                 env = gym_wrapper.GymFromDMEnv(bsuite_env)
-            
+
             elif env_id.startswith("dm"):
                 import dm_control2gym
                 _, domain, task = env_id.split('-')
                 env = dm_control2gym.make(domain_name=domain, task_name=task)
-            
+
             else:
                 if special_args is not None:
+                    print (special_args)
                     if 'NChain' in special_args[0]:
-                        print ('starting chain N = ', special_args[1])
-                        env = gym.make(env_id, n=special_args[1])
+                        print ('starting chain N = ', special_args[1], 'with multigoal=', special_args[2])
+                        env = gym.make(env_id, n=special_args[1], multigoal=special_args[2])
                 else:
                     env = gym.make(env_id)
 
@@ -291,7 +281,7 @@ class Task:
 
     def reset(self):
         return self.env.reset()
-    
+
     def record_or_not(self, info):
         if info[0]['episode'] % self.video_freq == 0:
             self.record_now = True

@@ -53,7 +53,8 @@ class DQNToySVGDActor(BaseActor):
 
         if done:
             self._network.sample_model_seed(dist='categorical')
-
+        print (info)
+        print (info[0].keys())
         if info[0]['terminate'] == True:
             self.sigterm = True
             self.close()

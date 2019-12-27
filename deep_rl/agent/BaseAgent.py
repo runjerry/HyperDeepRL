@@ -19,6 +19,8 @@ class BaseAgent:
                                  tf_log_dir=config.tf_log_handle,
                                  log_level=config.log_level)
         self.task_ind = 0
+        self.particle_terminal_states = torch.zeros(config.particles, config.chain_len)
+        self.particle_frequencies = torch.zeros(config.particles)
 
     def close(self):
         close_obj(self.task)
@@ -72,8 +74,6 @@ class BaseAgent:
     def record_online_return(self, info, offset=0):
 
         if isinstance(info, dict):
-            upright = info['episodic_upright']
-            total_upright = info['total_upright']
             total_ret = info['total_return']
             ret = info['episodic_return']
             ep = info['episode']
@@ -81,26 +81,42 @@ class BaseAgent:
             q_mean = info['q_mean']
             q_var = info['q_var']
             q_explore = info['q_explore']
+            exp_terminal = info['terminate']
+            ep_terminal = info['ep_terminal']
+            end_state = info['terminal_state']
+            network = info['network']
+
             if ret is not None:
                 self.logger.add_scalar('episodic_return_train', ret, self.total_steps + offset)
                 self.logger.add_scalar('episodic_steps', steps, self.total_steps + offset)
                 self.logger.add_scalar('total_return', total_ret, self.total_steps + offset)
-                self.logger.add_scalar('episodic_upright', upright, self.total_steps + offset)
-                self.logger.add_scalar('total_upright', total_upright, self.total_steps + offset)
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
                 self.logger.add_scalar('q_values_mean_actor', q_mean, self.total_steps + offset)
                 self.logger.add_scalar('q_values_var_actor', q_var, self.total_steps + offset)
                 self.logger.add_scalar('q_values_explore_actor', q_explore, self.total_steps + offset)
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
-                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| ep_upright: %s| total_upright: %s| total_return: %.3f' % (
+                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| total_return: %.3f' % (
                     ep,
                     steps,
                     self.total_steps + offset,
                     ret,
-                    upright,
-                    total_upright,
                     total_ret,
                 ))
+                if end_state is not None:
+                    self.particle_terminal_states[network][end_state] += 1
+
+                if ep_terminal:
+                    self.particle_frequencies[network] += 1
+
+                if exp_terminal:
+                    for i in range(self.config.particles):
+                        tag1 = 'chain{}/policy/particle{}'.format(self.config.chain_len, i)
+                        tag2 = 'chain{}/freq/particle{}'.format(self.config.chain_len, i)
+                        self.logger.add_histogram(tag1, self.particle_terminal_states[i], steps, self.total_steps + offset)
+                    self.logger.add_histogram(tag2, self.particle_frequencies, steps, self.total_steps + offset)
+                    print (self.particle_terminal_states)
+                    self.particle_terminal_states = torch.zeros(self.config.particles, self.config.chain_len)
+                    self.particle_frequencies = torch.zeros(self.config.particles)
 
         elif isinstance(info, tuple):
             for i, info_ in enumerate(info):
@@ -108,23 +124,6 @@ class BaseAgent:
         else:
             raise NotImplementedError
 
-    """
-    def record_agent_return(self, info):
-        if isinstance(info, dict):
-            loss = info['td_loss']
-            gk_mean = info['grad_kappa_mean']
-            kappa_mean = info['kappa_mean']
-            if ret is not none:
-                self.logger.add_scalar('td_loss', loss, self.total_steps + offset)
-                self.logger.add_scalar('grad_kappa', gk_mean, self.total_steps + offset)
-                self.logger.add_scalar('kappa', kappa_mean, self.total_steps + offset)
-
-        elif isinstance(info, tuple):
-            for i, info_ in enumerate(info):
-                self.record_online_return(info_, i)
-        else:
-            raise notimplementederror
-    """
 
     def switch_task(self):
         config = self.config
