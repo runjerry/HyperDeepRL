@@ -1,4 +1,4 @@
-######################################################################
+#########################G#############################################
 # Copyright (C) 2017 Shangtong Zhang(zhangshangtong.cpp@gmail.com)    #
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
@@ -23,16 +23,16 @@ def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
         setting = {
             'game': game,
             'tb_tag': tag,
-            'alpha_i': .1,
-            'alpha_f': .1,
-            'anneal': 500e3,
+            'alpha_i': .01,
+            'alpha_f': .01,
+            'anneal': (chain_len+9)*2000,
             'lr': 1e-2,
             'freq': 10,
             'grad_clip': None,
             'hidden': 256,
             'replay_size': int(1e3),
             'replay_bs': 32,
-            'dist': 'categorical'
+            'dist':'softmax'
         }
         print ('Running Config: ')
         for (k, v) in setting.items():
@@ -84,7 +84,7 @@ def dqn_feature(**kwargs):
     # special_args is for chain environment: env_name, chain_len, multigoal
     config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle, special_args=('NChain', config.chain_len, True))
     config.eval_env = config.task_fn()
-    config.particles = 24
+    config.particles = 10
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
@@ -121,8 +121,8 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'chain_retest3'
+    tag = 'chain_multimode_softmax_10dim'
     game = 'NChain-v3'
-    for c in list(range(4, 50)):
+    for c in list(range(5, 100))[::2]:
         sweep(game, tag, dqn_feature, c, trials=50)
 

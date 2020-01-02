@@ -101,7 +101,7 @@ class NChainEnv(gym.Env):
             info['terminal_state'] = None
 
         # print ('state: {}, action: {}, reward: {}, state: {}'.format(old_state, action, reward, self.state))
-        if self.steps >= self.n + 9:
+        if self.steps >= (self.n // 2) + 10:
             self.ep += 1
             done = True
             info['ep_terminal'] = True
@@ -123,7 +123,7 @@ class NChainEnv(gym.Env):
     def reset(self):
         # print ('reset')
         self.state_int = self.start_state
-        print (self.state_int)
+        print ('resetting to state ', self.state_int)
         self.set_state(self.state_int)
         self.steps = 0
         self.ep_reward = 0.

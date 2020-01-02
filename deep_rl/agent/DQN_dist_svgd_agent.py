@@ -31,16 +31,29 @@ class DQNDistSVGDActor(BaseActor):
         if self._state is None:
             self._state = self._task.reset()
         config = self.config
+        head = np.random.choice(config.particles, 1)[0]
         with config.lock:
             state = config.state_normalizer(self._state)
-            q_values = self._network(state)  # [particles, 1, actions]
-            particle_max = q_values.argmax(-1)
-            abs_max = q_values.max(2)[0].argmax( )
-            q_max = q_values[abs_max]
+            q_values = self._network(state)
+            if q_values.dim() == 4:
+                particle_max = q_values.argmax(-1)
+                abs_max = q_values.view(3*config.particles, q_values.size(2), q_values.size(3)).max(-1)[0].argmax()
+                q_max = q_values.view(3*config.particles, -1)[abs_max]
+            else:
+                q_values = self._network(state)  # [5, particles, 1, actions]
+                particle_max = q_values.argmax(-1)
+                abs_max = q_values.max(2)[0].argmax()
+                q_max = q_values[abs_max]
 
         q_max = to_np(q_max).flatten()
-        q_var = to_np(q_values.var(0))  # [actions]
-        q_mean = to_np(q_values.mean(0))  # [actions]
+        if q_values.dim() == 4:
+            q_var = to_np(q_values.var(0)[head])  # [actions]
+            q_mean = to_np(q_values.mean(0)[head]) # [actions]
+            actions_store = to_np(q_values.mean(0).argmax(-1)) # [particles, 1]
+        else:
+            q_var = to_np(q_values.var(0))  # [actions]
+            q_mean = to_np(q_values.mean(0))  # [actions]
+            actions_store = to_np(q_values.argmax(-1))  # [particles, 1]
 
         # UBE takes sqrt of a standard normal centered at q_mean
         # n step
@@ -54,8 +67,7 @@ class DQNDistSVGDActor(BaseActor):
         # 1 step
         else:
             q_explore = q_mean
-            # q_explore = q_mean + 1 * q_var
-
+            q_explore = q_mean + 1 * q_var
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
@@ -66,10 +78,10 @@ class DQNDistSVGDActor(BaseActor):
             # action = np.argmax(q_max)  # Max Action
             # action = np.argmax(q_mean)  # Mean Action
             action = np.argmax(q_explore)  # Exploration Bonus
-            actions_log = to_np(particle_max)
+            # actions_log = to_np(particle_max)
+            actions_log = actions_store
             # print ('p max', actions_log.mean().item())
         # print (actions_log.shape)
-
         next_state, reward, done, info = self._task.step([action])
         if config.render and self._task.record_now:
             self._task.render()
@@ -86,8 +98,10 @@ class DQNDistSVGDActor(BaseActor):
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
         info[0]['q_explore'] = q_explore.mean()
-        info[0]['network'] = self._network.model_seed['value_z'][0].argmax()
-
+        if self._network.model_seed['value_z'].dim() == 3:
+            info[0]['network'] = self._network.model_seed['value_z'][0][0][:-1].argmax()
+        else:
+            info[0]['network'] = self._network.model_seed['value_z'][0].argmax()
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state
@@ -147,10 +161,13 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
     def step(self):
         config = self.config
 
-        if not torch.equal(self.network.model_seed['value_z'],
-                           self.target_network.model_seed['value_z']):
+        if (not torch.equal(self.network.model_seed['value_z'],
+                           self.target_network.model_seed['value_z']) or
+            not torch.equal(self.network.model_seed['advantage_z'],
+                           self.target_network.model_seed['advantage_z']) or
+            not torch.equal(self.network.model_seed['features_z'],
+                           self.target_network.model_seed['features_z'])):
             self.target_network.set_model_seed(self.network.model_seed)
-
         transitions = self.actor.step()
         if self.actor.sigterm == True:
             self.close()
@@ -175,9 +192,13 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             ## Get target q values
             # """
             q_next = self.target_network(next_states).detach()  # [particles, batch, action]
+            if q_next.dim() == 4:
+                q_next = q_next.mean(0)
             if self.config.double_q:
                 ## Double DQN
                 q = self.network(next_states)  # choose random particle (Q function)  [batch, action]
+                if q.dim() == 4:
+                    q = q.mean(0)
                 best_actions = torch.argmax(q, dim=-1)  # get best action  [batch]
                 q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])
                 # q_next = q_next[:, self.batch_indices, best_actions]
@@ -190,6 +211,9 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             ## Get main Q values
             phi = self.network.body(states)  # [particles, batch, hidden]
             q = self.network.head(phi)  # [particles, batch, actions]
+            if q.dim() == 4:
+                q = q.mean(0)
+
             actions = actions.transpose(0, 1).squeeze(-1)
             q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
             # all q are the same for categorical
@@ -211,18 +235,16 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             # add random sample to q values to simulate random actions in the batch
             r = self.usampler.sample().cuda()
             rf = self.usampler.sample().cuda()
-            q_eps = q + r
-            q_frozen_eps = q_frozen + rf
-
-            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps)
-            # print (kappa.shape, grad_kappa.shape)
+            #q_eps = q + r
+            #q_frozen_eps = q_frozen + rf
+            kappa, grad_kappa = batch_rbf_xy(q_frozen, q)
             kappa = kappa.unsqueeze(-1)
 
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
             # print ('klop', kernel_logp.shape)
-            #print ('k', kappa, kappa.shape)
-            #print ('gk', grad_kappa, grad_kappa.shape)
             alpha = self.alpha_schedule.value(self.total_steps)
+            #print ('k', kappa, kappa.shape)
+            #print ('gk', grad_kappa * alpha, grad_kappa.shape)
             svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
             #### Disable SVGD
             #kappa.detach()

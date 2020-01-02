@@ -114,7 +114,9 @@ class BaseAgent:
                         tag2 = 'chain{}/freq/particle{}'.format(self.config.chain_len, i)
                         self.logger.add_histogram(tag1, self.particle_terminal_states[i], steps, self.total_steps + offset)
                     self.logger.add_histogram(tag2, self.particle_frequencies, steps, self.total_steps + offset)
-                    print (self.particle_terminal_states)
+                    for t in self.particle_terminal_states:
+                        print (t)
+                    print (self.particle_terminal_states.sum())
                     self.particle_terminal_states = torch.zeros(self.config.particles, self.config.chain_len)
                     self.particle_frequencies = torch.zeros(self.config.particles)
 
