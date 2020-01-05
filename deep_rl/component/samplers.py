@@ -37,8 +37,14 @@ class NoiseSampler(object):
             k_classes = self.z_dim
             probs = torch.ones(k_classes-1)/float(k_classes-1)
             self.base_dist = torch.distributions.OneHotCategorical(probs=probs)
-            high = torch.ones(self.particles, 1) * 1.0
-            low = torch.ones(self.particles, 1) * 0.9
+            high = torch.ones(self.particles, 1) * 0.001
+            low = torch.ones(self.particles, 1) * 0.0
+            self.aux = torch.linspace(0, 1, steps=self.particles)
+            mean = torch.ones(self.particles, 1)
+            std = torch.ones(self.particles, 1) * 0.3
+            self.aux_dist = torch.distributions.Normal(mean, std)
+            self.aux = self.aux_dist.sample()
+            self.aux = self.aux.view(self.particles, 1)
             self.aux_dist = torch.distributions.Uniform(low, high)
 
         elif self.dist_type == 'multisoftmax':
@@ -69,9 +75,11 @@ class NoiseSampler(object):
         if self.aux_dist is not None:
             # sample = self.base_dist.sample([self.particles])
             #sample = sample.unsqueeze(0).repeat(3, 1, 1)
-            sample_aux = self.aux_dist.sample()
+            # sample_aux = self.aux_dist.sample()
+            sample_aux = self.aux
             #sample_aux = sample_aux.repeat(1, self.particles).unsqueeze(-1)
             sample = torch.cat((sample, sample_aux), dim=-1)
+            # print (sample)
             #sample *= sample_aux
             # return sample, aux_sample
         return sample

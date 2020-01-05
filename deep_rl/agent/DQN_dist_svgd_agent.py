@@ -67,7 +67,7 @@ class DQNDistSVGDActor(BaseActor):
         # 1 step
         else:
             q_explore = q_mean
-            q_explore = q_mean + 1 * q_var
+            #q_explore = q_mean + 1 * q_var
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
@@ -90,9 +90,9 @@ class DQNDistSVGDActor(BaseActor):
             if self._task.record:
                 self._task.record_or_not(info)
 
-        if info[0]['terminate'] == True:
-            self.sigterm = True
-            self.close()
+        #if info[0]['terminate'] == True:
+        #    self.sigterm = True
+        #    self.close()
 
         # Add Q value estimates to info
         info[0]['q_mean'] = q_mean.mean()
@@ -169,9 +169,9 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
                            self.target_network.model_seed['features_z'])):
             self.target_network.set_model_seed(self.network.model_seed)
         transitions = self.actor.step()
-        if self.actor.sigterm == True:
-            self.close()
-            self.total_steps = config.max_steps
+        #if self.actor.sigterm == True:
+        #    self.close()
+        #    self.total_steps = config.max_steps
 
         experiences = []
         for state, action, reward, next_state, done, info in transitions:

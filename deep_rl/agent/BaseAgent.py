@@ -19,8 +19,8 @@ class BaseAgent:
                                  tf_log_dir=config.tf_log_handle,
                                  log_level=config.log_level)
         self.task_ind = 0
-        self.particle_terminal_states = torch.zeros(config.particles, config.chain_len)
-        self.particle_frequencies = torch.zeros(config.particles)
+        #self.particle_terminal_states = torch.zeros(config.particles, config.chain_len)
+        #self.particle_frequencies = torch.zeros(config.particles)
 
     def close(self):
         close_obj(self.task)
@@ -81,27 +81,34 @@ class BaseAgent:
             q_mean = info['q_mean']
             q_var = info['q_var']
             q_explore = info['q_explore']
-            exp_terminal = info['terminate']
-            ep_terminal = info['ep_terminal']
-            end_state = info['terminal_state']
+            upright = info['episodic_upright']
+            total_upright = info['total_upright']
+            #exp_terminal = info['terminate']
+            #ep_terminal = info['ep_terminal']
+            #end_state = info['terminal_state']
             network = info['network']
 
             if ret is not None:
                 self.logger.add_scalar('episodic_return_train', ret, self.total_steps + offset)
                 self.logger.add_scalar('episodic_steps', steps, self.total_steps + offset)
                 self.logger.add_scalar('total_return', total_ret, self.total_steps + offset)
+                self.logger.add_scalar('total_upright', total_upright, self.total_steps + offset)
+                self.logger.add_scalar('episodic_upright', upright, self.total_steps + offset)
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
                 self.logger.add_scalar('q_values_mean_actor', q_mean, self.total_steps + offset)
                 self.logger.add_scalar('q_values_var_actor', q_var, self.total_steps + offset)
                 self.logger.add_scalar('q_values_explore_actor', q_explore, self.total_steps + offset)
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
-                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| total_return: %.3f' % (
+                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| ep_upright: %s| total_upright: %s| total_return: %.3f' % (
                     ep,
                     steps,
                     self.total_steps + offset,
                     ret,
+                    upright,
+                    total_upright,
                     total_ret,
                 ))
+                """
                 if end_state is not None:
                     self.particle_terminal_states[network][end_state] += 1
 
@@ -119,7 +126,7 @@ class BaseAgent:
                     print (self.particle_terminal_states.sum())
                     self.particle_terminal_states = torch.zeros(self.config.particles, self.config.chain_len)
                     self.particle_frequencies = torch.zeros(self.config.particles)
-
+                """
         elif isinstance(info, tuple):
             for i, info_ in enumerate(info):
                 self.record_online_return(info_, i)

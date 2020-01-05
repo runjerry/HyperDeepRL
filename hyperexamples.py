@@ -15,7 +15,7 @@ def product_dict(kwargs):
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
 
-def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
+def sweep(game, tag, model_fn, chain_len=0, trials=50, manual=True):
     # manually define
     if manual:
         print ('=========================================================')
@@ -23,15 +23,15 @@ def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
         setting = {
             'game': game,
             'tb_tag': tag,
-            'alpha_i': .01,
-            'alpha_f': .01,
-            'anneal': (chain_len+9)*2000,
-            'lr': 1e-2,
-            'freq': 10,
+            'alpha_i': 10,
+            'alpha_f': .1,
+            'anneal': 500e3,
+            'lr': 1e-4,
+            'freq': 100,
             'grad_clip': None,
             'hidden': 256,
-            'replay_size': int(1e3),
-            'replay_bs': 32,
+            'replay_size': int(1e5),
+            'replay_bs': 128,
             'dist':'softmax'
         }
         print ('Running Config: ')
@@ -43,17 +43,17 @@ def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
         return
 
     hyperparams = {
-        'alpha_i': [1, 10, 100],
-        'alpha_f': [.1, 0.01],
+        'alpha_i': [1, 10],
+        'alpha_f': [.1],
         'anneal': [500e3],
         'lr': [2e-4, 1e-4],
         'freq' : [100, 150],
-        'grad_clip': [None, 5],
+        'grad_clip': [None, 1, 5],
         'hidden': [256, 128, 512],
         'replay_size': [int(1e5)],
-        'replay_bs': [128],
+        'replay_bs': [128, 64],
         # 'dist': ['categorical', 'multinomial', 'normal', 'uniform']
-        'dist': ['multinomial']
+        'dist': ['softmax']
     }
 
     search_space = list(product_dict(hyperparams))
@@ -62,8 +62,7 @@ def sweep(game, tag, model_fn, chain_len, trials=50, manual=True):
     for i, idx in enumerate(ordering):
         setting = search_space[idx]
         setting['game'] = game
-        setting['tb_tag'] = tag
-        setting['chain_len'] = chain_len
+        setting['tb_tag'] = tag + '_{}'.format(idx)
         print ('=========================================================')
         print ('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
             len(search_space), i+1, trials, int(float(i+1)/trials*100.)))
@@ -82,7 +81,7 @@ def dqn_feature(**kwargs):
     config.tag = config.tb_tag
     config.generate_log_handles()
     # special_args is for chain environment: env_name, chain_len, multigoal
-    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle, special_args=('NChain', config.chain_len, True))
+    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
     config.particles = 10
 
@@ -95,12 +94,12 @@ def dqn_feature(**kwargs):
 
     config.render = False  # Render environment at every train step
     config.random_action_prob = LinearSchedule(0.01, 0.001, 1e4)  # eps greedy params
-    config.discount = 0.8  # horizon
+    config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
-    config.sgd_update_frequency = 4  # how often to do learning
-    config.gradient_clip = 1  # max gradient norm
+    config.sgd_update_frequency = 1  # how often to do learning
+    config.gradient_clip = config.grad_clip  # max gradient norm
     config.eval_interval = int(5e3)
     config.max_steps = 500e3
     config.async_actor = False
@@ -121,8 +120,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'chain_multimode_softmax_10dim'
-    game = 'NChain-v3'
-    for c in list(range(5, 100))[::2]:
-        sweep(game, tag, dqn_feature, c, trials=50)
+    tag = 'cartpole_categorical_10dim'
+    game = 'bsuite-cartpole_swingup/0'
+    sweep(game, tag, dqn_feature, trials=50, manual=True)
 
