@@ -44,7 +44,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'hidden': 256,
             'replay_size': int(1e5),
             'replay_bs': 128,
-            'dist': 'categorical'
+            'dist': 'softmax'
         }
         print ('Running Config: ')
         for (k, v) in setting.items():
@@ -78,7 +78,7 @@ def dqn_feature(**kwargs):
     config.generate_log_handles()
     config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
-    config.particles = 10
+    config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     random_seed()
     # select_device(-1)
     select_device(0)
-    tag = 'novar_10categorical_svgd_trial6_alpha10_2'
+    tag = 'softmax10_fixlinspace1'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, trials=50)
 
