@@ -26,7 +26,7 @@ def sweep(game, tag, model_fn, trials=50, manual=False):
         'replay_size': [int(1e6), int(1e7)],
         'replay_bs': [32, 64, 128],
         # 'dist': ['categorical', 'multinomial', 'multivariate_normal']
-        'dist': ['softmax']
+        'dist': ['categorical']
     }
     # manually define
     if manual:
@@ -39,10 +39,10 @@ def sweep(game, tag, model_fn, trials=50, manual=False):
                     anneal=500e3,
                     lr=1e-4,
                     freq=10000,
-                    grad_clip=None,
+                    grad_clip=5,
                     hidden=256,
                     replay_size=int(1e6),
-                    replay_bs=32,
+                    replay_bs=128,
                     dist='categorical')
         return
 
@@ -85,7 +85,7 @@ def dqn_pixel(**kwargs):
     config.discount = 0.99
     config.target_network_update_freq = config.freq
     config.exploration_steps = 0
-    config.sgd_update_frequency = 1
+    config.sgd_update_frequency = 4
     config.gradient_clip = config.grad_clip
     config.history_length = 4
     config.double_q = True
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'atari_intial_trials'
-    game = 'BreakoutNoFrameskip-v4'
-    sweep(game, tag, dqn_pixel, trials=50)
+    tag = 'pong_trials_cat'
+    game = 'FreewayNoFrameskip-v4'
+    sweep(game, tag, dqn_pixel, trials=50, manual=True)
 
