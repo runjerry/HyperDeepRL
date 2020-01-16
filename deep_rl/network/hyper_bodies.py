@@ -36,6 +36,30 @@ class ToyFCHyperBody(nn.Module):
                 x = self.gate(layer(z[i], x))
         return x
 
+class ThompsonHyperBody(nn.Module):
+    def __init__(self, state_dim, hidden_units=(64, 64), gate=F.relu, hidden=None):
+        super(ThompsonHyperBody, self).__init__()
+        self.mixer = False
+        if hidden:
+            hidden_units=(hidden, hidden)
+        print (hidden_units)
+        dims = (state_dim,) + hidden_units
+        self.config = FCBody_config(state_dim, hidden_units, gate)
+        self.gate = gate
+        self.feature_dim = dims[-1]
+        n_layers = self.config['n_gen']
+        self.layers = nn.ModuleList([LinearGenerator(self.config['fc{}'.format(i+1)]).cuda() for i in range(n_layers)])
+
+    def forward(self, x=None, z=None, theta=None):
+        ones_mask = torch.ones(x.dim()).long().tolist()
+        x = x.unsqueeze(0).repeat(z.shape[1], *ones_mask)
+
+        if x.size(2) == 1:  # DM lab has incompatible sizing with gym
+            x = x.squeeze(2)
+
+        for i, layer in enumerate(self.layers):
+            x = self.gate(layer(z[i], x))
+        return x
 
 class DummyHyperBody(nn.Module):
     def __init__(self, state_dim):

@@ -4,13 +4,16 @@
 # declaration at the top                                              #
 #######################################################################
 from .normalizer import *
+import datetime
+import yaml
+import os
+import json
 import argparse
 import torch
 
 
 class Config:
     DEVICE = torch.device('cuda')
-    particles = 24
 
     def __init__(self):
         self.parser = argparse.ArgumentParser()
@@ -62,6 +65,7 @@ class Config:
         self.tasks = False
         self.particles = 24
         self.hyper = False
+        self.render = False
 
     @property
     def eval_env(self):
@@ -73,7 +77,21 @@ class Config:
         self.state_dim = env.state_dim
         self.action_dim = env.action_dim
         self.task_name = env.name
+    
+    def generate_log_handles(self):
+        ts = datetime.datetime.now().strftime("%y%m%d-%H%M%S")
+        self.log_handle = './tf_log/%s-%s/log.txt' % (self.tag, ts)
+        self.tf_log_handle = './tf_log/%s-%s' % (self.tag, ts)
+        if not os.path.exists(self.tf_log_handle):
+            os.makedirs(self.tf_log_handle)
 
+    def save_config_to_yaml(self):
+        items = vars(self)
+        itemstr = {k: str(v) for (k, v) in items.items()}
+        save_fn = '/config.json'
+        with open(self.tf_log_handle+save_fn, 'w') as f:
+            json.dump(itemstr, f, indent=2)
+    
     def add_argument(self, *args, **kwargs):
         self.parser.add_argument(*args, **kwargs)
 

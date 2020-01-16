@@ -15,7 +15,9 @@ from skimage.io import imsave
 class BaseAgent:
     def __init__(self, config):
         self.config = config
-        self.logger = get_logger(tag=config.tag, log_level=config.log_level)
+        self.logger = get_logger(log_dir=config.log_handle,
+                                 tf_log_dir=config.tf_log_handle,
+                                 log_level=config.log_level)
         self.task_ind = 0
 
     def close(self):
@@ -59,12 +61,38 @@ class BaseAgent:
             'episodic_return_test': np.mean(episodic_returns),
         }
 
+
     def record_online_return(self, info, offset=0):
+
         if isinstance(info, dict):
+            total_ret = info['total_return']
             ret = info['episodic_return']
+            ep = info['episode']
+            steps = info['ep_steps']
+            q_mean = info['q_mean']
+            q_var = info['q_var']
+            q_explore = info['q_explore']
+            #upright = info['episodic_upright']
+            #total_upright = info['total_upright']
+
             if ret is not None:
                 self.logger.add_scalar('episodic_return_train', ret, self.total_steps + offset)
-                self.logger.info('steps %d, episodic_return_train %s' % (self.total_steps + offset, ret))
+                self.logger.add_scalar('episodic_steps', steps, self.total_steps + offset)
+                self.logger.add_scalar('total_return', total_ret, self.total_steps + offset)
+                #self.logger.add_scalar('total_upright', total_upright, self.total_steps + offset)
+                #self.logger.add_scalar('episodic_upright', upright, self.total_steps + offset)
+                self.logger.add_scalar('episode', ep, self.total_steps + offset)
+                self.logger.add_scalar('q_values_mean_actor', q_mean, self.total_steps + offset)
+                self.logger.add_scalar('q_values_var_actor', q_var, self.total_steps + offset)
+                self.logger.add_scalar('q_values_explore_actor', q_explore, self.total_steps + offset)
+                self.logger.add_scalar('episode', ep, self.total_steps + offset)
+                self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| total_return: %.3f' % (
+                    ep,
+                    steps,
+                    self.total_steps + offset,
+                    ret,
+                    total_ret,
+                ))
         elif isinstance(info, tuple):
             for i, info_ in enumerate(info):
                 self.record_online_return(info_, i)

@@ -40,10 +40,10 @@ dueling_net = namedtuple('dueling_net', ' '.join(fields))
 dueling_net.__new__.__defaults__ = defaults # python 3.6
 def DuelingNet_config(feature_dim, action_dim, mixer=False):
     net_config = {
-            'fc_value': dueling_net(d_input=feature_dim, d_output=1),
-            'fc_advantage': dueling_net(d_input=feature_dim, d_output=action_dim),
-            'z_dim': 64,
-            's_dim': 64,
+            'fc_value': dueling_net(d_input=feature_dim, d_output=1, z_dim=24),
+            'fc_advantage': dueling_net(d_input=feature_dim, d_output=action_dim, z_dim=24),
+            'z_dim': 24,
+            's_dim': 24,
             'n_gen': 2
             }
     if mixer:
