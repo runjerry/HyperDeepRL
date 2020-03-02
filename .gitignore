@@ -1,4 +1,5 @@
 tf_log/
+slurm_outfiles/
 past_runs/
 *.ubuntu-MS-7B48
 log/
