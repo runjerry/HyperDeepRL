@@ -1,0 +1,1407 @@
+2020-02-27 18:00:47.996987: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /apps/slurm/19.05/lib:/usr/local/apps/cuda/cuda-9.0/lib64:/usr/local/apps/cuda/cuda-9.0/lib:/nfs/stak/users/ratzlafn/nccl/lib
+2020-02-27 18:00:48.000531: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /apps/slurm/19.05/lib:/usr/local/apps/cuda/cuda-9.0/lib64:/usr/local/apps/cuda/cuda-9.0/lib:/nfs/stak/users/ratzlafn/nccl/lib
+2020-02-27 18:00:48.000934: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2020-02-27 18:01:11,301 - root - INFO: steps 0, 91180521.74 steps/s
+2020-02-27 18:01:12,028 - root - INFO: steps 0, ep_return_test -7.90(0.00)
+2020-02-27 18:01:18,588 - root - INFO: ep: 1| steps: 427| total_steps: 426| return_train: -22.900| ep_upright: 0| total_upright: 0| total_return: -22.900
+2020-02-27 18:01:22,648 - root - INFO: ep: 2| steps: 264| total_steps: 690| return_train: -14.900| ep_upright: 0| total_upright: 0| total_return: -37.800
+2020-02-27 18:01:24,764 - root - INFO: ep: 3| steps: 139| total_steps: 829| return_train: -12.400| ep_upright: 0| total_upright: 0| total_return: -50.200
+2020-02-27 18:01:27,349 - root - INFO: steps 1000, 62.32 steps/s
+2020-02-27 18:01:29,465 - root - INFO: ep: 4| steps: 311| total_steps: 1140| return_train: -20.100| ep_upright: 0| total_upright: 0| total_return: -70.300
+2020-02-27 18:01:35,051 - root - INFO: ep: 5| steps: 370| total_steps: 1510| return_train: -19.000| ep_upright: 0| total_upright: 0| total_return: -89.300
+2020-02-27 18:01:39,673 - root - INFO: ep: 6| steps: 306| total_steps: 1816| return_train: -20.400| ep_upright: 0| total_upright: 0| total_return: -109.700
+2020-02-27 18:01:42,457 - root - INFO: steps 2000, 66.20 steps/s
+2020-02-27 18:01:43,018 - root - INFO: ep: 7| steps: 221| total_steps: 2037| return_train: -14.700| ep_upright: 0| total_upright: 0| total_return: -124.400
+2020-02-27 18:01:49,840 - root - INFO: ep: 8| steps: 450| total_steps: 2487| return_train: -25.000| ep_upright: 0| total_upright: 0| total_return: -149.400
+2020-02-27 18:01:51,837 - root - INFO: ep: 9| steps: 131| total_steps: 2618| return_train: -9.100| ep_upright: 0| total_upright: 0| total_return: -158.500
+2020-02-27 18:01:57,666 - root - INFO: steps 3000, 65.75 steps/s
+2020-02-27 18:01:59,959 - root - INFO: ep: 10| steps: 532| total_steps: 3150| return_train: -24.300| ep_upright: 0| total_upright: 0| total_return: -182.800
+2020-02-27 18:02:06,464 - root - INFO: ep: 11| steps: 430| total_steps: 3580| return_train: -25.600| ep_upright: 5| total_upright: 5| total_return: -208.400
+2020-02-27 18:02:09,364 - root - INFO: ep: 12| steps: 191| total_steps: 3771| return_train: -13.000| ep_upright: 0| total_upright: 5| total_return: -221.400
+2020-02-27 18:02:12,837 - root - INFO: steps 4000, 65.92 steps/s
+2020-02-27 18:02:13,356 - root - INFO: ep: 13| steps: 263| total_steps: 4034| return_train: -14.000| ep_upright: 0| total_upright: 5| total_return: -235.400
+2020-02-27 18:02:15,604 - root - INFO: ep: 14| steps: 148| total_steps: 4182| return_train: -12.500| ep_upright: 0| total_upright: 5| total_return: -247.900
+2020-02-27 18:02:22,285 - root - INFO: ep: 15| steps: 441| total_steps: 4623| return_train: -24.900| ep_upright: 0| total_upright: 5| total_return: -272.800
+2020-02-27 18:02:28,006 - root - INFO: steps 5000, 65.93 steps/s
+2020-02-27 18:02:29,601 - root - INFO: steps 5000, ep_return_test -15.52(1.30)
+2020-02-27 18:02:30,286 - root - INFO: ep: 16| steps: 422| total_steps: 5045| return_train: -9.900| ep_upright: 15| total_upright: 20| total_return: -282.700
+2020-02-27 18:02:32,451 - root - INFO: ep: 17| steps: 143| total_steps: 5188| return_train: -9.600| ep_upright: 0| total_upright: 20| total_return: -292.300
+2020-02-27 18:02:37,187 - root - INFO: ep: 18| steps: 310| total_steps: 5498| return_train: -21.200| ep_upright: 0| total_upright: 20| total_return: -313.500
+2020-02-27 18:02:40,504 - root - INFO: ep: 19| steps: 215| total_steps: 5713| return_train: -17.200| ep_upright: 0| total_upright: 20| total_return: -330.700
+2020-02-27 18:02:43,392 - root - INFO: ep: 20| steps: 190| total_steps: 5903| return_train: -12.200| ep_upright: 0| total_upright: 20| total_return: -342.900
+2020-02-27 18:02:44,868 - root - INFO: steps 6000, 59.31 steps/s
+2020-02-27 18:02:48,024 - root - INFO: ep: 21| steps: 304| total_steps: 6207| return_train: -20.100| ep_upright: 0| total_upright: 20| total_return: -363.000
+2020-02-27 18:02:50,691 - root - INFO: ep: 22| steps: 175| total_steps: 6382| return_train: -10.000| ep_upright: 0| total_upright: 20| total_return: -373.000
+2020-02-27 18:03:00,120 - root - INFO: steps 7000, 65.57 steps/s
+2020-02-27 18:03:01,872 - root - INFO: ep: 23| steps: 732| total_steps: 7114| return_train: -49.100| ep_upright: 0| total_upright: 20| total_return: -422.100
+2020-02-27 18:03:09,037 - root - INFO: ep: 24| steps: 469| total_steps: 7583| return_train: -29.100| ep_upright: 0| total_upright: 20| total_return: -451.200
+2020-02-27 18:03:12,791 - root - INFO: ep: 25| steps: 245| total_steps: 7828| return_train: -18.600| ep_upright: 0| total_upright: 20| total_return: -469.800
+2020-02-27 18:03:15,429 - root - INFO: steps 8000, 65.32 steps/s
+2020-02-27 18:03:18,011 - root - INFO: ep: 26| steps: 338| total_steps: 8166| return_train: -14.000| ep_upright: 0| total_upright: 20| total_return: -483.800
+2020-02-27 18:03:20,646 - root - INFO: ep: 27| steps: 170| total_steps: 8336| return_train: -11.400| ep_upright: 0| total_upright: 20| total_return: -495.200
+2020-02-27 18:03:23,066 - root - INFO: ep: 28| steps: 159| total_steps: 8495| return_train: -8.800| ep_upright: 0| total_upright: 20| total_return: -504.000
+2020-02-27 18:03:27,311 - root - INFO: ep: 29| steps: 279| total_steps: 8774| return_train: -17.600| ep_upright: 0| total_upright: 20| total_return: -521.600
+2020-02-27 18:03:30,751 - root - INFO: steps 9000, 65.27 steps/s
+2020-02-27 18:03:31,482 - root - INFO: ep: 30| steps: 274| total_steps: 9048| return_train: -17.100| ep_upright: 0| total_upright: 20| total_return: -538.700
+2020-02-27 18:03:36,427 - root - INFO: ep: 31| steps: 325| total_steps: 9373| return_train: -21.400| ep_upright: 0| total_upright: 20| total_return: -560.100
+2020-02-27 18:03:39,986 - root - INFO: ep: 32| steps: 234| total_steps: 9607| return_train: -15.900| ep_upright: 0| total_upright: 20| total_return: -576.000
+2020-02-27 18:03:43,795 - root - INFO: ep: 33| steps: 249| total_steps: 9856| return_train: -16.900| ep_upright: 0| total_upright: 20| total_return: -592.900
+2020-02-27 18:03:46,004 - root - INFO: steps 10000, 65.56 steps/s
+2020-02-27 18:03:47,108 - root - INFO: steps 10000, ep_return_test -7.22(0.05)
+2020-02-27 18:03:47,610 - root - INFO: ep: 34| steps: 176| total_steps: 10032| return_train: -14.100| ep_upright: 0| total_upright: 20| total_return: -607.000
+2020-02-27 18:03:53,149 - root - INFO: ep: 35| steps: 361| total_steps: 10393| return_train: -0.800| ep_upright: 14| total_upright: 34| total_return: -607.800
+2020-02-27 18:03:55,482 - root - INFO: ep: 36| steps: 153| total_steps: 10546| return_train: -8.600| ep_upright: 0| total_upright: 34| total_return: -616.400
+2020-02-27 18:03:59,510 - root - INFO: ep: 37| steps: 259| total_steps: 10805| return_train: -15.600| ep_upright: 0| total_upright: 34| total_return: -632.000
+2020-02-27 18:04:02,342 - root - INFO: ep: 38| steps: 185| total_steps: 10990| return_train: -10.900| ep_upright: 0| total_upright: 34| total_return: -642.900
+2020-02-27 18:04:02,495 - root - INFO: steps 11000, 60.65 steps/s
+2020-02-27 18:04:07,733 - root - INFO: ep: 39| steps: 354| total_steps: 11344| return_train: -20.000| ep_upright: 0| total_upright: 34| total_return: -662.900
+2020-02-27 18:04:11,247 - root - INFO: ep: 40| steps: 231| total_steps: 11575| return_train: -14.000| ep_upright: 0| total_upright: 34| total_return: -676.900
+2020-02-27 18:04:13,512 - root - INFO: ep: 41| steps: 148| total_steps: 11723| return_train: -9.500| ep_upright: 0| total_upright: 34| total_return: -686.400
+2020-02-27 18:04:15,381 - root - INFO: ep: 42| steps: 122| total_steps: 11845| return_train: -9.300| ep_upright: 0| total_upright: 34| total_return: -695.700
+2020-02-27 18:04:17,669 - root - INFO: ep: 43| steps: 150| total_steps: 11995| return_train: -10.000| ep_upright: 0| total_upright: 34| total_return: -705.700
+2020-02-27 18:04:17,746 - root - INFO: steps 12000, 65.57 steps/s
+2020-02-27 18:04:23,244 - root - INFO: ep: 44| steps: 365| total_steps: 12360| return_train: -5.700| ep_upright: 15| total_upright: 49| total_return: -711.400
+2020-02-27 18:04:26,978 - root - INFO: ep: 45| steps: 245| total_steps: 12605| return_train: -13.500| ep_upright: 0| total_upright: 49| total_return: -724.900
+2020-02-27 18:04:32,402 - root - INFO: ep: 46| steps: 356| total_steps: 12961| return_train: -26.500| ep_upright: 0| total_upright: 49| total_return: -751.400
+2020-02-27 18:04:32,995 - root - INFO: steps 13000, 65.58 steps/s
+2020-02-27 18:04:37,493 - root - INFO: ep: 47| steps: 332| total_steps: 13293| return_train: -24.000| ep_upright: 0| total_upright: 49| total_return: -775.400
+2020-02-27 18:04:40,392 - root - INFO: ep: 48| steps: 188| total_steps: 13481| return_train: -12.100| ep_upright: 0| total_upright: 49| total_return: -787.500
+2020-02-27 18:04:46,920 - root - INFO: ep: 49| steps: 427| total_steps: 13908| return_train: -22.300| ep_upright: 0| total_upright: 49| total_return: -809.800
+2020-02-27 18:04:48,325 - root - INFO: steps 14000, 65.23 steps/s
+2020-02-27 18:04:50,089 - root - INFO: ep: 50| steps: 207| total_steps: 14115| return_train: -8.300| ep_upright: 0| total_upright: 49| total_return: -818.100
+2020-02-27 18:04:53,451 - root - INFO: ep: 51| steps: 219| total_steps: 14334| return_train: -11.400| ep_upright: 0| total_upright: 49| total_return: -829.500
+2020-02-27 18:04:57,396 - root - INFO: ep: 52| steps: 256| total_steps: 14590| return_train: -16.200| ep_upright: 0| total_upright: 49| total_return: -845.700
+2020-02-27 18:05:00,899 - root - INFO: ep: 53| steps: 227| total_steps: 14817| return_train: -14.700| ep_upright: 0| total_upright: 49| total_return: -860.400
+2020-02-27 18:05:03,699 - root - INFO: steps 15000, 65.05 steps/s
+2020-02-27 18:05:12,597 - root - INFO: steps 15000, ep_return_test -0.10(0.03)
+2020-02-27 18:05:12,929 - root - INFO: ep: 54| steps: 204| total_steps: 15021| return_train: -13.200| ep_upright: 0| total_upright: 49| total_return: -873.600
+2020-02-27 18:05:18,448 - root - INFO: ep: 55| steps: 354| total_steps: 15375| return_train: -22.100| ep_upright: 0| total_upright: 49| total_return: -895.700
+2020-02-27 18:05:22,197 - root - INFO: ep: 56| steps: 240| total_steps: 15615| return_train: -10.500| ep_upright: 0| total_upright: 49| total_return: -906.200
+2020-02-27 18:05:24,657 - root - INFO: ep: 57| steps: 160| total_steps: 15775| return_train: -9.700| ep_upright: 0| total_upright: 49| total_return: -915.900
+2020-02-27 18:05:28,096 - root - INFO: steps 16000, 40.99 steps/s
+2020-02-27 18:05:28,412 - root - INFO: ep: 58| steps: 245| total_steps: 16020| return_train: -16.700| ep_upright: 0| total_upright: 49| total_return: -932.600
+2020-02-27 18:05:30,038 - root - INFO: ep: 59| steps: 106| total_steps: 16126| return_train: -6.500| ep_upright: 0| total_upright: 49| total_return: -939.100
+2020-02-27 18:05:32,506 - root - INFO: ep: 60| steps: 161| total_steps: 16287| return_train: -8.800| ep_upright: 0| total_upright: 49| total_return: -947.900
+2020-02-27 18:05:43,414 - root - INFO: steps 17000, 65.29 steps/s
+2020-02-27 18:05:43,679 - root - INFO: ep: 61| steps: 730| total_steps: 17017| return_train: -43.100| ep_upright: 0| total_upright: 49| total_return: -991.000
+2020-02-27 18:05:45,851 - root - INFO: ep: 62| steps: 142| total_steps: 17159| return_train: -10.100| ep_upright: 0| total_upright: 49| total_return: -1001.100
+2020-02-27 18:05:48,450 - root - INFO: ep: 63| steps: 169| total_steps: 17328| return_train: -12.800| ep_upright: 0| total_upright: 49| total_return: -1013.900
+2020-02-27 18:05:53,305 - root - INFO: ep: 64| steps: 316| total_steps: 17644| return_train: -20.800| ep_upright: 0| total_upright: 49| total_return: -1034.700
+2020-02-27 18:05:56,353 - root - INFO: ep: 65| steps: 199| total_steps: 17843| return_train: -11.400| ep_upright: 0| total_upright: 49| total_return: -1046.100
+2020-02-27 18:05:58,783 - root - INFO: steps 18000, 65.07 steps/s
+2020-02-27 18:06:09,889 - root - INFO: ep: 66| steps: 880| total_steps: 18723| return_train: -31.900| ep_upright: 14| total_upright: 63| total_return: -1078.000
+2020-02-27 18:06:11,692 - root - INFO: ep: 67| steps: 118| total_steps: 18841| return_train: -9.600| ep_upright: 0| total_upright: 63| total_return: -1087.600
+2020-02-27 18:06:14,121 - root - INFO: steps 19000, 65.20 steps/s
+2020-02-27 18:06:19,762 - root - INFO: ep: 68| steps: 524| total_steps: 19365| return_train: -36.700| ep_upright: 0| total_upright: 63| total_return: -1124.300
+2020-02-27 18:06:22,697 - root - INFO: ep: 69| steps: 187| total_steps: 19552| return_train: -2.600| ep_upright: 9| total_upright: 72| total_return: -1126.900
+2020-02-27 18:06:25,227 - root - INFO: ep: 70| steps: 161| total_steps: 19713| return_train: -10.100| ep_upright: 0| total_upright: 72| total_return: -1137.000
+2020-02-27 18:06:29,723 - root - INFO: steps 20000, 64.10 steps/s
+2020-02-27 18:06:30,918 - root - INFO: steps 20000, ep_return_test -6.06(0.04)
+2020-02-27 18:06:36,366 - root - INFO: ep: 71| steps: 636| total_steps: 20349| return_train: -41.100| ep_upright: 0| total_upright: 72| total_return: -1178.100
+2020-02-27 18:06:42,526 - root - INFO: ep: 72| steps: 387| total_steps: 20736| return_train: -24.600| ep_upright: 0| total_upright: 72| total_return: -1202.700
+2020-02-27 18:06:46,588 - root - INFO: steps 21000, 59.30 steps/s
+2020-02-27 18:06:47,179 - root - INFO: ep: 73| steps: 302| total_steps: 21038| return_train: -16.700| ep_upright: 0| total_upright: 72| total_return: -1219.400
+2020-02-27 18:06:51,187 - root - INFO: ep: 74| steps: 259| total_steps: 21297| return_train: -13.400| ep_upright: 0| total_upright: 72| total_return: -1232.800
+2020-02-27 18:06:54,606 - root - INFO: ep: 75| steps: 222| total_steps: 21519| return_train: -14.800| ep_upright: 0| total_upright: 72| total_return: -1247.600
+2020-02-27 18:06:56,421 - root - INFO: ep: 76| steps: 117| total_steps: 21636| return_train: -10.200| ep_upright: 0| total_upright: 72| total_return: -1257.800
+2020-02-27 18:07:02,053 - root - INFO: steps 22000, 64.67 steps/s
+2020-02-27 18:07:02,865 - root - INFO: ep: 77| steps: 416| total_steps: 22052| return_train: -24.400| ep_upright: 0| total_upright: 72| total_return: -1282.200
+2020-02-27 18:07:17,517 - root - INFO: steps 23000, 64.67 steps/s
+2020-02-27 18:07:18,352 - root - INFO: ep: 78| steps: 1001| total_steps: 23053| return_train: -53.100| ep_upright: 0| total_upright: 72| total_return: -1335.300
+2020-02-27 18:07:26,017 - root - INFO: ep: 79| steps: 487| total_steps: 23540| return_train: -9.500| ep_upright: 15| total_upright: 87| total_return: -1344.800
+2020-02-27 18:07:28,723 - root - INFO: ep: 80| steps: 172| total_steps: 23712| return_train: -10.600| ep_upright: 0| total_upright: 87| total_return: -1355.400
+2020-02-27 18:07:31,654 - root - INFO: ep: 81| steps: 186| total_steps: 23898| return_train: -7.300| ep_upright: 0| total_upright: 87| total_return: -1362.700
+2020-02-27 18:07:33,260 - root - INFO: steps 24000, 63.52 steps/s
+2020-02-27 18:07:37,077 - root - INFO: ep: 82| steps: 342| total_steps: 24240| return_train: -16.800| ep_upright: 0| total_upright: 87| total_return: -1379.500
+2020-02-27 18:07:40,638 - root - INFO: ep: 83| steps: 226| total_steps: 24466| return_train: -15.500| ep_upright: 0| total_upright: 87| total_return: -1395.000
+2020-02-27 18:07:43,568 - root - INFO: ep: 84| steps: 186| total_steps: 24652| return_train: -10.300| ep_upright: 0| total_upright: 87| total_return: -1405.300
+2020-02-27 18:07:49,041 - root - INFO: steps 25000, 63.37 steps/s
+2020-02-27 18:07:58,144 - root - INFO: steps 25000, ep_return_test -0.15(0.14)
+2020-02-27 18:07:58,719 - root - INFO: ep: 85| steps: 383| total_steps: 25035| return_train: -21.900| ep_upright: 0| total_upright: 87| total_return: -1427.200
+2020-02-27 18:08:01,160 - root - INFO: ep: 86| steps: 149| total_steps: 25184| return_train: -9.700| ep_upright: 0| total_upright: 87| total_return: -1436.900
+2020-02-27 18:08:06,916 - root - INFO: ep: 87| steps: 352| total_steps: 25536| return_train: -28.100| ep_upright: 0| total_upright: 87| total_return: -1465.000
+2020-02-27 18:08:09,192 - root - INFO: ep: 88| steps: 141| total_steps: 25677| return_train: -7.800| ep_upright: 0| total_upright: 87| total_return: -1472.800
+2020-02-27 18:08:13,376 - root - INFO: ep: 89| steps: 263| total_steps: 25940| return_train: -16.900| ep_upright: 0| total_upright: 87| total_return: -1489.700
+2020-02-27 18:08:14,322 - root - INFO: steps 26000, 39.56 steps/s
+2020-02-27 18:08:15,289 - root - INFO: ep: 90| steps: 122| total_steps: 26062| return_train: -7.400| ep_upright: 0| total_upright: 87| total_return: -1497.100
+2020-02-27 18:08:17,791 - root - INFO: ep: 91| steps: 162| total_steps: 26224| return_train: -9.600| ep_upright: 0| total_upright: 87| total_return: -1506.700
+2020-02-27 18:08:21,450 - root - INFO: ep: 92| steps: 236| total_steps: 26460| return_train: -12.900| ep_upright: 0| total_upright: 87| total_return: -1519.600
+2020-02-27 18:08:24,709 - root - INFO: ep: 93| steps: 212| total_steps: 26672| return_train: -10.200| ep_upright: 0| total_upright: 87| total_return: -1529.800
+2020-02-27 18:08:29,753 - root - INFO: steps 27000, 64.81 steps/s
+2020-02-27 18:08:29,832 - root - INFO: ep: 94| steps: 333| total_steps: 27005| return_train: -23.400| ep_upright: 0| total_upright: 87| total_return: -1553.200
+2020-02-27 18:08:34,904 - root - INFO: ep: 95| steps: 324| total_steps: 27329| return_train: -23.200| ep_upright: 0| total_upright: 87| total_return: -1576.400
+2020-02-27 18:08:38,325 - root - INFO: ep: 96| steps: 217| total_steps: 27546| return_train: -12.300| ep_upright: 0| total_upright: 87| total_return: -1588.700
+2020-02-27 18:08:40,806 - root - INFO: ep: 97| steps: 157| total_steps: 27703| return_train: -7.700| ep_upright: 0| total_upright: 87| total_return: -1596.400
+2020-02-27 18:08:43,915 - root - INFO: ep: 98| steps: 197| total_steps: 27900| return_train: -12.500| ep_upright: 0| total_upright: 87| total_return: -1608.900
+2020-02-27 18:08:45,492 - root - INFO: steps 28000, 63.54 steps/s
+2020-02-27 18:08:54,037 - root - INFO: ep: 99| steps: 637| total_steps: 28537| return_train: -41.600| ep_upright: 0| total_upright: 87| total_return: -1650.500
+2020-02-27 18:09:01,356 - root - INFO: steps 29000, 63.04 steps/s
+2020-02-27 18:09:05,234 - root - INFO: ep: 100| steps: 709| total_steps: 29246| return_train: -33.400| ep_upright: 0| total_upright: 87| total_return: -1683.900
+2020-02-27 18:09:11,030 - root - INFO: ep: 101| steps: 362| total_steps: 29608| return_train: -22.800| ep_upright: 0| total_upright: 87| total_return: -1706.700
+2020-02-27 18:09:13,190 - root - INFO: ep: 102| steps: 132| total_steps: 29740| return_train: -6.300| ep_upright: 0| total_upright: 87| total_return: -1713.000
+2020-02-27 18:09:17,460 - root - INFO: steps 30000, 62.10 steps/s
+2020-02-27 18:09:20,554 - root - INFO: steps 30000, ep_return_test -4.60(0.09)
+2020-02-27 18:09:25,654 - root - INFO: ep: 103| steps: 581| total_steps: 30321| return_train: -25.300| ep_upright: 0| total_upright: 87| total_return: -1738.300
+2020-02-27 18:09:31,189 - root - INFO: ep: 104| steps: 360| total_steps: 30681| return_train: -21.600| ep_upright: 0| total_upright: 87| total_return: -1759.900
+2020-02-27 18:09:36,088 - root - INFO: steps 31000, 53.68 steps/s
+2020-02-27 18:09:38,772 - root - INFO: ep: 105| steps: 493| total_steps: 31174| return_train: -36.800| ep_upright: 0| total_upright: 87| total_return: -1796.700
+2020-02-27 18:09:45,479 - root - INFO: ep: 106| steps: 431| total_steps: 31605| return_train: -25.000| ep_upright: 0| total_upright: 87| total_return: -1821.700
+2020-02-27 18:09:48,000 - root - INFO: ep: 107| steps: 163| total_steps: 31768| return_train: -12.500| ep_upright: 0| total_upright: 87| total_return: -1834.200
+2020-02-27 18:09:51,581 - root - INFO: steps 32000, 64.55 steps/s
+2020-02-27 18:09:52,182 - root - INFO: ep: 108| steps: 271| total_steps: 32039| return_train: -18.700| ep_upright: 0| total_upright: 87| total_return: -1852.900
+2020-02-27 18:09:56,408 - root - INFO: ep: 109| steps: 275| total_steps: 32314| return_train: -17.700| ep_upright: 0| total_upright: 87| total_return: -1870.600
+2020-02-27 18:09:59,994 - root - INFO: ep: 110| steps: 230| total_steps: 32544| return_train: -11.500| ep_upright: 0| total_upright: 87| total_return: -1882.100
+2020-02-27 18:10:02,978 - root - INFO: ep: 111| steps: 194| total_steps: 32738| return_train: -12.500| ep_upright: 0| total_upright: 87| total_return: -1894.600
+2020-02-27 18:10:05,275 - root - INFO: ep: 112| steps: 149| total_steps: 32887| return_train: -6.800| ep_upright: 0| total_upright: 87| total_return: -1901.400
+2020-02-27 18:10:07,010 - root - INFO: steps 33000, 64.82 steps/s
+2020-02-27 18:10:08,117 - root - INFO: ep: 113| steps: 185| total_steps: 33072| return_train: -10.800| ep_upright: 0| total_upright: 87| total_return: -1912.200
+2020-02-27 18:10:14,614 - root - INFO: ep: 114| steps: 423| total_steps: 33495| return_train: -22.900| ep_upright: 0| total_upright: 87| total_return: -1935.100
+2020-02-27 18:10:20,126 - root - INFO: ep: 115| steps: 359| total_steps: 33854| return_train: -22.300| ep_upright: 0| total_upright: 87| total_return: -1957.400
+2020-02-27 18:10:22,368 - root - INFO: steps 34000, 65.11 steps/s
+2020-02-27 18:10:24,723 - root - INFO: ep: 116| steps: 299| total_steps: 34153| return_train: -24.200| ep_upright: 0| total_upright: 87| total_return: -1981.600
+2020-02-27 18:10:27,242 - root - INFO: ep: 117| steps: 164| total_steps: 34317| return_train: -8.900| ep_upright: 0| total_upright: 87| total_return: -1990.500
+2020-02-27 18:10:29,819 - root - INFO: ep: 118| steps: 167| total_steps: 34484| return_train: -9.100| ep_upright: 0| total_upright: 87| total_return: -1999.600
+2020-02-27 18:10:34,961 - root - INFO: ep: 119| steps: 334| total_steps: 34818| return_train: -23.700| ep_upright: 0| total_upright: 87| total_return: -2023.300
+2020-02-27 18:10:37,772 - root - INFO: steps 35000, 64.92 steps/s
+2020-02-27 18:10:41,695 - root - INFO: steps 35000, ep_return_test -13.12(0.35)
+2020-02-27 18:10:42,262 - root - INFO: ep: 120| steps: 218| total_steps: 35036| return_train: -13.400| ep_upright: 0| total_upright: 87| total_return: -2036.700
+2020-02-27 18:10:49,248 - root - INFO: ep: 121| steps: 450| total_steps: 35486| return_train: -26.400| ep_upright: 7| total_upright: 94| total_return: -2063.100
+2020-02-27 18:10:51,385 - root - INFO: ep: 122| steps: 138| total_steps: 35624| return_train: -8.800| ep_upright: 0| total_upright: 94| total_return: -2071.900
+2020-02-27 18:10:54,419 - root - INFO: ep: 123| steps: 195| total_steps: 35819| return_train: -12.700| ep_upright: 0| total_upright: 94| total_return: -2084.600
+2020-02-27 18:10:57,212 - root - INFO: steps 36000, 51.44 steps/s
+2020-02-27 18:11:00,481 - root - INFO: ep: 124| steps: 392| total_steps: 36211| return_train: -25.600| ep_upright: 0| total_upright: 94| total_return: -2110.200
+2020-02-27 18:11:10,163 - root - INFO: ep: 125| steps: 626| total_steps: 36837| return_train: -36.600| ep_upright: 0| total_upright: 94| total_return: -2146.800
+2020-02-27 18:11:12,716 - root - INFO: steps 37000, 64.51 steps/s
+2020-02-27 18:11:14,157 - root - INFO: ep: 126| steps: 255| total_steps: 37092| return_train: -20.300| ep_upright: 0| total_upright: 94| total_return: -2167.100
+2020-02-27 18:11:16,181 - root - INFO: ep: 127| steps: 131| total_steps: 37223| return_train: -10.800| ep_upright: 0| total_upright: 94| total_return: -2177.900
+2020-02-27 18:11:19,191 - root - INFO: ep: 128| steps: 192| total_steps: 37415| return_train: -8.800| ep_upright: 0| total_upright: 94| total_return: -2186.700
+2020-02-27 18:11:21,481 - root - INFO: ep: 129| steps: 147| total_steps: 37562| return_train: -7.700| ep_upright: 0| total_upright: 94| total_return: -2194.400
+2020-02-27 18:11:24,220 - root - INFO: ep: 130| steps: 176| total_steps: 37738| return_train: -7.500| ep_upright: 0| total_upright: 94| total_return: -2201.900
+2020-02-27 18:11:28,262 - root - INFO: steps 38000, 64.33 steps/s
+2020-02-27 18:11:36,034 - root - INFO: ep: 131| steps: 767| total_steps: 38505| return_train: -36.300| ep_upright: 12| total_upright: 106| total_return: -2238.200
+2020-02-27 18:11:43,559 - root - INFO: ep: 132| steps: 484| total_steps: 38989| return_train: -29.600| ep_upright: 0| total_upright: 106| total_return: -2267.800
+2020-02-27 18:11:43,730 - root - INFO: steps 39000, 64.65 steps/s
+2020-02-27 18:11:47,144 - root - INFO: ep: 133| steps: 231| total_steps: 39220| return_train: -13.500| ep_upright: 0| total_upright: 106| total_return: -2281.300
+2020-02-27 18:11:49,231 - root - INFO: ep: 134| steps: 135| total_steps: 39355| return_train: -6.600| ep_upright: 0| total_upright: 106| total_return: -2287.900
+2020-02-27 18:11:55,956 - root - INFO: ep: 135| steps: 437| total_steps: 39792| return_train: -21.100| ep_upright: 0| total_upright: 106| total_return: -2309.000
+2020-02-27 18:11:59,198 - root - INFO: steps 40000, 64.65 steps/s
+2020-02-27 18:12:08,194 - root - INFO: steps 40000, ep_return_test 0.00(0.00)
+2020-02-27 18:12:10,789 - root - INFO: ep: 136| steps: 376| total_steps: 40168| return_train: -5.400| ep_upright: 14| total_upright: 120| total_return: -2314.400
+2020-02-27 18:12:14,965 - root - INFO: ep: 137| steps: 272| total_steps: 40440| return_train: -14.700| ep_upright: 0| total_upright: 120| total_return: -2329.100
+2020-02-27 18:12:18,440 - root - INFO: ep: 138| steps: 225| total_steps: 40665| return_train: -17.000| ep_upright: 0| total_upright: 120| total_return: -2346.100
+2020-02-27 18:12:20,903 - root - INFO: ep: 139| steps: 160| total_steps: 40825| return_train: -12.000| ep_upright: 0| total_upright: 120| total_return: -2358.100
+2020-02-27 18:12:23,594 - root - INFO: steps 41000, 40.99 steps/s
+2020-02-27 18:12:23,613 - root - INFO: ep: 140| steps: 176| total_steps: 41001| return_train: -10.900| ep_upright: 0| total_upright: 120| total_return: -2369.000
+2020-02-27 18:12:26,498 - root - INFO: ep: 141| steps: 187| total_steps: 41188| return_train: -6.500| ep_upright: 0| total_upright: 120| total_return: -2375.500
+2020-02-27 18:12:31,729 - root - INFO: ep: 142| steps: 339| total_steps: 41527| return_train: -21.100| ep_upright: 0| total_upright: 120| total_return: -2396.600
+2020-02-27 18:12:35,173 - root - INFO: ep: 143| steps: 224| total_steps: 41751| return_train: -8.800| ep_upright: 0| total_upright: 120| total_return: -2405.400
+2020-02-27 18:12:37,948 - root - INFO: ep: 144| steps: 179| total_steps: 41930| return_train: -15.300| ep_upright: 0| total_upright: 120| total_return: -2420.700
+2020-02-27 18:12:39,047 - root - INFO: steps 42000, 64.72 steps/s
+2020-02-27 18:12:45,214 - root - INFO: ep: 145| steps: 465| total_steps: 42395| return_train: -26.100| ep_upright: 0| total_upright: 120| total_return: -2446.800
+2020-02-27 18:12:52,133 - root - INFO: ep: 146| steps: 447| total_steps: 42842| return_train: -21.200| ep_upright: 0| total_upright: 120| total_return: -2468.000
+2020-02-27 18:12:54,581 - root - INFO: steps 43000, 64.38 steps/s
+2020-02-27 18:12:55,971 - root - INFO: ep: 147| steps: 247| total_steps: 43089| return_train: -13.400| ep_upright: 0| total_upright: 120| total_return: -2481.400
+2020-02-27 18:12:59,156 - root - INFO: ep: 148| steps: 205| total_steps: 43294| return_train: -17.100| ep_upright: 0| total_upright: 120| total_return: -2498.500
+2020-02-27 18:13:01,111 - root - INFO: ep: 149| steps: 126| total_steps: 43420| return_train: -7.300| ep_upright: 0| total_upright: 120| total_return: -2505.800
+2020-02-27 18:13:03,244 - root - INFO: ep: 150| steps: 137| total_steps: 43557| return_train: -10.000| ep_upright: 0| total_upright: 120| total_return: -2515.800
+2020-02-27 18:13:04,976 - root - INFO: ep: 151| steps: 112| total_steps: 43669| return_train: -9.200| ep_upright: 0| total_upright: 120| total_return: -2525.000
+2020-02-27 18:13:10,082 - root - INFO: steps 44000, 64.52 steps/s
+2020-02-27 18:13:12,051 - root - INFO: ep: 152| steps: 458| total_steps: 44127| return_train: -22.500| ep_upright: 0| total_upright: 120| total_return: -2547.500
+2020-02-27 18:13:13,555 - root - INFO: ep: 153| steps: 96| total_steps: 44223| return_train: -7.100| ep_upright: 0| total_upright: 120| total_return: -2554.600
+2020-02-27 18:13:17,882 - root - INFO: ep: 154| steps: 277| total_steps: 44500| return_train: -18.600| ep_upright: 0| total_upright: 120| total_return: -2573.200
+2020-02-27 18:13:21,020 - root - INFO: ep: 155| steps: 199| total_steps: 44699| return_train: -11.200| ep_upright: 0| total_upright: 120| total_return: -2584.400
+2020-02-27 18:13:25,739 - root - INFO: steps 45000, 63.87 steps/s
+2020-02-27 18:13:26,535 - root - INFO: steps 45000, ep_return_test -7.42(0.09)
+2020-02-27 18:13:28,476 - root - INFO: ep: 156| steps: 426| total_steps: 45125| return_train: -15.300| ep_upright: 14| total_upright: 134| total_return: -2599.700
+2020-02-27 18:13:35,566 - root - INFO: ep: 157| steps: 458| total_steps: 45583| return_train: -30.300| ep_upright: 0| total_upright: 134| total_return: -2630.000
+2020-02-27 18:13:42,022 - root - INFO: steps 46000, 61.42 steps/s
+2020-02-27 18:13:43,557 - root - INFO: ep: 158| steps: 515| total_steps: 46098| return_train: -37.400| ep_upright: 0| total_upright: 134| total_return: -2667.400
+2020-02-27 18:13:48,036 - root - INFO: ep: 159| steps: 286| total_steps: 46384| return_train: -19.700| ep_upright: 0| total_upright: 134| total_return: -2687.100
+2020-02-27 18:13:50,221 - root - INFO: ep: 160| steps: 140| total_steps: 46524| return_train: -5.300| ep_upright: 0| total_upright: 134| total_return: -2692.400
+2020-02-27 18:13:52,773 - root - INFO: ep: 161| steps: 164| total_steps: 46688| return_train: -11.500| ep_upright: 0| total_upright: 134| total_return: -2703.900
+2020-02-27 18:13:56,350 - root - INFO: ep: 162| steps: 230| total_steps: 46918| return_train: -18.200| ep_upright: 0| total_upright: 134| total_return: -2722.100
+2020-02-27 18:13:57,621 - root - INFO: steps 47000, 64.11 steps/s
+2020-02-27 18:14:02,666 - root - INFO: ep: 163| steps: 403| total_steps: 47321| return_train: -29.600| ep_upright: 0| total_upright: 134| total_return: -2751.700
+2020-02-27 18:14:08,188 - root - INFO: ep: 164| steps: 355| total_steps: 47676| return_train: -14.000| ep_upright: 0| total_upright: 134| total_return: -2765.700
+2020-02-27 18:14:11,285 - root - INFO: ep: 165| steps: 201| total_steps: 47877| return_train: -14.200| ep_upright: 0| total_upright: 134| total_return: -2779.900
+2020-02-27 18:14:13,178 - root - INFO: steps 48000, 64.29 steps/s
+2020-02-27 18:14:18,156 - root - INFO: ep: 166| steps: 445| total_steps: 48322| return_train: -24.300| ep_upright: 0| total_upright: 134| total_return: -2804.200
+2020-02-27 18:14:21,898 - root - INFO: ep: 167| steps: 243| total_steps: 48565| return_train: -15.600| ep_upright: 0| total_upright: 134| total_return: -2819.800
+2020-02-27 18:14:24,837 - root - INFO: ep: 168| steps: 191| total_steps: 48756| return_train: -5.000| ep_upright: 2| total_upright: 136| total_return: -2824.800
+2020-02-27 18:14:28,601 - root - INFO: steps 49000, 64.84 steps/s
+2020-02-27 18:14:37,591 - root - INFO: ep: 169| steps: 827| total_steps: 49583| return_train: 14.800| ep_upright: 42| total_upright: 178| total_return: -2810.000
+2020-02-27 18:14:40,468 - root - INFO: ep: 170| steps: 185| total_steps: 49768| return_train: -11.100| ep_upright: 0| total_upright: 178| total_return: -2821.100
+2020-02-27 18:14:44,092 - root - INFO: ep: 171| steps: 230| total_steps: 49998| return_train: -11.800| ep_upright: 0| total_upright: 178| total_return: -2832.900
+2020-02-27 18:14:44,123 - root - INFO: steps 50000, 64.43 steps/s
+2020-02-27 18:14:45,981 - root - INFO: steps 50000, ep_return_test -20.64(2.37)
+2020-02-27 18:14:49,183 - root - INFO: ep: 172| steps: 209| total_steps: 50207| return_train: -11.100| ep_upright: 0| total_upright: 178| total_return: -2844.000
+2020-02-27 18:14:54,531 - root - INFO: ep: 173| steps: 343| total_steps: 50550| return_train: -15.500| ep_upright: 0| total_upright: 178| total_return: -2859.500
+2020-02-27 18:15:00,698 - root - INFO: ep: 174| steps: 397| total_steps: 50947| return_train: -18.600| ep_upright: 0| total_upright: 178| total_return: -2878.100
+2020-02-27 18:15:01,520 - root - INFO: steps 51000, 57.49 steps/s
+2020-02-27 18:15:03,627 - root - INFO: ep: 175| steps: 189| total_steps: 51136| return_train: -14.700| ep_upright: 0| total_upright: 178| total_return: -2892.800
+2020-02-27 18:15:06,966 - root - INFO: ep: 176| steps: 216| total_steps: 51352| return_train: 1.000| ep_upright: 13| total_upright: 191| total_return: -2891.800
+2020-02-27 18:15:10,226 - root - INFO: ep: 177| steps: 211| total_steps: 51563| return_train: -3.200| ep_upright: 9| total_upright: 200| total_return: -2895.000
+2020-02-27 18:15:16,991 - root - INFO: steps 52000, 64.64 steps/s
+2020-02-27 18:15:25,731 - root - INFO: ep: 178| steps: 995| total_steps: 52558| return_train: -38.900| ep_upright: 0| total_upright: 200| total_return: -2933.900
+2020-02-27 18:15:28,241 - root - INFO: ep: 179| steps: 163| total_steps: 52721| return_train: -6.700| ep_upright: 0| total_upright: 200| total_return: -2940.600
+2020-02-27 18:15:31,429 - root - INFO: ep: 180| steps: 206| total_steps: 52927| return_train: -9.100| ep_upright: 0| total_upright: 200| total_return: -2949.700
+2020-02-27 18:15:32,561 - root - INFO: steps 53000, 64.23 steps/s
+2020-02-27 18:15:33,833 - root - INFO: ep: 181| steps: 155| total_steps: 53082| return_train: -9.900| ep_upright: 0| total_upright: 200| total_return: -2959.600
+2020-02-27 18:15:37,855 - root - INFO: ep: 182| steps: 260| total_steps: 53342| return_train: -17.200| ep_upright: 0| total_upright: 200| total_return: -2976.800
+2020-02-27 18:15:43,506 - root - INFO: ep: 183| steps: 364| total_steps: 53706| return_train: -17.100| ep_upright: 0| total_upright: 200| total_return: -2993.900
+2020-02-27 18:15:48,054 - root - INFO: steps 54000, 64.55 steps/s
+2020-02-27 18:15:48,805 - root - INFO: ep: 184| steps: 342| total_steps: 54048| return_train: -28.100| ep_upright: 0| total_upright: 200| total_return: -3022.000
+2020-02-27 18:15:51,140 - root - INFO: ep: 185| steps: 151| total_steps: 54199| return_train: -9.300| ep_upright: 0| total_upright: 200| total_return: -3031.300
+2020-02-27 18:15:53,547 - root - INFO: ep: 186| steps: 156| total_steps: 54355| return_train: -14.900| ep_upright: 0| total_upright: 200| total_return: -3046.200
+2020-02-27 18:15:59,103 - root - INFO: ep: 187| steps: 359| total_steps: 54714| return_train: 29.100| ep_upright: 43| total_upright: 243| total_return: -3017.100
+2020-02-27 18:16:03,544 - root - INFO: steps 55000, 64.57 steps/s
+2020-02-27 18:16:06,890 - root - INFO: steps 55000, ep_return_test -31.26(0.32)
+2020-02-27 18:16:10,270 - root - INFO: ep: 188| steps: 504| total_steps: 55218| return_train: -37.800| ep_upright: 0| total_upright: 243| total_return: -3054.900
+2020-02-27 18:16:14,577 - root - INFO: ep: 189| steps: 279| total_steps: 55497| return_train: -12.900| ep_upright: 0| total_upright: 243| total_return: -3067.800
+2020-02-27 18:16:18,609 - root - INFO: ep: 190| steps: 262| total_steps: 55759| return_train: -13.200| ep_upright: 0| total_upright: 243| total_return: -3081.000
+2020-02-27 18:16:21,070 - root - INFO: ep: 191| steps: 160| total_steps: 55919| return_train: -7.500| ep_upright: 0| total_upright: 243| total_return: -3088.500
+2020-02-27 18:16:22,318 - root - INFO: steps 56000, 53.27 steps/s
+2020-02-27 18:16:22,967 - root - INFO: ep: 192| steps: 123| total_steps: 56042| return_train: -8.500| ep_upright: 0| total_upright: 243| total_return: -3097.000
+2020-02-27 18:16:25,586 - root - INFO: ep: 193| steps: 170| total_steps: 56212| return_train: -9.400| ep_upright: 2| total_upright: 245| total_return: -3106.400
+2020-02-27 18:16:28,235 - root - INFO: ep: 194| steps: 172| total_steps: 56384| return_train: -12.500| ep_upright: 0| total_upright: 245| total_return: -3118.900
+2020-02-27 18:16:31,669 - root - INFO: ep: 195| steps: 223| total_steps: 56607| return_train: -13.300| ep_upright: 0| total_upright: 245| total_return: -3132.200
+2020-02-27 18:16:34,338 - root - INFO: ep: 196| steps: 173| total_steps: 56780| return_train: -9.400| ep_upright: 0| total_upright: 245| total_return: -3141.600
+2020-02-27 18:16:37,736 - root - INFO: steps 57000, 64.86 steps/s
+2020-02-27 18:16:41,557 - root - INFO: ep: 197| steps: 464| total_steps: 57244| return_train: -29.800| ep_upright: 0| total_upright: 245| total_return: -3171.400
+2020-02-27 18:16:43,597 - root - INFO: ep: 198| steps: 131| total_steps: 57375| return_train: -5.700| ep_upright: 0| total_upright: 245| total_return: -3177.100
+2020-02-27 18:16:47,577 - root - INFO: ep: 199| steps: 256| total_steps: 57631| return_train: -20.700| ep_upright: 0| total_upright: 245| total_return: -3197.800
+2020-02-27 18:16:53,471 - root - INFO: steps 58000, 63.56 steps/s
+2020-02-27 18:16:54,502 - root - INFO: ep: 200| steps: 435| total_steps: 58066| return_train: -35.500| ep_upright: 0| total_upright: 245| total_return: -3233.300
+2020-02-27 18:16:58,654 - root - INFO: ep: 201| steps: 266| total_steps: 58332| return_train: -1.700| ep_upright: 14| total_upright: 259| total_return: -3235.000
+2020-02-27 18:17:05,722 - root - INFO: ep: 202| steps: 455| total_steps: 58787| return_train: -13.700| ep_upright: 14| total_upright: 273| total_return: -3248.700
+2020-02-27 18:17:09,025 - root - INFO: steps 59000, 64.30 steps/s
+2020-02-27 18:17:09,214 - root - INFO: ep: 203| steps: 225| total_steps: 59012| return_train: -13.500| ep_upright: 0| total_upright: 273| total_return: -3262.200
+2020-02-27 18:17:11,827 - root - INFO: ep: 204| steps: 168| total_steps: 59180| return_train: -10.800| ep_upright: 0| total_upright: 273| total_return: -3273.000
+2020-02-27 18:17:14,758 - root - INFO: ep: 205| steps: 189| total_steps: 59369| return_train: -11.200| ep_upright: 0| total_upright: 273| total_return: -3284.200
+2020-02-27 18:17:20,477 - root - INFO: ep: 206| steps: 363| total_steps: 59732| return_train: -17.900| ep_upright: 0| total_upright: 273| total_return: -3302.100
+2020-02-27 18:17:22,237 - root - INFO: ep: 207| steps: 112| total_steps: 59844| return_train: -5.000| ep_upright: 0| total_upright: 273| total_return: -3307.100
+2020-02-27 18:17:24,692 - root - INFO: steps 60000, 63.83 steps/s
+2020-02-27 18:17:25,851 - root - INFO: steps 60000, ep_return_test -6.25(0.09)
+2020-02-27 18:17:27,916 - root - INFO: ep: 208| steps: 289| total_steps: 60133| return_train: -10.600| ep_upright: 0| total_upright: 273| total_return: -3317.700
+2020-02-27 18:17:33,460 - root - INFO: ep: 209| steps: 357| total_steps: 60490| return_train: -15.000| ep_upright: 0| total_upright: 273| total_return: -3332.700
+2020-02-27 18:17:35,856 - root - INFO: ep: 210| steps: 155| total_steps: 60645| return_train: -6.700| ep_upright: 0| total_upright: 273| total_return: -3339.400
+2020-02-27 18:17:38,827 - root - INFO: ep: 211| steps: 190| total_steps: 60835| return_train: -11.000| ep_upright: 0| total_upright: 273| total_return: -3350.400
+2020-02-27 18:17:41,383 - root - INFO: steps 61000, 59.92 steps/s
+2020-02-27 18:17:45,758 - root - INFO: ep: 212| steps: 448| total_steps: 61283| return_train: -28.100| ep_upright: 0| total_upright: 273| total_return: -3378.500
+2020-02-27 18:17:48,161 - root - INFO: ep: 213| steps: 155| total_steps: 61438| return_train: -8.400| ep_upright: 0| total_upright: 273| total_return: -3386.900
+2020-02-27 18:17:50,379 - root - INFO: ep: 214| steps: 142| total_steps: 61580| return_train: -9.300| ep_upright: 0| total_upright: 273| total_return: -3396.200
+2020-02-27 18:17:56,068 - root - INFO: ep: 215| steps: 367| total_steps: 61947| return_train: -2.300| ep_upright: 14| total_upright: 287| total_return: -3398.500
+2020-02-27 18:17:56,888 - root - INFO: steps 62000, 64.50 steps/s
+2020-02-27 18:17:58,771 - root - INFO: ep: 216| steps: 173| total_steps: 62120| return_train: -8.100| ep_upright: 0| total_upright: 287| total_return: -3406.600
+2020-02-27 18:18:02,269 - root - INFO: ep: 217| steps: 224| total_steps: 62344| return_train: -10.600| ep_upright: 0| total_upright: 287| total_return: -3417.200
+2020-02-27 18:18:11,187 - root - INFO: ep: 218| steps: 574| total_steps: 62918| return_train: -29.000| ep_upright: 0| total_upright: 287| total_return: -3446.200
+2020-02-27 18:18:12,457 - root - INFO: steps 63000, 64.23 steps/s
+2020-02-27 18:18:17,199 - root - INFO: ep: 219| steps: 389| total_steps: 63307| return_train: -19.000| ep_upright: 0| total_upright: 287| total_return: -3465.200
+2020-02-27 18:18:22,355 - root - INFO: ep: 220| steps: 333| total_steps: 63640| return_train: -13.500| ep_upright: 0| total_upright: 287| total_return: -3478.700
+2020-02-27 18:18:27,913 - root - INFO: steps 64000, 64.70 steps/s
+2020-02-27 18:18:35,182 - root - INFO: ep: 221| steps: 831| total_steps: 64471| return_train: -5.900| ep_upright: 18| total_upright: 305| total_return: -3484.600
+2020-02-27 18:18:37,539 - root - INFO: ep: 222| steps: 152| total_steps: 64623| return_train: -10.900| ep_upright: 0| total_upright: 305| total_return: -3495.500
+2020-02-27 18:18:43,000 - root - INFO: ep: 223| steps: 349| total_steps: 64972| return_train: -15.600| ep_upright: 0| total_upright: 305| total_return: -3511.100
+2020-02-27 18:18:43,442 - root - INFO: steps 65000, 64.40 steps/s
+2020-02-27 18:18:52,458 - root - INFO: steps 65000, ep_return_test 0.00(0.00)
+2020-02-27 18:18:54,186 - root - INFO: ep: 224| steps: 139| total_steps: 65111| return_train: -9.600| ep_upright: 0| total_upright: 305| total_return: -3520.700
+2020-02-27 18:18:58,374 - root - INFO: ep: 225| steps: 269| total_steps: 65380| return_train: -14.000| ep_upright: 0| total_upright: 305| total_return: -3534.700
+2020-02-27 18:19:03,998 - root - INFO: ep: 226| steps: 361| total_steps: 65741| return_train: -23.700| ep_upright: 0| total_upright: 305| total_return: -3558.400
+2020-02-27 18:19:08,009 - root - INFO: steps 66000, 40.71 steps/s
+2020-02-27 18:19:11,278 - root - INFO: ep: 227| steps: 469| total_steps: 66210| return_train: -21.100| ep_upright: 0| total_upright: 305| total_return: -3579.500
+2020-02-27 18:19:13,412 - root - INFO: ep: 228| steps: 137| total_steps: 66347| return_train: -10.400| ep_upright: 0| total_upright: 305| total_return: -3589.900
+2020-02-27 18:19:17,676 - root - INFO: ep: 229| steps: 272| total_steps: 66619| return_train: -12.300| ep_upright: 0| total_upright: 305| total_return: -3602.200
+2020-02-27 18:19:23,676 - root - INFO: steps 67000, 63.83 steps/s
+2020-02-27 18:19:25,949 - root - INFO: ep: 230| steps: 527| total_steps: 67146| return_train: -20.900| ep_upright: 0| total_upright: 305| total_return: -3623.100
+2020-02-27 18:19:29,591 - root - INFO: ep: 231| steps: 235| total_steps: 67381| return_train: -17.500| ep_upright: 0| total_upright: 305| total_return: -3640.600
+2020-02-27 18:19:39,153 - root - INFO: ep: 232| steps: 615| total_steps: 67996| return_train: -23.900| ep_upright: 0| total_upright: 305| total_return: -3664.500
+2020-02-27 18:19:39,215 - root - INFO: steps 68000, 64.36 steps/s
+2020-02-27 18:19:49,406 - root - INFO: ep: 233| steps: 655| total_steps: 68651| return_train: 8.600| ep_upright: 30| total_upright: 335| total_return: -3655.900
+2020-02-27 18:19:52,161 - root - INFO: ep: 234| steps: 177| total_steps: 68828| return_train: -7.000| ep_upright: 0| total_upright: 335| total_return: -3662.900
+2020-02-27 18:19:54,839 - root - INFO: steps 69000, 64.01 steps/s
+2020-02-27 18:19:56,097 - root - INFO: ep: 235| steps: 253| total_steps: 69081| return_train: -9.700| ep_upright: 0| total_upright: 335| total_return: -3672.600
+2020-02-27 18:19:58,222 - root - INFO: ep: 236| steps: 137| total_steps: 69218| return_train: -8.100| ep_upright: 0| total_upright: 335| total_return: -3680.700
+2020-02-27 18:20:02,044 - root - INFO: ep: 237| steps: 242| total_steps: 69460| return_train: -5.900| ep_upright: 0| total_upright: 335| total_return: -3686.600
+2020-02-27 18:20:10,442 - root - INFO: steps 70000, 64.10 steps/s
+2020-02-27 18:20:11,511 - root - INFO: steps 70000, ep_return_test -11.90(0.13)
+2020-02-27 18:20:18,660 - root - INFO: ep: 238| steps: 1001| total_steps: 70461| return_train: 23.700| ep_upright: 60| total_upright: 395| total_return: -3662.900
+2020-02-27 18:20:21,346 - root - INFO: ep: 239| steps: 174| total_steps: 70635| return_train: -6.700| ep_upright: 0| total_upright: 395| total_return: -3669.600
+2020-02-27 18:20:27,010 - root - INFO: steps 71000, 60.36 steps/s
+2020-02-27 18:20:27,309 - root - INFO: ep: 240| steps: 384| total_steps: 71019| return_train: -21.400| ep_upright: 0| total_upright: 395| total_return: -3691.000
+2020-02-27 18:20:33,440 - root - INFO: ep: 241| steps: 396| total_steps: 71415| return_train: -17.900| ep_upright: 0| total_upright: 395| total_return: -3708.900
+2020-02-27 18:20:35,102 - root - INFO: ep: 242| steps: 107| total_steps: 71522| return_train: -8.200| ep_upright: 0| total_upright: 395| total_return: -3717.100
+2020-02-27 18:20:39,977 - root - INFO: ep: 243| steps: 313| total_steps: 71835| return_train: -11.500| ep_upright: 0| total_upright: 395| total_return: -3728.600
+2020-02-27 18:20:42,564 - root - INFO: steps 72000, 64.30 steps/s
+2020-02-27 18:20:43,872 - root - INFO: ep: 244| steps: 249| total_steps: 72084| return_train: -7.700| ep_upright: 0| total_upright: 395| total_return: -3736.300
+2020-02-27 18:20:55,230 - root - INFO: ep: 245| steps: 730| total_steps: 72814| return_train: -25.100| ep_upright: 0| total_upright: 395| total_return: -3761.400
+2020-02-27 18:20:57,380 - root - INFO: ep: 246| steps: 138| total_steps: 72952| return_train: -6.300| ep_upright: 0| total_upright: 395| total_return: -3767.700
+2020-02-27 18:20:58,131 - root - INFO: steps 73000, 64.24 steps/s
+2020-02-27 18:21:01,953 - root - INFO: ep: 247| steps: 293| total_steps: 73245| return_train: -10.700| ep_upright: 0| total_upright: 395| total_return: -3778.400
+2020-02-27 18:21:10,639 - root - INFO: ep: 248| steps: 557| total_steps: 73802| return_train: -30.300| ep_upright: 0| total_upright: 395| total_return: -3808.700
+2020-02-27 18:21:13,716 - root - INFO: steps 74000, 64.17 steps/s
+2020-02-27 18:21:15,864 - root - INFO: ep: 249| steps: 333| total_steps: 74135| return_train: -22.000| ep_upright: 0| total_upright: 395| total_return: -3830.700
+2020-02-27 18:21:18,188 - root - INFO: ep: 250| steps: 148| total_steps: 74283| return_train: -7.300| ep_upright: 0| total_upright: 395| total_return: -3838.000
+2020-02-27 18:21:22,574 - root - INFO: ep: 251| steps: 277| total_steps: 74560| return_train: -10.400| ep_upright: 4| total_upright: 399| total_return: -3848.400
+2020-02-27 18:21:29,442 - root - INFO: steps 75000, 63.59 steps/s
+2020-02-27 18:21:36,667 - root - INFO: steps 75000, ep_return_test -5.05(0.05)
+2020-02-27 18:21:40,979 - root - INFO: ep: 252| steps: 716| total_steps: 75276| return_train: -23.700| ep_upright: 0| total_upright: 399| total_return: -3872.100
+2020-02-27 18:21:45,080 - root - INFO: ep: 253| steps: 264| total_steps: 75540| return_train: -21.800| ep_upright: 0| total_upright: 399| total_return: -3893.900
+2020-02-27 18:21:48,848 - root - INFO: ep: 254| steps: 240| total_steps: 75780| return_train: -9.000| ep_upright: 0| total_upright: 399| total_return: -3902.900
+2020-02-27 18:21:52,259 - root - INFO: steps 76000, 43.83 steps/s
+2020-02-27 18:22:01,188 - root - INFO: ep: 255| steps: 792| total_steps: 76572| return_train: -14.500| ep_upright: 0| total_upright: 399| total_return: -3917.400
+2020-02-27 18:22:06,130 - root - INFO: ep: 256| steps: 317| total_steps: 76889| return_train: -14.700| ep_upright: 0| total_upright: 399| total_return: -3932.100
+2020-02-27 18:22:07,870 - root - INFO: steps 77000, 64.06 steps/s
+2020-02-27 18:22:08,944 - root - INFO: ep: 257| steps: 180| total_steps: 77069| return_train: -10.100| ep_upright: 0| total_upright: 399| total_return: -3942.200
+2020-02-27 18:22:12,767 - root - INFO: ep: 258| steps: 247| total_steps: 77316| return_train: -14.800| ep_upright: 0| total_upright: 399| total_return: -3957.000
+2020-02-27 18:22:15,010 - root - INFO: ep: 259| steps: 145| total_steps: 77461| return_train: -7.100| ep_upright: 0| total_upright: 399| total_return: -3964.100
+2020-02-27 18:22:20,467 - root - INFO: ep: 260| steps: 353| total_steps: 77814| return_train: 1.900| ep_upright: 13| total_upright: 412| total_return: -3962.200
+2020-02-27 18:22:23,338 - root - INFO: steps 78000, 64.65 steps/s
+2020-02-27 18:22:28,470 - root - INFO: ep: 261| steps: 517| total_steps: 78331| return_train: 15.100| ep_upright: 34| total_upright: 446| total_return: -3947.100
+2020-02-27 18:22:36,655 - root - INFO: ep: 262| steps: 529| total_steps: 78860| return_train: -5.800| ep_upright: 24| total_upright: 470| total_return: -3952.900
+2020-02-27 18:22:38,835 - root - INFO: steps 79000, 64.53 steps/s
+2020-02-27 18:22:40,391 - root - INFO: ep: 263| steps: 237| total_steps: 79097| return_train: -13.900| ep_upright: 0| total_upright: 470| total_return: -3966.800
+2020-02-27 18:22:43,536 - root - INFO: ep: 264| steps: 202| total_steps: 79299| return_train: -8.900| ep_upright: 0| total_upright: 470| total_return: -3975.700
+2020-02-27 18:22:50,874 - root - INFO: ep: 265| steps: 472| total_steps: 79771| return_train: -23.700| ep_upright: 0| total_upright: 470| total_return: -3999.400
+2020-02-27 18:22:53,204 - root - INFO: ep: 266| steps: 150| total_steps: 79921| return_train: -7.700| ep_upright: 0| total_upright: 470| total_return: -4007.100
+2020-02-27 18:22:54,449 - root - INFO: steps 80000, 64.05 steps/s
+2020-02-27 18:23:03,449 - root - INFO: steps 80000, ep_return_test 0.00(0.00)
+2020-02-27 18:23:03,955 - root - INFO: ep: 267| steps: 111| total_steps: 80032| return_train: -6.500| ep_upright: 0| total_upright: 470| total_return: -4013.600
+2020-02-27 18:23:15,022 - root - INFO: ep: 268| steps: 697| total_steps: 80729| return_train: -12.900| ep_upright: 0| total_upright: 470| total_return: -4026.500
+2020-02-27 18:23:19,311 - root - INFO: steps 81000, 40.22 steps/s
+2020-02-27 18:23:21,818 - root - INFO: ep: 269| steps: 427| total_steps: 81156| return_train: -10.800| ep_upright: 0| total_upright: 470| total_return: -4037.300
+2020-02-27 18:23:31,154 - root - INFO: ep: 270| steps: 589| total_steps: 81745| return_train: -19.000| ep_upright: 0| total_upright: 470| total_return: -4056.300
+2020-02-27 18:23:34,451 - root - INFO: ep: 271| steps: 205| total_steps: 81950| return_train: -11.000| ep_upright: 0| total_upright: 470| total_return: -4067.300
+2020-02-27 18:23:35,256 - root - INFO: steps 82000, 62.72 steps/s
+2020-02-27 18:23:43,242 - root - INFO: ep: 272| steps: 551| total_steps: 82501| return_train: -18.300| ep_upright: 0| total_upright: 470| total_return: -4085.600
+2020-02-27 18:23:51,211 - root - INFO: steps 83000, 62.68 steps/s
+2020-02-27 18:23:59,313 - root - INFO: ep: 273| steps: 1001| total_steps: 83502| return_train: 25.200| ep_upright: 56| total_upright: 526| total_return: -4060.400
+2020-02-27 18:24:04,371 - root - INFO: ep: 274| steps: 312| total_steps: 83814| return_train: -13.700| ep_upright: 0| total_upright: 526| total_return: -4074.100
+2020-02-27 18:24:07,338 - root - INFO: steps 84000, 62.01 steps/s
+2020-02-27 18:24:07,724 - root - INFO: ep: 275| steps: 210| total_steps: 84024| return_train: -12.800| ep_upright: 0| total_upright: 526| total_return: -4086.900
+2020-02-27 18:24:14,234 - root - INFO: ep: 276| steps: 406| total_steps: 84430| return_train: -12.300| ep_upright: 0| total_upright: 526| total_return: -4099.200
+2020-02-27 18:24:19,730 - root - INFO: ep: 277| steps: 343| total_steps: 84773| return_train: 0.600| ep_upright: 15| total_upright: 541| total_return: -4098.600
+2020-02-27 18:24:22,634 - root - INFO: ep: 278| steps: 181| total_steps: 84954| return_train: -8.200| ep_upright: 0| total_upright: 541| total_return: -4106.800
+2020-02-27 18:24:23,367 - root - INFO: steps 85000, 62.39 steps/s
+2020-02-27 18:24:24,673 - root - INFO: steps 85000, ep_return_test -7.98(2.43)
+2020-02-27 18:24:39,835 - root - INFO: ep: 279| steps: 1001| total_steps: 85955| return_train: 77.600| ep_upright: 105| total_upright: 646| total_return: -4029.200
+2020-02-27 18:24:40,570 - root - INFO: steps 86000, 58.13 steps/s
+2020-02-27 18:24:41,681 - root - INFO: ep: 280| steps: 112| total_steps: 86067| return_train: -6.300| ep_upright: 0| total_upright: 646| total_return: -4035.500
+2020-02-27 18:24:49,782 - root - INFO: ep: 281| steps: 504| total_steps: 86571| return_train: 5.700| ep_upright: 25| total_upright: 671| total_return: -4029.800
+2020-02-27 18:24:51,563 - root - INFO: ep: 282| steps: 113| total_steps: 86684| return_train: -5.400| ep_upright: 0| total_upright: 671| total_return: -4035.200
+2020-02-27 18:24:54,149 - root - INFO: ep: 283| steps: 164| total_steps: 86848| return_train: -6.600| ep_upright: 5| total_upright: 676| total_return: -4041.800
+2020-02-27 18:24:56,602 - root - INFO: steps 87000, 62.38 steps/s
+2020-02-27 18:24:59,089 - root - INFO: ep: 284| steps: 306| total_steps: 87154| return_train: -18.100| ep_upright: 0| total_upright: 676| total_return: -4059.900
+2020-02-27 18:25:01,542 - root - INFO: ep: 285| steps: 153| total_steps: 87307| return_train: -4.600| ep_upright: 0| total_upright: 676| total_return: -4064.500
+2020-02-27 18:25:05,795 - root - INFO: ep: 286| steps: 263| total_steps: 87570| return_train: -7.600| ep_upright: 0| total_upright: 676| total_return: -4072.100
+2020-02-27 18:25:09,262 - root - INFO: ep: 287| steps: 215| total_steps: 87785| return_train: -13.500| ep_upright: 0| total_upright: 676| total_return: -4085.600
+2020-02-27 18:25:12,672 - root - INFO: steps 88000, 62.23 steps/s
+2020-02-27 18:25:12,706 - root - INFO: ep: 288| steps: 217| total_steps: 88002| return_train: -9.300| ep_upright: 0| total_upright: 676| total_return: -4094.900
+2020-02-27 18:25:17,280 - root - INFO: ep: 289| steps: 288| total_steps: 88290| return_train: -6.800| ep_upright: 0| total_upright: 676| total_return: -4101.700
+2020-02-27 18:25:19,112 - root - INFO: ep: 290| steps: 112| total_steps: 88402| return_train: -8.700| ep_upright: 0| total_upright: 676| total_return: -4110.400
+2020-02-27 18:25:21,074 - root - INFO: ep: 291| steps: 120| total_steps: 88522| return_train: -7.100| ep_upright: 0| total_upright: 676| total_return: -4117.500
+2020-02-27 18:25:28,811 - root - INFO: steps 89000, 61.96 steps/s
+2020-02-27 18:25:34,567 - root - INFO: ep: 292| steps: 837| total_steps: 89359| return_train: -22.800| ep_upright: 0| total_upright: 676| total_return: -4140.300
+2020-02-27 18:25:40,025 - root - INFO: ep: 293| steps: 345| total_steps: 89704| return_train: -18.000| ep_upright: 0| total_upright: 676| total_return: -4158.300
+2020-02-27 18:25:44,760 - root - INFO: ep: 294| steps: 292| total_steps: 89996| return_train: -7.200| ep_upright: 0| total_upright: 676| total_return: -4165.500
+2020-02-27 18:25:44,824 - root - INFO: steps 90000, 62.45 steps/s
+2020-02-27 18:25:53,980 - root - INFO: steps 90000, ep_return_test 0.00(0.00)
+2020-02-27 18:26:02,718 - root - INFO: ep: 295| steps: 553| total_steps: 90549| return_train: -10.800| ep_upright: 0| total_upright: 676| total_return: -4176.300
+2020-02-27 18:26:04,679 - root - INFO: ep: 296| steps: 119| total_steps: 90668| return_train: -9.700| ep_upright: 0| total_upright: 676| total_return: -4186.000
+2020-02-27 18:26:07,114 - root - INFO: ep: 297| steps: 149| total_steps: 90817| return_train: -10.100| ep_upright: 0| total_upright: 676| total_return: -4196.100
+2020-02-27 18:26:10,040 - root - INFO: steps 91000, 39.66 steps/s
+2020-02-27 18:26:20,125 - root - INFO: ep: 298| steps: 813| total_steps: 91630| return_train: 1.200| ep_upright: 31| total_upright: 707| total_return: -4194.900
+2020-02-27 18:26:25,390 - root - INFO: ep: 299| steps: 335| total_steps: 91965| return_train: 1.500| ep_upright: 7| total_upright: 714| total_return: -4193.400
+2020-02-27 18:26:25,954 - root - INFO: steps 92000, 62.84 steps/s
+2020-02-27 18:26:30,515 - root - INFO: ep: 300| steps: 318| total_steps: 92283| return_train: 17.900| ep_upright: 35| total_upright: 749| total_return: -4175.500
+2020-02-27 18:26:34,141 - root - INFO: ep: 301| steps: 227| total_steps: 92510| return_train: -7.900| ep_upright: 0| total_upright: 749| total_return: -4183.400
+2020-02-27 18:26:41,515 - root - INFO: ep: 302| steps: 458| total_steps: 92968| return_train: -2.500| ep_upright: 13| total_upright: 762| total_return: -4185.900
+2020-02-27 18:26:42,026 - root - INFO: steps 93000, 62.23 steps/s
+2020-02-27 18:26:45,262 - root - INFO: ep: 303| steps: 237| total_steps: 93205| return_train: 7.800| ep_upright: 14| total_upright: 776| total_return: -4178.100
+2020-02-27 18:26:50,417 - root - INFO: ep: 304| steps: 320| total_steps: 93525| return_train: -4.000| ep_upright: 14| total_upright: 790| total_return: -4182.100
+2020-02-27 18:26:54,274 - root - INFO: ep: 305| steps: 234| total_steps: 93759| return_train: -9.100| ep_upright: 0| total_upright: 790| total_return: -4191.200
+2020-02-27 18:26:56,956 - root - INFO: ep: 306| steps: 164| total_steps: 93923| return_train: -10.000| ep_upright: 0| total_upright: 790| total_return: -4201.200
+2020-02-27 18:26:58,220 - root - INFO: steps 94000, 61.76 steps/s
+2020-02-27 18:26:59,568 - root - INFO: ep: 307| steps: 159| total_steps: 94082| return_train: -5.100| ep_upright: 0| total_upright: 790| total_return: -4206.300
+2020-02-27 18:27:03,218 - root - INFO: ep: 308| steps: 224| total_steps: 94306| return_train: -13.100| ep_upright: 0| total_upright: 790| total_return: -4219.400
+2020-02-27 18:27:10,659 - root - INFO: ep: 309| steps: 462| total_steps: 94768| return_train: -10.000| ep_upright: 0| total_upright: 790| total_return: -4229.400
+2020-02-27 18:27:13,266 - root - INFO: ep: 310| steps: 156| total_steps: 94924| return_train: -8.000| ep_upright: 0| total_upright: 790| total_return: -4237.400
+2020-02-27 18:27:14,529 - root - INFO: steps 95000, 61.32 steps/s
+2020-02-27 18:27:17,115 - root - INFO: steps 95000, ep_return_test 4.32(6.93)
+2020-02-27 18:27:20,022 - root - INFO: ep: 311| steps: 253| total_steps: 95177| return_train: -1.200| ep_upright: 13| total_upright: 803| total_return: -4238.600
+2020-02-27 18:27:26,947 - root - INFO: ep: 312| steps: 420| total_steps: 95597| return_train: -14.400| ep_upright: 0| total_upright: 803| total_return: -4253.000
+2020-02-27 18:27:32,447 - root - INFO: ep: 313| steps: 335| total_steps: 95932| return_train: -15.400| ep_upright: 0| total_upright: 803| total_return: -4268.400
+2020-02-27 18:27:33,573 - root - INFO: steps 96000, 52.51 steps/s
+2020-02-27 18:27:38,944 - root - INFO: ep: 314| steps: 382| total_steps: 96314| return_train: 2.100| ep_upright: 14| total_upright: 817| total_return: -4266.300
+2020-02-27 18:27:48,252 - root - INFO: ep: 315| steps: 565| total_steps: 96879| return_train: 13.500| ep_upright: 28| total_upright: 845| total_return: -4252.800
+2020-02-27 18:27:50,187 - root - INFO: steps 97000, 60.19 steps/s
+2020-02-27 18:27:52,063 - root - INFO: ep: 316| steps: 240| total_steps: 97119| return_train: -9.400| ep_upright: 0| total_upright: 845| total_return: -4262.200
+2020-02-27 18:27:57,153 - root - INFO: ep: 317| steps: 323| total_steps: 97442| return_train: -15.800| ep_upright: 0| total_upright: 845| total_return: -4278.000
+2020-02-27 18:28:02,873 - root - INFO: ep: 318| steps: 351| total_steps: 97793| return_train: -16.100| ep_upright: 0| total_upright: 845| total_return: -4294.100
+2020-02-27 18:28:06,225 - root - INFO: steps 98000, 62.36 steps/s
+2020-02-27 18:28:18,930 - root - INFO: ep: 319| steps: 1001| total_steps: 98794| return_train: -3.500| ep_upright: 15| total_upright: 860| total_return: -4297.600
+2020-02-27 18:28:20,823 - root - INFO: ep: 320| steps: 119| total_steps: 98913| return_train: -9.800| ep_upright: 0| total_upright: 860| total_return: -4307.400
+2020-02-27 18:28:22,237 - root - INFO: steps 99000, 62.46 steps/s
+2020-02-27 18:28:28,360 - root - INFO: ep: 321| steps: 466| total_steps: 99379| return_train: -25.100| ep_upright: 0| total_upright: 860| total_return: -4332.500
+2020-02-27 18:28:32,387 - root - INFO: ep: 322| steps: 247| total_steps: 99626| return_train: -8.600| ep_upright: 0| total_upright: 860| total_return: -4341.100
+2020-02-27 18:28:37,964 - root - INFO: ep: 323| steps: 351| total_steps: 99977| return_train: 4.000| ep_upright: 14| total_upright: 874| total_return: -4337.100
+2020-02-27 18:28:38,326 - root - INFO: steps 100000, 62.16 steps/s
+2020-02-27 18:28:39,277 - root - INFO: steps 100000, ep_return_test -9.01(0.20)
+2020-02-27 18:28:41,449 - root - INFO: ep: 324| steps: 159| total_steps: 100136| return_train: -6.900| ep_upright: 0| total_upright: 874| total_return: -4344.000
+2020-02-27 18:28:50,013 - root - INFO: ep: 325| steps: 531| total_steps: 100667| return_train: -12.300| ep_upright: 0| total_upright: 874| total_return: -4356.300
+2020-02-27 18:28:52,729 - root - INFO: ep: 326| steps: 167| total_steps: 100834| return_train: -6.200| ep_upright: 0| total_upright: 874| total_return: -4362.500
+2020-02-27 18:28:55,408 - root - INFO: steps 101000, 58.54 steps/s
+2020-02-27 18:28:55,718 - root - INFO: ep: 327| steps: 185| total_steps: 101019| return_train: -9.300| ep_upright: 0| total_upright: 874| total_return: -4371.800
+2020-02-27 18:29:00,480 - root - INFO: ep: 328| steps: 300| total_steps: 101319| return_train: 2.400| ep_upright: 10| total_upright: 884| total_return: -4369.400
+2020-02-27 18:29:05,514 - root - INFO: ep: 329| steps: 319| total_steps: 101638| return_train: 2.900| ep_upright: 15| total_upright: 899| total_return: -4366.500
+2020-02-27 18:29:08,580 - root - INFO: ep: 330| steps: 188| total_steps: 101826| return_train: -14.800| ep_upright: 0| total_upright: 899| total_return: -4381.300
+2020-02-27 18:29:11,397 - root - INFO: steps 102000, 62.55 steps/s
+2020-02-27 18:29:11,816 - root - INFO: ep: 331| steps: 200| total_steps: 102026| return_train: -3.700| ep_upright: 0| total_upright: 899| total_return: -4385.000
+2020-02-27 18:29:13,291 - root - INFO: ep: 332| steps: 93| total_steps: 102119| return_train: -5.600| ep_upright: 0| total_upright: 899| total_return: -4390.600
+2020-02-27 18:29:18,111 - root - INFO: ep: 333| steps: 306| total_steps: 102425| return_train: -9.500| ep_upright: 0| total_upright: 899| total_return: -4400.100
+2020-02-27 18:29:27,144 - root - INFO: steps 103000, 63.51 steps/s
+2020-02-27 18:29:29,674 - root - INFO: ep: 334| steps: 739| total_steps: 103164| return_train: -10.500| ep_upright: 5| total_upright: 904| total_return: -4410.600
+2020-02-27 18:29:34,776 - root - INFO: ep: 335| steps: 330| total_steps: 103494| return_train: 2.600| ep_upright: 14| total_upright: 918| total_return: -4408.000
+2020-02-27 18:29:36,307 - root - INFO: ep: 336| steps: 99| total_steps: 103593| return_train: -7.800| ep_upright: 0| total_upright: 918| total_return: -4415.800
+2020-02-27 18:29:42,599 - root - INFO: steps 104000, 64.71 steps/s
+2020-02-27 18:29:45,633 - root - INFO: ep: 337| steps: 603| total_steps: 104196| return_train: 9.800| ep_upright: 20| total_upright: 938| total_return: -4406.000
+2020-02-27 18:29:50,224 - root - INFO: ep: 338| steps: 296| total_steps: 104492| return_train: -13.600| ep_upright: 0| total_upright: 938| total_return: -4419.600
+2020-02-27 18:29:58,097 - root - INFO: steps 105000, 64.53 steps/s
+2020-02-27 18:30:07,203 - root - INFO: steps 105000, ep_return_test 0.00(0.00)
+2020-02-27 18:30:10,184 - root - INFO: ep: 339| steps: 699| total_steps: 105191| return_train: 48.900| ep_upright: 57| total_upright: 995| total_return: -4370.700
+2020-02-27 18:30:22,719 - root - INFO: steps 106000, 40.62 steps/s
+2020-02-27 18:30:25,684 - root - INFO: ep: 340| steps: 1001| total_steps: 106192| return_train: 24.400| ep_upright: 40| total_upright: 1035| total_return: -4346.300
+2020-02-27 18:30:29,264 - root - INFO: ep: 341| steps: 232| total_steps: 106424| return_train: -3.800| ep_upright: 0| total_upright: 1035| total_return: -4350.100
+2020-02-27 18:30:33,629 - root - INFO: ep: 342| steps: 283| total_steps: 106707| return_train: -2.400| ep_upright: 0| total_upright: 1035| total_return: -4352.500
+2020-02-27 18:30:38,154 - root - INFO: steps 107000, 64.79 steps/s
+2020-02-27 18:30:49,202 - root - INFO: ep: 343| steps: 1001| total_steps: 107708| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.500
+2020-02-27 18:30:53,753 - root - INFO: steps 108000, 64.11 steps/s
+2020-02-27 18:31:04,774 - root - INFO: ep: 344| steps: 1001| total_steps: 108709| return_train: -0.100| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:31:09,280 - root - INFO: steps 109000, 64.41 steps/s
+2020-02-27 18:31:20,389 - root - INFO: ep: 345| steps: 1001| total_steps: 109710| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:31:24,964 - root - INFO: steps 110000, 63.76 steps/s
+2020-02-27 18:31:34,026 - root - INFO: steps 110000, ep_return_test 0.00(0.00)
+2020-02-27 18:31:45,033 - root - INFO: ep: 346| steps: 1001| total_steps: 110711| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:31:49,538 - root - INFO: steps 111000, 40.70 steps/s
+2020-02-27 18:32:00,518 - root - INFO: ep: 347| steps: 1001| total_steps: 111712| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:32:05,068 - root - INFO: steps 112000, 64.40 steps/s
+2020-02-27 18:32:16,124 - root - INFO: ep: 348| steps: 1001| total_steps: 112713| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:32:20,554 - root - INFO: steps 113000, 64.58 steps/s
+2020-02-27 18:32:31,578 - root - INFO: ep: 349| steps: 1001| total_steps: 113714| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:32:35,998 - root - INFO: steps 114000, 64.76 steps/s
+2020-02-27 18:32:47,206 - root - INFO: ep: 350| steps: 1001| total_steps: 114715| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:32:51,679 - root - INFO: steps 115000, 63.78 steps/s
+2020-02-27 18:33:00,704 - root - INFO: steps 115000, ep_return_test 0.00(0.00)
+2020-02-27 18:33:11,814 - root - INFO: ep: 351| steps: 1001| total_steps: 115716| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:33:16,210 - root - INFO: steps 116000, 40.77 steps/s
+2020-02-27 18:33:27,468 - root - INFO: ep: 352| steps: 1001| total_steps: 116717| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:33:31,927 - root - INFO: steps 117000, 63.63 steps/s
+2020-02-27 18:33:43,136 - root - INFO: ep: 353| steps: 1001| total_steps: 117718| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:33:47,559 - root - INFO: steps 118000, 63.98 steps/s
+2020-02-27 18:33:58,731 - root - INFO: ep: 354| steps: 1001| total_steps: 118719| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:34:03,156 - root - INFO: steps 119000, 64.12 steps/s
+2020-02-27 18:34:14,420 - root - INFO: ep: 355| steps: 1001| total_steps: 119720| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:34:18,762 - root - INFO: steps 120000, 64.08 steps/s
+2020-02-27 18:34:27,826 - root - INFO: steps 120000, ep_return_test 0.00(0.00)
+2020-02-27 18:34:39,016 - root - INFO: ep: 356| steps: 1001| total_steps: 120721| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:34:43,430 - root - INFO: steps 121000, 40.54 steps/s
+2020-02-27 18:34:54,701 - root - INFO: ep: 357| steps: 1001| total_steps: 121722| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:34:59,031 - root - INFO: steps 122000, 64.10 steps/s
+2020-02-27 18:35:10,301 - root - INFO: ep: 358| steps: 1001| total_steps: 122723| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:35:14,621 - root - INFO: steps 123000, 64.15 steps/s
+2020-02-27 18:35:26,026 - root - INFO: ep: 359| steps: 1001| total_steps: 123724| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:35:30,369 - root - INFO: steps 124000, 63.50 steps/s
+2020-02-27 18:35:41,668 - root - INFO: ep: 360| steps: 1001| total_steps: 124725| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:35:45,966 - root - INFO: steps 125000, 64.12 steps/s
+2020-02-27 18:35:54,988 - root - INFO: steps 125000, ep_return_test 0.00(0.00)
+2020-02-27 18:36:06,393 - root - INFO: ep: 361| steps: 1001| total_steps: 125726| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:36:10,741 - root - INFO: steps 126000, 40.36 steps/s
+2020-02-27 18:36:22,047 - root - INFO: ep: 362| steps: 1001| total_steps: 126727| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:36:26,283 - root - INFO: steps 127000, 64.35 steps/s
+2020-02-27 18:36:37,556 - root - INFO: ep: 363| steps: 1001| total_steps: 127728| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:36:41,828 - root - INFO: steps 128000, 64.34 steps/s
+2020-02-27 18:36:53,288 - root - INFO: ep: 364| steps: 1001| total_steps: 128729| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4352.600
+2020-02-27 18:36:57,507 - root - INFO: steps 129000, 63.78 steps/s
+2020-02-27 18:37:06,244 - root - INFO: ep: 365| steps: 831| total_steps: 129560| return_train: -0.800| ep_upright: 0| total_upright: 1035| total_return: -4353.400
+2020-02-27 18:37:13,113 - root - INFO: steps 130000, 64.09 steps/s
+2020-02-27 18:37:15,854 - root - INFO: steps 130000, ep_return_test -1.09(0.01)
+2020-02-27 18:37:16,679 - root - INFO: ep: 366| steps: 492| total_steps: 130052| return_train: -1.100| ep_upright: 0| total_upright: 1035| total_return: -4354.500
+2020-02-27 18:37:22,804 - root - INFO: ep: 367| steps: 390| total_steps: 130442| return_train: -1.100| ep_upright: 0| total_upright: 1035| total_return: -4355.600
+2020-02-27 18:37:27,980 - root - INFO: ep: 368| steps: 326| total_steps: 130768| return_train: -1.000| ep_upright: 0| total_upright: 1035| total_return: -4356.600
+2020-02-27 18:37:31,603 - root - INFO: steps 131000, 54.09 steps/s
+2020-02-27 18:37:43,582 - root - INFO: ep: 369| steps: 1001| total_steps: 131769| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4356.600
+2020-02-27 18:37:47,175 - root - INFO: steps 132000, 64.23 steps/s
+2020-02-27 18:37:59,131 - root - INFO: ep: 370| steps: 1001| total_steps: 132770| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4356.600
+2020-02-27 18:38:02,734 - root - INFO: steps 133000, 64.28 steps/s
+2020-02-27 18:38:02,753 - root - INFO: ep: 371| steps: 231| total_steps: 133001| return_train: -1.800| ep_upright: 0| total_upright: 1035| total_return: -4358.400
+2020-02-27 18:38:18,371 - root - INFO: steps 134000, 63.95 steps/s
+2020-02-27 18:38:18,406 - root - INFO: ep: 372| steps: 1001| total_steps: 134002| return_train: 0.000| ep_upright: 0| total_upright: 1035| total_return: -4358.400
+2020-02-27 18:38:33,902 - root - INFO: steps 135000, 64.39 steps/s
+2020-02-27 18:38:38,240 - root - INFO: steps 135000, ep_return_test -4.33(0.36)
+2020-02-27 18:38:38,295 - root - INFO: ep: 373| steps: 1001| total_steps: 135003| return_train: 80.300| ep_upright: 110| total_upright: 1145| total_return: -4278.100
+2020-02-27 18:38:54,000 - root - INFO: steps 136000, 49.76 steps/s
+2020-02-27 18:38:54,065 - root - INFO: ep: 374| steps: 1001| total_steps: 136004| return_train: 0.000| ep_upright: 0| total_upright: 1145| total_return: -4278.100
+2020-02-27 18:38:58,585 - root - INFO: ep: 375| steps: 288| total_steps: 136292| return_train: -4.300| ep_upright: 0| total_upright: 1145| total_return: -4282.400
+2020-02-27 18:39:09,723 - root - INFO: steps 137000, 63.60 steps/s
+2020-02-27 18:39:14,331 - root - INFO: ep: 376| steps: 1001| total_steps: 137293| return_train: -7.400| ep_upright: 26| total_upright: 1171| total_return: -4289.800
+2020-02-27 18:39:25,457 - root - INFO: steps 138000, 63.56 steps/s
+2020-02-27 18:39:30,070 - root - INFO: ep: 377| steps: 1001| total_steps: 138294| return_train: 0.000| ep_upright: 0| total_upright: 1171| total_return: -4289.800
+2020-02-27 18:39:41,164 - root - INFO: steps 139000, 63.67 steps/s
+2020-02-27 18:39:45,772 - root - INFO: ep: 378| steps: 1001| total_steps: 139295| return_train: 0.000| ep_upright: 0| total_upright: 1171| total_return: -4289.800
+2020-02-27 18:39:54,943 - root - INFO: ep: 379| steps: 588| total_steps: 139883| return_train: 16.200| ep_upright: 35| total_upright: 1206| total_return: -4273.600
+2020-02-27 18:39:56,758 - root - INFO: steps 140000, 64.13 steps/s
+2020-02-27 18:40:05,824 - root - INFO: steps 140000, ep_return_test 0.00(0.00)
+2020-02-27 18:40:19,564 - root - INFO: ep: 380| steps: 1001| total_steps: 140884| return_train: -0.100| ep_upright: 0| total_upright: 1206| total_return: -4273.700
+2020-02-27 18:40:21,369 - root - INFO: steps 141000, 40.63 steps/s
+2020-02-27 18:40:35,117 - root - INFO: ep: 381| steps: 1001| total_steps: 141885| return_train: 82.000| ep_upright: 132| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:40:36,903 - root - INFO: steps 142000, 64.38 steps/s
+2020-02-27 18:40:50,891 - root - INFO: ep: 382| steps: 1001| total_steps: 142886| return_train: 0.000| ep_upright: 0| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:40:52,693 - root - INFO: steps 143000, 63.33 steps/s
+2020-02-27 18:41:06,583 - root - INFO: ep: 383| steps: 1001| total_steps: 143887| return_train: 0.000| ep_upright: 0| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:41:08,342 - root - INFO: steps 144000, 63.91 steps/s
+2020-02-27 18:41:22,261 - root - INFO: ep: 384| steps: 1001| total_steps: 144888| return_train: 0.000| ep_upright: 0| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:41:24,012 - root - INFO: steps 145000, 63.82 steps/s
+2020-02-27 18:41:33,038 - root - INFO: steps 145000, ep_return_test 0.00(0.00)
+2020-02-27 18:41:46,909 - root - INFO: ep: 385| steps: 1001| total_steps: 145889| return_train: 0.000| ep_upright: 0| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:41:48,640 - root - INFO: steps 146000, 40.61 steps/s
+2020-02-27 18:42:02,498 - root - INFO: ep: 386| steps: 1001| total_steps: 146890| return_train: 0.000| ep_upright: 0| total_upright: 1338| total_return: -4191.700
+2020-02-27 18:42:04,249 - root - INFO: steps 147000, 64.07 steps/s
+2020-02-27 18:42:10,968 - root - INFO: ep: 387| steps: 531| total_steps: 147421| return_train: -6.900| ep_upright: 18| total_upright: 1356| total_return: -4198.600
+2020-02-27 18:42:19,929 - root - INFO: ep: 388| steps: 561| total_steps: 147982| return_train: -1.000| ep_upright: 20| total_upright: 1376| total_return: -4199.600
+2020-02-27 18:42:20,219 - root - INFO: steps 148000, 62.62 steps/s
+2020-02-27 18:42:26,397 - root - INFO: ep: 389| steps: 400| total_steps: 148382| return_train: 59.600| ep_upright: 73| total_upright: 1449| total_return: -4140.000
+2020-02-27 18:42:32,135 - root - INFO: ep: 390| steps: 360| total_steps: 148742| return_train: 39.100| ep_upright: 50| total_upright: 1499| total_return: -4100.900
+2020-02-27 18:42:36,241 - root - INFO: steps 149000, 62.42 steps/s
+2020-02-27 18:42:39,947 - root - INFO: ep: 391| steps: 489| total_steps: 149231| return_train: 85.000| ep_upright: 96| total_upright: 1595| total_return: -4015.900
+2020-02-27 18:42:46,699 - root - INFO: ep: 392| steps: 409| total_steps: 149640| return_train: 34.500| ep_upright: 56| total_upright: 1651| total_return: -3981.400
+2020-02-27 18:42:52,760 - root - INFO: steps 150000, 60.54 steps/s
+2020-02-27 18:42:56,458 - root - INFO: steps 150000, ep_return_test 33.51(0.57)
+2020-02-27 18:42:59,426 - root - INFO: ep: 393| steps: 546| total_steps: 150186| return_train: 98.500| ep_upright: 109| total_upright: 1760| total_return: -3882.900
+2020-02-27 18:43:12,175 - root - INFO: steps 151000, 51.51 steps/s
+2020-02-27 18:43:15,114 - root - INFO: ep: 394| steps: 1001| total_steps: 151187| return_train: -3.400| ep_upright: 42| total_upright: 1802| total_return: -3886.300
+2020-02-27 18:43:24,972 - root - INFO: ep: 395| steps: 626| total_steps: 151813| return_train: 35.300| ep_upright: 51| total_upright: 1853| total_return: -3851.000
+2020-02-27 18:43:27,908 - root - INFO: steps 152000, 63.57 steps/s
+2020-02-27 18:43:31,630 - root - INFO: ep: 396| steps: 425| total_steps: 152238| return_train: 57.700| ep_upright: 71| total_upright: 1924| total_return: -3793.300
+2020-02-27 18:43:37,941 - root - INFO: ep: 397| steps: 405| total_steps: 152643| return_train: 28.300| ep_upright: 39| total_upright: 1963| total_return: -3765.000
+2020-02-27 18:43:43,571 - root - INFO: steps 153000, 63.85 steps/s
+2020-02-27 18:43:47,065 - root - INFO: ep: 398| steps: 581| total_steps: 153224| return_train: 63.600| ep_upright: 81| total_upright: 2044| total_return: -3701.400
+2020-02-27 18:43:52,509 - root - INFO: ep: 399| steps: 347| total_steps: 153571| return_train: 10.600| ep_upright: 29| total_upright: 2073| total_return: -3690.800
+2020-02-27 18:43:59,173 - root - INFO: steps 154000, 64.10 steps/s
+2020-02-27 18:44:01,198 - root - INFO: ep: 400| steps: 558| total_steps: 154129| return_train: 113.500| ep_upright: 127| total_upright: 2200| total_return: -3577.300
+2020-02-27 18:44:14,836 - root - INFO: steps 155000, 63.85 steps/s
+2020-02-27 18:44:23,558 - root - INFO: steps 155000, ep_return_test 53.10(7.34)
+2020-02-27 18:44:25,586 - root - INFO: ep: 401| steps: 1001| total_steps: 155130| return_train: 35.000| ep_upright: 89| total_upright: 2289| total_return: -3542.300
+2020-02-27 18:44:34,560 - root - INFO: ep: 402| steps: 577| total_steps: 155707| return_train: -11.700| ep_upright: 0| total_upright: 2289| total_return: -3554.000
+2020-02-27 18:44:39,137 - root - INFO: steps 156000, 41.15 steps/s
+2020-02-27 18:44:45,760 - root - INFO: ep: 403| steps: 709| total_steps: 156416| return_train: 129.700| ep_upright: 147| total_upright: 2436| total_return: -3424.300
+2020-02-27 18:44:54,971 - root - INFO: steps 157000, 63.16 steps/s
+2020-02-27 18:44:58,942 - root - INFO: ep: 404| steps: 836| total_steps: 157252| return_train: 148.600| ep_upright: 186| total_upright: 2622| total_return: -3275.700
+2020-02-27 18:45:10,675 - root - INFO: steps 158000, 63.68 steps/s
+2020-02-27 18:45:14,644 - root - INFO: ep: 405| steps: 1001| total_steps: 158253| return_train: 150.000| ep_upright: 182| total_upright: 2804| total_return: -3125.700
+2020-02-27 18:45:26,493 - root - INFO: steps 159000, 63.22 steps/s
+2020-02-27 18:45:30,502 - root - INFO: ep: 406| steps: 1001| total_steps: 159254| return_train: 134.400| ep_upright: 172| total_upright: 2976| total_return: -2991.300
+2020-02-27 18:45:42,229 - root - INFO: steps 160000, 63.55 steps/s
+2020-02-27 18:45:51,150 - root - INFO: steps 160000, ep_return_test 189.56(24.27)
+2020-02-27 18:45:55,119 - root - INFO: ep: 407| steps: 1001| total_steps: 160255| return_train: -0.100| ep_upright: 0| total_upright: 2976| total_return: -2991.400
+2020-02-27 18:46:06,775 - root - INFO: steps 161000, 40.74 steps/s
+2020-02-27 18:46:10,791 - root - INFO: ep: 408| steps: 1001| total_steps: 161256| return_train: 305.200| ep_upright: 363| total_upright: 3339| total_return: -2686.200
+2020-02-27 18:46:21,561 - root - INFO: ep: 409| steps: 690| total_steps: 161946| return_train: 43.300| ep_upright: 73| total_upright: 3412| total_return: -2642.900
+2020-02-27 18:46:22,401 - root - INFO: steps 162000, 64.00 steps/s
+2020-02-27 18:46:27,703 - root - INFO: ep: 410| steps: 395| total_steps: 162341| return_train: 18.300| ep_upright: 42| total_upright: 3454| total_return: -2624.600
+2020-02-27 18:46:34,736 - root - INFO: ep: 411| steps: 450| total_steps: 162791| return_train: 72.500| ep_upright: 96| total_upright: 3550| total_return: -2552.100
+2020-02-27 18:46:37,999 - root - INFO: steps 163000, 64.12 steps/s
+2020-02-27 18:46:50,566 - root - INFO: ep: 412| steps: 1001| total_steps: 163792| return_train: 171.600| ep_upright: 221| total_upright: 3771| total_return: -2380.500
+2020-02-27 18:46:53,822 - root - INFO: steps 164000, 63.20 steps/s
+2020-02-27 18:47:06,234 - root - INFO: ep: 413| steps: 1001| total_steps: 164793| return_train: 367.900| ep_upright: 447| total_upright: 4218| total_return: -2012.600
+2020-02-27 18:47:09,468 - root - INFO: steps 165000, 63.92 steps/s
+2020-02-27 18:47:11,606 - root - INFO: steps 165000, ep_return_test 13.29(0.36)
+2020-02-27 18:47:18,861 - root - INFO: ep: 414| steps: 668| total_steps: 165461| return_train: 5.500| ep_upright: 35| total_upright: 4253| total_return: -2007.100
+2020-02-27 18:47:27,368 - root - INFO: steps 166000, 55.87 steps/s
+2020-02-27 18:47:29,586 - root - INFO: ep: 415| steps: 680| total_steps: 166141| return_train: 145.700| ep_upright: 171| total_upright: 4424| total_return: -1861.400
+2020-02-27 18:47:43,035 - root - INFO: steps 167000, 63.83 steps/s
+2020-02-27 18:47:45,265 - root - INFO: ep: 416| steps: 1001| total_steps: 167142| return_train: 8.400| ep_upright: 74| total_upright: 4498| total_return: -1853.000
+2020-02-27 18:47:54,773 - root - INFO: ep: 417| steps: 606| total_steps: 167748| return_train: 26.800| ep_upright: 54| total_upright: 4552| total_return: -1826.200
+2020-02-27 18:47:58,721 - root - INFO: steps 168000, 63.76 steps/s
+2020-02-27 18:48:02,909 - root - INFO: ep: 418| steps: 519| total_steps: 168267| return_train: -1.800| ep_upright: 14| total_upright: 4566| total_return: -1828.000
+2020-02-27 18:48:09,277 - root - INFO: ep: 419| steps: 400| total_steps: 168667| return_train: 7.000| ep_upright: 27| total_upright: 4593| total_return: -1821.000
+2020-02-27 18:48:14,467 - root - INFO: steps 169000, 63.51 steps/s
+2020-02-27 18:48:24,081 - root - INFO: ep: 420| steps: 948| total_steps: 169615| return_train: 99.200| ep_upright: 139| total_upright: 4732| total_return: -1721.800
+2020-02-27 18:48:30,075 - root - INFO: steps 170000, 64.07 steps/s
+2020-02-27 18:48:39,128 - root - INFO: steps 170000, ep_return_test 24.23(6.14)
+2020-02-27 18:48:48,841 - root - INFO: ep: 421| steps: 1001| total_steps: 170616| return_train: 74.200| ep_upright: 109| total_upright: 4841| total_return: -1647.600
+2020-02-27 18:48:54,885 - root - INFO: steps 171000, 40.31 steps/s
+2020-02-27 18:49:02,364 - root - INFO: ep: 422| steps: 860| total_steps: 171476| return_train: 64.300| ep_upright: 95| total_upright: 4936| total_return: -1583.300
+2020-02-27 18:49:10,581 - root - INFO: steps 172000, 63.72 steps/s
+2020-02-27 18:49:18,079 - root - INFO: ep: 423| steps: 1001| total_steps: 172477| return_train: 65.900| ep_upright: 112| total_upright: 5048| total_return: -1517.400
+2020-02-27 18:49:26,336 - root - INFO: steps 173000, 63.48 steps/s
+2020-02-27 18:49:33,860 - root - INFO: ep: 424| steps: 1001| total_steps: 173478| return_train: 140.400| ep_upright: 204| total_upright: 5252| total_return: -1377.000
+2020-02-27 18:49:42,037 - root - INFO: steps 174000, 63.70 steps/s
+2020-02-27 18:49:49,533 - root - INFO: ep: 425| steps: 1001| total_steps: 174479| return_train: 44.800| ep_upright: 74| total_upright: 5326| total_return: -1332.200
+2020-02-27 18:49:57,687 - root - INFO: steps 175000, 63.90 steps/s
+2020-02-27 18:50:06,753 - root - INFO: steps 175000, ep_return_test 36.43(7.16)
+2020-02-27 18:50:14,224 - root - INFO: ep: 426| steps: 1001| total_steps: 175480| return_train: 29.300| ep_upright: 59| total_upright: 5385| total_return: -1302.900
+2020-02-27 18:50:22,328 - root - INFO: steps 176000, 40.59 steps/s
+2020-02-27 18:50:23,377 - root - INFO: ep: 427| steps: 587| total_steps: 176067| return_train: 26.400| ep_upright: 45| total_upright: 5430| total_return: -1276.500
+2020-02-27 18:50:33,914 - root - INFO: ep: 428| steps: 676| total_steps: 176743| return_train: 143.200| ep_upright: 172| total_upright: 5602| total_return: -1133.300
+2020-02-27 18:50:37,917 - root - INFO: steps 177000, 64.15 steps/s
+2020-02-27 18:50:39,613 - root - INFO: ep: 429| steps: 365| total_steps: 177108| return_train: 44.900| ep_upright: 61| total_upright: 5663| total_return: -1088.400
+2020-02-27 18:50:49,576 - root - INFO: ep: 430| steps: 628| total_steps: 177736| return_train: 17.400| ep_upright: 55| total_upright: 5718| total_return: -1071.000
+2020-02-27 18:50:53,808 - root - INFO: steps 178000, 62.93 steps/s
+2020-02-27 18:51:03,602 - root - INFO: ep: 431| steps: 883| total_steps: 178619| return_train: 182.000| ep_upright: 231| total_upright: 5949| total_return: -889.000
+2020-02-27 18:51:09,577 - root - INFO: steps 179000, 63.42 steps/s
+2020-02-27 18:51:10,376 - root - INFO: ep: 432| steps: 431| total_steps: 179050| return_train: 86.400| ep_upright: 105| total_upright: 6054| total_return: -802.600
+2020-02-27 18:51:17,568 - root - INFO: ep: 433| steps: 453| total_steps: 179503| return_train: 107.700| ep_upright: 120| total_upright: 6174| total_return: -694.900
+2020-02-27 18:51:23,537 - root - INFO: ep: 434| steps: 376| total_steps: 179879| return_train: 38.500| ep_upright: 52| total_upright: 6226| total_return: -656.400
+2020-02-27 18:51:25,473 - root - INFO: steps 180000, 62.92 steps/s
+2020-02-27 18:51:34,446 - root - INFO: steps 180000, ep_return_test 163.60(18.55)
+2020-02-27 18:51:37,807 - root - INFO: ep: 435| steps: 336| total_steps: 180215| return_train: 4.700| ep_upright: 20| total_upright: 6246| total_return: -651.700
+2020-02-27 18:51:43,408 - root - INFO: ep: 436| steps: 359| total_steps: 180574| return_train: 29.300| ep_upright: 48| total_upright: 6294| total_return: -622.400
+2020-02-27 18:51:50,126 - root - INFO: steps 181000, 40.56 steps/s
+2020-02-27 18:51:56,261 - root - INFO: ep: 437| steps: 818| total_steps: 181392| return_train: 127.100| ep_upright: 174| total_upright: 6468| total_return: -495.300
+2020-02-27 18:52:03,990 - root - INFO: ep: 438| steps: 495| total_steps: 181887| return_train: 102.800| ep_upright: 128| total_upright: 6596| total_return: -392.500
+2020-02-27 18:52:05,776 - root - INFO: steps 182000, 63.90 steps/s
+2020-02-27 18:52:19,663 - root - INFO: ep: 439| steps: 1001| total_steps: 182888| return_train: 274.900| ep_upright: 330| total_upright: 6926| total_return: -117.600
+2020-02-27 18:52:21,406 - root - INFO: steps 183000, 63.98 steps/s
+2020-02-27 18:52:35,256 - root - INFO: ep: 440| steps: 1001| total_steps: 183889| return_train: 95.000| ep_upright: 152| total_upright: 7078| total_return: -22.600
+2020-02-27 18:52:36,982 - root - INFO: steps 184000, 64.21 steps/s
+2020-02-27 18:52:50,993 - root - INFO: ep: 441| steps: 1001| total_steps: 184890| return_train: 187.400| ep_upright: 250| total_upright: 7328| total_return: 164.800
+2020-02-27 18:52:52,717 - root - INFO: steps 185000, 63.55 steps/s
+2020-02-27 18:52:59,628 - root - INFO: steps 185000, ep_return_test 108.46(25.38)
+2020-02-27 18:53:03,501 - root - INFO: ep: 442| steps: 356| total_steps: 185246| return_train: 33.600| ep_upright: 55| total_upright: 7383| total_return: 198.400
+2020-02-27 18:53:15,312 - root - INFO: steps 186000, 44.26 steps/s
+2020-02-27 18:53:18,503 - root - INFO: ep: 443| steps: 957| total_steps: 186203| return_train: 244.900| ep_upright: 311| total_upright: 7694| total_return: 443.300
+2020-02-27 18:53:31,006 - root - INFO: steps 187000, 63.72 steps/s
+2020-02-27 18:53:34,207 - root - INFO: ep: 444| steps: 1001| total_steps: 187204| return_train: 320.700| ep_upright: 386| total_upright: 8080| total_return: 764.000
+2020-02-27 18:53:46,698 - root - INFO: steps 188000, 63.73 steps/s
+2020-02-27 18:53:49,902 - root - INFO: ep: 445| steps: 1001| total_steps: 188205| return_train: 159.400| ep_upright: 224| total_upright: 8304| total_return: 923.400
+2020-02-27 18:54:00,371 - root - INFO: ep: 446| steps: 672| total_steps: 188877| return_train: 37.900| ep_upright: 65| total_upright: 8369| total_return: 961.300
+2020-02-27 18:54:02,288 - root - INFO: steps 189000, 64.15 steps/s
+2020-02-27 18:54:12,364 - root - INFO: ep: 447| steps: 763| total_steps: 189640| return_train: 243.400| ep_upright: 286| total_upright: 8655| total_return: 1204.700
+2020-02-27 18:54:17,976 - root - INFO: steps 190000, 63.75 steps/s
+2020-02-27 18:54:22,961 - root - INFO: steps 190000, ep_return_test 63.70(31.77)
+2020-02-27 18:54:29,417 - root - INFO: ep: 448| steps: 773| total_steps: 190413| return_train: 43.000| ep_upright: 72| total_upright: 8727| total_return: 1247.700
+2020-02-27 18:54:38,539 - root - INFO: steps 191000, 48.63 steps/s
+2020-02-27 18:54:45,064 - root - INFO: ep: 449| steps: 1001| total_steps: 191414| return_train: 166.200| ep_upright: 239| total_upright: 8966| total_return: 1413.900
+2020-02-27 18:54:52,516 - root - INFO: ep: 450| steps: 471| total_steps: 191885| return_train: 35.800| ep_upright: 60| total_upright: 9026| total_return: 1449.700
+2020-02-27 18:54:54,318 - root - INFO: steps 192000, 63.38 steps/s
+2020-02-27 18:54:57,345 - root - INFO: ep: 451| steps: 307| total_steps: 192192| return_train: 0.600| ep_upright: 22| total_upright: 9048| total_return: 1450.300
+2020-02-27 18:55:02,776 - root - INFO: ep: 452| steps: 342| total_steps: 192534| return_train: 105.000| ep_upright: 124| total_upright: 9172| total_return: 1555.300
+2020-02-27 18:55:10,098 - root - INFO: steps 193000, 63.38 steps/s
+2020-02-27 18:55:10,514 - root - INFO: ep: 453| steps: 492| total_steps: 193026| return_train: -11.400| ep_upright: 15| total_upright: 9187| total_return: 1543.900
+2020-02-27 18:55:24,080 - root - INFO: ep: 454| steps: 863| total_steps: 193889| return_train: 17.800| ep_upright: 49| total_upright: 9236| total_return: 1561.700
+2020-02-27 18:55:25,822 - root - INFO: steps 194000, 63.60 steps/s
+2020-02-27 18:55:39,776 - root - INFO: ep: 455| steps: 1001| total_steps: 194890| return_train: 416.600| ep_upright: 458| total_upright: 9694| total_return: 1978.300
+2020-02-27 18:55:41,503 - root - INFO: steps 195000, 63.78 steps/s
+2020-02-27 18:55:45,181 - root - INFO: steps 195000, ep_return_test 8.18(2.34)
+2020-02-27 18:55:59,131 - root - INFO: ep: 456| steps: 1001| total_steps: 195891| return_train: 161.300| ep_upright: 217| total_upright: 9911| total_return: 2139.600
+2020-02-27 18:56:00,827 - root - INFO: steps 196000, 51.75 steps/s
+2020-02-27 18:56:03,501 - root - INFO: ep: 457| steps: 280| total_steps: 196171| return_train: -3.300| ep_upright: 12| total_upright: 9923| total_return: 2136.300
+2020-02-27 18:56:16,482 - root - INFO: steps 197000, 63.88 steps/s
+2020-02-27 18:56:19,184 - root - INFO: ep: 458| steps: 1001| total_steps: 197172| return_train: 395.800| ep_upright: 444| total_upright: 10367| total_return: 2532.100
+2020-02-27 18:56:32,146 - root - INFO: steps 198000, 63.85 steps/s
+2020-02-27 18:56:34,853 - root - INFO: ep: 459| steps: 1001| total_steps: 198173| return_train: 418.500| ep_upright: 472| total_upright: 10839| total_return: 2950.600
+2020-02-27 18:56:45,572 - root - INFO: ep: 460| steps: 681| total_steps: 198854| return_train: 105.900| ep_upright: 143| total_upright: 10982| total_return: 3056.500
+2020-02-27 18:56:47,887 - root - INFO: steps 199000, 63.53 steps/s
+2020-02-27 18:57:01,357 - root - INFO: ep: 461| steps: 1001| total_steps: 199855| return_train: 214.100| ep_upright: 277| total_upright: 11259| total_return: 3270.600
+2020-02-27 18:57:03,641 - root - INFO: steps 200000, 63.48 steps/s
+2020-02-27 18:57:10,798 - root - INFO: steps 200000, ep_return_test 286.55(56.65)
+2020-02-27 18:57:12,638 - root - INFO: ep: 462| steps: 261| total_steps: 200116| return_train: 54.400| ep_upright: 70| total_upright: 11329| total_return: 3325.000
+2020-02-27 18:57:20,967 - root - INFO: ep: 463| steps: 530| total_steps: 200646| return_train: 82.600| ep_upright: 110| total_upright: 11439| total_return: 3407.600
+2020-02-27 18:57:26,559 - root - INFO: steps 201000, 43.64 steps/s
+2020-02-27 18:57:36,647 - root - INFO: ep: 464| steps: 1001| total_steps: 201647| return_train: 253.100| ep_upright: 295| total_upright: 11734| total_return: 3660.700
+2020-02-27 18:57:42,151 - root - INFO: steps 202000, 64.14 steps/s
+2020-02-27 18:57:44,894 - root - INFO: ep: 465| steps: 529| total_steps: 202176| return_train: 18.900| ep_upright: 50| total_upright: 11784| total_return: 3679.600
+2020-02-27 18:57:57,777 - root - INFO: steps 203000, 64.00 steps/s
+2020-02-27 18:58:00,539 - root - INFO: ep: 466| steps: 1001| total_steps: 203177| return_train: 248.500| ep_upright: 307| total_upright: 12091| total_return: 3928.100
+2020-02-27 18:58:13,478 - root - INFO: steps 204000, 63.70 steps/s
+2020-02-27 18:58:16,259 - root - INFO: ep: 467| steps: 1001| total_steps: 204178| return_train: 141.400| ep_upright: 178| total_upright: 12269| total_return: 4069.500
+2020-02-27 18:58:29,075 - root - INFO: steps 205000, 64.12 steps/s
+2020-02-27 18:58:38,137 - root - INFO: steps 205000, ep_return_test 285.28(44.69)
+2020-02-27 18:58:40,968 - root - INFO: ep: 468| steps: 1001| total_steps: 205179| return_train: 241.700| ep_upright: 293| total_upright: 12562| total_return: 4311.200
+2020-02-27 18:58:53,931 - root - INFO: steps 206000, 40.23 steps/s
+2020-02-27 18:58:56,766 - root - INFO: ep: 469| steps: 1001| total_steps: 206180| return_train: 264.500| ep_upright: 330| total_upright: 12892| total_return: 4575.700
+2020-02-27 18:59:09,256 - root - INFO: ep: 470| steps: 792| total_steps: 206972| return_train: 383.400| ep_upright: 420| total_upright: 13312| total_return: 4959.100
+2020-02-27 18:59:09,702 - root - INFO: steps 207000, 63.41 steps/s
+2020-02-27 18:59:25,072 - root - INFO: ep: 471| steps: 1001| total_steps: 207973| return_train: 194.400| ep_upright: 242| total_upright: 13554| total_return: 5153.500
+2020-02-27 18:59:25,501 - root - INFO: steps 208000, 63.30 steps/s
+2020-02-27 18:59:40,727 - root - INFO: ep: 472| steps: 1001| total_steps: 208974| return_train: 136.000| ep_upright: 180| total_upright: 13734| total_return: 5289.500
+2020-02-27 18:59:41,134 - root - INFO: steps 209000, 63.97 steps/s
+2020-02-27 18:59:49,662 - root - INFO: ep: 473| steps: 572| total_steps: 209546| return_train: 80.100| ep_upright: 118| total_upright: 13852| total_return: 5369.600
+2020-02-27 18:59:56,764 - root - INFO: steps 210000, 63.98 steps/s
+2020-02-27 19:00:03,443 - root - INFO: steps 210000, ep_return_test 178.20(37.73)
+2020-02-27 19:00:08,445 - root - INFO: ep: 474| steps: 771| total_steps: 210317| return_train: 102.400| ep_upright: 148| total_upright: 14000| total_return: 5472.000
+2020-02-27 19:00:15,144 - root - INFO: ep: 475| steps: 429| total_steps: 210746| return_train: 49.800| ep_upright: 72| total_upright: 14072| total_return: 5521.800
+2020-02-27 19:00:19,109 - root - INFO: steps 211000, 44.76 steps/s
+2020-02-27 19:00:30,723 - root - INFO: ep: 476| steps: 1001| total_steps: 211747| return_train: 731.400| ep_upright: 783| total_upright: 14855| total_return: 6253.200
+2020-02-27 19:00:34,667 - root - INFO: steps 212000, 64.28 steps/s
+2020-02-27 19:00:46,419 - root - INFO: ep: 477| steps: 1001| total_steps: 212748| return_train: 627.200| ep_upright: 653| total_upright: 15508| total_return: 6880.400
+2020-02-27 19:00:50,370 - root - INFO: steps 213000, 63.69 steps/s
+2020-02-27 19:01:02,148 - root - INFO: ep: 478| steps: 1001| total_steps: 213749| return_train: 135.600| ep_upright: 181| total_upright: 15689| total_return: 7016.000
+2020-02-27 19:01:06,073 - root - INFO: steps 214000, 63.69 steps/s
+2020-02-27 19:01:14,863 - root - INFO: ep: 479| steps: 810| total_steps: 214559| return_train: 99.000| ep_upright: 152| total_upright: 15841| total_return: 7115.000
+2020-02-27 19:01:18,009 - root - INFO: ep: 480| steps: 201| total_steps: 214760| return_train: -9.800| ep_upright: 0| total_upright: 15841| total_return: 7105.200
+2020-02-27 19:01:21,785 - root - INFO: steps 215000, 63.65 steps/s
+2020-02-27 19:01:28,415 - root - INFO: steps 215000, ep_return_test 120.65(56.09)
+2020-02-27 19:01:40,376 - root - INFO: ep: 481| steps: 1001| total_steps: 215761| return_train: 73.900| ep_upright: 113| total_upright: 15954| total_return: 7179.100
+2020-02-27 19:01:44,148 - root - INFO: steps 216000, 44.72 steps/s
+2020-02-27 19:01:48,241 - root - INFO: ep: 482| steps: 501| total_steps: 216262| return_train: 92.900| ep_upright: 125| total_upright: 16079| total_return: 7272.000
+2020-02-27 19:01:59,414 - root - INFO: ep: 483| steps: 716| total_steps: 216978| return_train: 50.900| ep_upright: 104| total_upright: 16183| total_return: 7322.900
+2020-02-27 19:01:59,755 - root - INFO: steps 217000, 64.08 steps/s
+2020-02-27 19:02:15,169 - root - INFO: ep: 484| steps: 1001| total_steps: 217979| return_train: 311.900| ep_upright: 378| total_upright: 16561| total_return: 7634.800
+2020-02-27 19:02:15,500 - root - INFO: steps 218000, 63.52 steps/s
+2020-02-27 19:02:30,845 - root - INFO: ep: 485| steps: 1001| total_steps: 218980| return_train: 268.700| ep_upright: 339| total_upright: 16900| total_return: 7903.500
+2020-02-27 19:02:31,157 - root - INFO: steps 219000, 63.88 steps/s
+2020-02-27 19:02:32,407 - root - INFO: ep: 486| steps: 100| total_steps: 219080| return_train: -8.300| ep_upright: 0| total_upright: 16900| total_return: 7895.200
+2020-02-27 19:02:46,846 - root - INFO: steps 220000, 63.74 steps/s
+2020-02-27 19:02:55,489 - root - INFO: steps 220000, ep_return_test 467.60(55.27)
+2020-02-27 19:02:56,782 - root - INFO: ep: 487| steps: 1001| total_steps: 220081| return_train: -31.100| ep_upright: 34| total_upright: 16934| total_return: 7864.100
+2020-02-27 19:03:06,068 - root - INFO: ep: 488| steps: 588| total_steps: 220669| return_train: 81.600| ep_upright: 110| total_upright: 17044| total_return: 7945.700
+2020-02-27 19:03:10,412 - root - INFO: ep: 489| steps: 275| total_steps: 220944| return_train: 11.900| ep_upright: 22| total_upright: 17066| total_return: 7957.600
+2020-02-27 19:03:11,299 - root - INFO: steps 221000, 40.90 steps/s
+2020-02-27 19:03:20,467 - root - INFO: ep: 490| steps: 635| total_steps: 221579| return_train: 66.300| ep_upright: 106| total_upright: 17172| total_return: 8023.900
+2020-02-27 19:03:27,086 - root - INFO: steps 222000, 63.35 steps/s
+2020-02-27 19:03:36,216 - root - INFO: ep: 491| steps: 1001| total_steps: 222580| return_train: 2.600| ep_upright: 76| total_upright: 17248| total_return: 8026.500
+2020-02-27 19:03:42,580 - root - INFO: ep: 492| steps: 404| total_steps: 222984| return_train: -28.900| ep_upright: 0| total_upright: 17248| total_return: 7997.600
+2020-02-27 19:03:42,831 - root - INFO: steps 223000, 63.52 steps/s
+2020-02-27 19:03:45,162 - root - INFO: ep: 493| steps: 165| total_steps: 223149| return_train: -9.700| ep_upright: 0| total_upright: 17248| total_return: 7987.900
+2020-02-27 19:03:58,505 - root - INFO: steps 224000, 63.81 steps/s
+2020-02-27 19:04:00,859 - root - INFO: ep: 494| steps: 1001| total_steps: 224150| return_train: 499.500| ep_upright: 565| total_upright: 17813| total_return: 8487.400
+2020-02-27 19:04:14,192 - root - INFO: steps 225000, 63.75 steps/s
+2020-02-27 19:04:19,856 - root - INFO: steps 225000, ep_return_test 89.69(61.82)
+2020-02-27 19:04:22,242 - root - INFO: ep: 495| steps: 1001| total_steps: 225151| return_train: 808.200| ep_upright: 845| total_upright: 18658| total_return: 9295.600
+2020-02-27 19:04:35,142 - root - INFO: ep: 496| steps: 827| total_steps: 225978| return_train: 296.200| ep_upright: 329| total_upright: 18987| total_return: 9591.800
+2020-02-27 19:04:35,487 - root - INFO: steps 226000, 46.96 steps/s
+2020-02-27 19:04:37,827 - root - INFO: ep: 497| steps: 172| total_steps: 226150| return_train: -7.400| ep_upright: 2| total_upright: 18989| total_return: 9584.400
+2020-02-27 19:04:51,258 - root - INFO: steps 227000, 63.41 steps/s
+2020-02-27 19:04:53,619 - root - INFO: ep: 498| steps: 1001| total_steps: 227151| return_train: 456.400| ep_upright: 497| total_upright: 19486| total_return: 10040.800
+2020-02-27 19:05:05,295 - root - INFO: ep: 499| steps: 740| total_steps: 227891| return_train: -37.500| ep_upright: 30| total_upright: 19516| total_return: 10003.300
+2020-02-27 19:05:07,011 - root - INFO: steps 228000, 63.49 steps/s
+2020-02-27 19:05:15,901 - root - INFO: ep: 500| steps: 674| total_steps: 228565| return_train: -44.100| ep_upright: 0| total_upright: 19516| total_return: 9959.200
+2020-02-27 19:05:18,518 - root - INFO: ep: 501| steps: 167| total_steps: 228732| return_train: -7.000| ep_upright: 7| total_upright: 19523| total_return: 9952.200
+2020-02-27 19:05:22,736 - root - INFO: steps 229000, 63.60 steps/s
+2020-02-27 19:05:34,245 - root - INFO: ep: 502| steps: 1001| total_steps: 229733| return_train: 67.000| ep_upright: 122| total_upright: 19645| total_return: 10019.200
+2020-02-27 19:05:36,086 - root - INFO: ep: 503| steps: 116| total_steps: 229849| return_train: -6.200| ep_upright: 0| total_upright: 19645| total_return: 10013.000
+2020-02-27 19:05:37,766 - root - INFO: ep: 504| steps: 107| total_steps: 229956| return_train: -6.400| ep_upright: 0| total_upright: 19645| total_return: 10006.600
+2020-02-27 19:05:38,455 - root - INFO: steps 230000, 63.62 steps/s
+2020-02-27 19:05:47,574 - root - INFO: steps 230000, ep_return_test 57.33(33.73)
+2020-02-27 19:06:00,862 - root - INFO: ep: 505| steps: 892| total_steps: 230848| return_train: 18.200| ep_upright: 69| total_upright: 19714| total_return: 10024.800
+2020-02-27 19:06:03,239 - root - INFO: steps 231000, 40.35 steps/s
+2020-02-27 19:06:03,790 - root - INFO: ep: 506| steps: 187| total_steps: 231035| return_train: -15.800| ep_upright: 0| total_upright: 19714| total_return: 10009.000
+2020-02-27 19:06:05,429 - root - INFO: ep: 507| steps: 104| total_steps: 231139| return_train: -5.900| ep_upright: 0| total_upright: 19714| total_return: 10003.100
+2020-02-27 19:06:07,079 - root - INFO: ep: 508| steps: 105| total_steps: 231244| return_train: -6.000| ep_upright: 0| total_upright: 19714| total_return: 9997.100
+2020-02-27 19:06:11,360 - root - INFO: ep: 509| steps: 274| total_steps: 231518| return_train: -22.900| ep_upright: 0| total_upright: 19714| total_return: 9974.200
+2020-02-27 19:06:18,881 - root - INFO: steps 232000, 63.94 steps/s
+2020-02-27 19:06:19,920 - root - INFO: ep: 510| steps: 548| total_steps: 232066| return_train: 51.000| ep_upright: 91| total_upright: 19805| total_return: 10025.200
+2020-02-27 19:06:34,548 - root - INFO: steps 233000, 63.83 steps/s
+2020-02-27 19:06:35,603 - root - INFO: ep: 511| steps: 1001| total_steps: 233067| return_train: 106.900| ep_upright: 181| total_upright: 19986| total_return: 10132.100
+2020-02-27 19:06:50,279 - root - INFO: steps 234000, 63.58 steps/s
+2020-02-27 19:06:51,358 - root - INFO: ep: 512| steps: 1001| total_steps: 234068| return_train: -37.300| ep_upright: 34| total_upright: 20020| total_return: 10094.800
+2020-02-27 19:07:06,057 - root - INFO: steps 235000, 63.38 steps/s
+2020-02-27 19:07:15,197 - root - INFO: steps 235000, ep_return_test 394.71(8.38)
+2020-02-27 19:07:16,300 - root - INFO: ep: 513| steps: 1001| total_steps: 235069| return_train: 22.100| ep_upright: 86| total_upright: 20106| total_return: 10116.900
+2020-02-27 19:07:31,136 - root - INFO: steps 236000, 39.88 steps/s
+2020-02-27 19:07:32,253 - root - INFO: ep: 514| steps: 1001| total_steps: 236070| return_train: 134.800| ep_upright: 200| total_upright: 20306| total_return: 10251.700
+2020-02-27 19:07:47,207 - root - INFO: steps 237000, 62.23 steps/s
+2020-02-27 19:07:48,351 - root - INFO: ep: 515| steps: 1001| total_steps: 237071| return_train: 358.400| ep_upright: 424| total_upright: 20730| total_return: 10610.100
+2020-02-27 19:08:03,404 - root - INFO: steps 238000, 61.75 steps/s
+2020-02-27 19:08:04,605 - root - INFO: ep: 516| steps: 1001| total_steps: 238072| return_train: 417.600| ep_upright: 461| total_upright: 21191| total_return: 11027.700
+2020-02-27 19:08:19,698 - root - INFO: steps 239000, 61.37 steps/s
+2020-02-27 19:08:20,844 - root - INFO: ep: 517| steps: 1001| total_steps: 239073| return_train: 167.200| ep_upright: 221| total_upright: 21412| total_return: 11194.900
+2020-02-27 19:08:35,285 - root - INFO: steps 240000, 64.16 steps/s
+2020-02-27 19:08:44,516 - root - INFO: steps 240000, ep_return_test -3.93(2.70)
+2020-02-27 19:08:45,714 - root - INFO: ep: 518| steps: 1001| total_steps: 240074| return_train: 482.200| ep_upright: 533| total_upright: 21945| total_return: 11677.100
+2020-02-27 19:09:00,554 - root - INFO: steps 241000, 39.58 steps/s
+2020-02-27 19:09:01,762 - root - INFO: ep: 519| steps: 1001| total_steps: 241075| return_train: 343.400| ep_upright: 398| total_upright: 22343| total_return: 12020.500
+2020-02-27 19:09:16,734 - root - INFO: steps 242000, 61.81 steps/s
+2020-02-27 19:09:18,001 - root - INFO: ep: 520| steps: 1001| total_steps: 242076| return_train: -5.600| ep_upright: 74| total_upright: 22417| total_return: 12014.900
+2020-02-27 19:09:22,690 - root - INFO: ep: 521| steps: 281| total_steps: 242357| return_train: -15.800| ep_upright: 0| total_upright: 22417| total_return: 11999.100
+2020-02-27 19:09:33,193 - root - INFO: steps 243000, 60.76 steps/s
+2020-02-27 19:09:38,781 - root - INFO: ep: 522| steps: 1001| total_steps: 243358| return_train: -27.600| ep_upright: 33| total_upright: 22450| total_return: 11971.500
+2020-02-27 19:09:48,812 - root - INFO: steps 244000, 64.03 steps/s
+2020-02-27 19:09:54,412 - root - INFO: ep: 523| steps: 1001| total_steps: 244359| return_train: 745.300| ep_upright: 821| total_upright: 23271| total_return: 12716.800
+2020-02-27 19:09:56,156 - root - INFO: ep: 524| steps: 112| total_steps: 244471| return_train: -9.900| ep_upright: 0| total_upright: 23271| total_return: 12706.900
+2020-02-27 19:10:04,400 - root - INFO: steps 245000, 64.16 steps/s
+2020-02-27 19:10:13,485 - root - INFO: steps 245000, ep_return_test 694.46(1.48)
+2020-02-27 19:10:20,864 - root - INFO: ep: 525| steps: 1001| total_steps: 245472| return_train: 690.100| ep_upright: 720| total_upright: 23991| total_return: 13397.000
+2020-02-27 19:10:29,080 - root - INFO: steps 246000, 40.52 steps/s
+2020-02-27 19:10:32,474 - root - INFO: ep: 526| steps: 743| total_steps: 246215| return_train: -35.400| ep_upright: 0| total_upright: 23991| total_return: 13361.600
+2020-02-27 19:10:39,778 - root - INFO: ep: 527| steps: 468| total_steps: 246683| return_train: -34.100| ep_upright: 0| total_upright: 23991| total_return: 13327.500
+2020-02-27 19:10:44,750 - root - INFO: steps 247000, 63.82 steps/s
+2020-02-27 19:10:55,497 - root - INFO: ep: 528| steps: 1001| total_steps: 247684| return_train: 647.100| ep_upright: 702| total_upright: 24693| total_return: 13974.600
+2020-02-27 19:11:00,453 - root - INFO: steps 248000, 63.69 steps/s
+2020-02-27 19:11:11,174 - root - INFO: ep: 529| steps: 1001| total_steps: 248685| return_train: -8.100| ep_upright: 15| total_upright: 24708| total_return: 13966.500
+2020-02-27 19:11:16,132 - root - INFO: steps 249000, 63.79 steps/s
+2020-02-27 19:11:26,924 - root - INFO: ep: 530| steps: 1001| total_steps: 249686| return_train: 515.400| ep_upright: 565| total_upright: 25273| total_return: 14481.900
+2020-02-27 19:11:31,863 - root - INFO: steps 250000, 63.57 steps/s
+2020-02-27 19:11:40,921 - root - INFO: steps 250000, ep_return_test 493.53(26.49)
+2020-02-27 19:11:51,698 - root - INFO: ep: 531| steps: 1001| total_steps: 250687| return_train: 369.100| ep_upright: 429| total_upright: 25702| total_return: 14851.000
+2020-02-27 19:11:53,231 - root - INFO: ep: 532| steps: 98| total_steps: 250785| return_train: -6.400| ep_upright: 0| total_upright: 25702| total_return: 14844.600
+2020-02-27 19:11:56,630 - root - INFO: steps 251000, 40.38 steps/s
+2020-02-27 19:12:08,928 - root - INFO: ep: 533| steps: 1001| total_steps: 251786| return_train: -52.600| ep_upright: 0| total_upright: 25702| total_return: 14792.000
+2020-02-27 19:12:12,261 - root - INFO: steps 252000, 63.98 steps/s
+2020-02-27 19:12:24,481 - root - INFO: ep: 534| steps: 1001| total_steps: 252787| return_train: 641.800| ep_upright: 683| total_upright: 26385| total_return: 15433.800
+2020-02-27 19:12:27,795 - root - INFO: steps 253000, 64.38 steps/s
+2020-02-27 19:12:40,059 - root - INFO: ep: 535| steps: 1001| total_steps: 253788| return_train: 592.600| ep_upright: 648| total_upright: 27033| total_return: 16026.400
+2020-02-27 19:12:43,387 - root - INFO: steps 254000, 64.14 steps/s
+2020-02-27 19:12:55,820 - root - INFO: ep: 536| steps: 1001| total_steps: 254789| return_train: 277.100| ep_upright: 363| total_upright: 27396| total_return: 16303.500
+2020-02-27 19:12:59,113 - root - INFO: steps 255000, 63.60 steps/s
+2020-02-27 19:13:08,179 - root - INFO: steps 255000, ep_return_test 175.62(46.84)
+2020-02-27 19:13:20,666 - root - INFO: ep: 537| steps: 1001| total_steps: 255790| return_train: 424.100| ep_upright: 463| total_upright: 27859| total_return: 16727.600
+2020-02-27 19:13:23,950 - root - INFO: steps 256000, 40.26 steps/s
+2020-02-27 19:13:36,435 - root - INFO: ep: 538| steps: 1001| total_steps: 256791| return_train: 365.700| ep_upright: 410| total_upright: 28269| total_return: 17093.300
+2020-02-27 19:13:39,702 - root - INFO: steps 257000, 63.49 steps/s
+2020-02-27 19:13:52,098 - root - INFO: ep: 539| steps: 1001| total_steps: 257792| return_train: 245.900| ep_upright: 286| total_upright: 28555| total_return: 17339.200
+2020-02-27 19:13:55,333 - root - INFO: steps 258000, 63.98 steps/s
+2020-02-27 19:14:07,751 - root - INFO: ep: 540| steps: 1001| total_steps: 258793| return_train: 203.600| ep_upright: 256| total_upright: 28811| total_return: 17542.800
+2020-02-27 19:14:10,978 - root - INFO: steps 259000, 63.93 steps/s
+2020-02-27 19:14:15,216 - root - INFO: ep: 541| steps: 478| total_steps: 259271| return_train: -6.900| ep_upright: 22| total_upright: 28833| total_return: 17535.900
+2020-02-27 19:14:26,617 - root - INFO: steps 260000, 63.95 steps/s
+2020-02-27 19:14:35,673 - root - INFO: steps 260000, ep_return_test 378.41(53.81)
+2020-02-27 19:14:39,929 - root - INFO: ep: 542| steps: 1001| total_steps: 260272| return_train: 357.500| ep_upright: 406| total_upright: 29239| total_return: 17893.400
+2020-02-27 19:14:51,407 - root - INFO: steps 261000, 40.34 steps/s
+2020-02-27 19:14:55,677 - root - INFO: ep: 543| steps: 1001| total_steps: 261273| return_train: 688.000| ep_upright: 742| total_upright: 29981| total_return: 18581.400
+2020-02-27 19:15:07,018 - root - INFO: steps 262000, 64.06 steps/s
+2020-02-27 19:15:11,283 - root - INFO: ep: 544| steps: 1001| total_steps: 262274| return_train: 499.800| ep_upright: 562| total_upright: 30543| total_return: 19081.200
+2020-02-27 19:15:22,645 - root - INFO: steps 263000, 64.00 steps/s
+2020-02-27 19:15:26,971 - root - INFO: ep: 545| steps: 1001| total_steps: 263275| return_train: 518.300| ep_upright: 577| total_upright: 31120| total_return: 19599.500
+2020-02-27 19:15:38,460 - root - INFO: steps 264000, 63.24 steps/s
+2020-02-27 19:15:42,836 - root - INFO: ep: 546| steps: 1001| total_steps: 264276| return_train: 596.500| ep_upright: 630| total_upright: 31750| total_return: 20196.000
+2020-02-27 19:15:54,140 - root - INFO: steps 265000, 63.78 steps/s
+2020-02-27 19:16:03,202 - root - INFO: steps 265000, ep_return_test 708.71(15.56)
+2020-02-27 19:16:07,592 - root - INFO: ep: 547| steps: 1001| total_steps: 265277| return_train: 527.400| ep_upright: 580| total_upright: 32330| total_return: 20723.400
+2020-02-27 19:16:18,977 - root - INFO: steps 266000, 40.27 steps/s
+2020-02-27 19:16:23,309 - root - INFO: ep: 548| steps: 1001| total_steps: 266278| return_train: 155.300| ep_upright: 203| total_upright: 32533| total_return: 20878.700
+2020-02-27 19:16:24,982 - root - INFO: ep: 549| steps: 107| total_steps: 266385| return_train: -9.500| ep_upright: 0| total_upright: 32533| total_return: 20869.200
+2020-02-27 19:16:34,547 - root - INFO: steps 267000, 64.23 steps/s
+2020-02-27 19:16:40,562 - root - INFO: ep: 550| steps: 1001| total_steps: 267386| return_train: 74.300| ep_upright: 135| total_upright: 32668| total_return: 20943.500
+2020-02-27 19:16:50,272 - root - INFO: steps 268000, 63.60 steps/s
+2020-02-27 19:16:56,374 - root - INFO: ep: 551| steps: 1001| total_steps: 268387| return_train: 238.700| ep_upright: 304| total_upright: 32972| total_return: 21182.200
+2020-02-27 19:17:06,001 - root - INFO: steps 269000, 63.58 steps/s
+2020-02-27 19:17:12,066 - root - INFO: ep: 552| steps: 1001| total_steps: 269388| return_train: 8.500| ep_upright: 87| total_upright: 33059| total_return: 21190.700
+2020-02-27 19:17:21,654 - root - INFO: steps 270000, 63.89 steps/s
+2020-02-27 19:17:28,923 - root - INFO: steps 270000, ep_return_test 560.37(117.83)
+2020-02-27 19:17:35,081 - root - INFO: ep: 553| steps: 1001| total_steps: 270389| return_train: 834.100| ep_upright: 853| total_upright: 33912| total_return: 22024.800
+2020-02-27 19:17:44,707 - root - INFO: steps 271000, 43.38 steps/s
+2020-02-27 19:17:50,798 - root - INFO: ep: 554| steps: 1001| total_steps: 271390| return_train: 582.600| ep_upright: 648| total_upright: 34560| total_return: 22607.400
+2020-02-27 19:17:57,479 - root - INFO: ep: 555| steps: 429| total_steps: 271819| return_train: -22.500| ep_upright: 0| total_upright: 34560| total_return: 22584.900
+2020-02-27 19:18:00,293 - root - INFO: steps 272000, 64.16 steps/s
+2020-02-27 19:18:13,052 - root - INFO: ep: 556| steps: 1001| total_steps: 272820| return_train: 817.900| ep_upright: 846| total_upright: 35406| total_return: 23402.800
+2020-02-27 19:18:15,831 - root - INFO: steps 273000, 64.36 steps/s
+2020-02-27 19:18:28,610 - root - INFO: ep: 557| steps: 1001| total_steps: 273821| return_train: 787.400| ep_upright: 813| total_upright: 36219| total_return: 24190.200
+2020-02-27 19:18:31,396 - root - INFO: steps 274000, 64.25 steps/s
+2020-02-27 19:18:44,361 - root - INFO: ep: 558| steps: 1001| total_steps: 274822| return_train: 663.100| ep_upright: 694| total_upright: 36913| total_return: 24853.300
+2020-02-27 19:18:47,211 - root - INFO: steps 275000, 63.23 steps/s
+2020-02-27 19:18:56,352 - root - INFO: steps 275000, ep_return_test 343.35(44.72)
+2020-02-27 19:19:09,588 - root - INFO: ep: 559| steps: 1001| total_steps: 275823| return_train: 463.900| ep_upright: 508| total_upright: 37421| total_return: 25317.200
+2020-02-27 19:19:12,419 - root - INFO: steps 276000, 39.67 steps/s
+2020-02-27 19:19:25,973 - root - INFO: ep: 560| steps: 1001| total_steps: 276824| return_train: 98.700| ep_upright: 141| total_upright: 37562| total_return: 25415.900
+2020-02-27 19:19:28,912 - root - INFO: steps 277000, 60.64 steps/s
+2020-02-27 19:19:42,142 - root - INFO: ep: 561| steps: 1001| total_steps: 277825| return_train: 104.200| ep_upright: 154| total_upright: 37716| total_return: 25520.100
+2020-02-27 19:19:44,881 - root - INFO: steps 278000, 62.62 steps/s
+2020-02-27 19:19:57,864 - root - INFO: ep: 562| steps: 1001| total_steps: 278826| return_train: -32.700| ep_upright: 37| total_upright: 37753| total_return: 25487.400
+2020-02-27 19:20:00,583 - root - INFO: steps 279000, 63.69 steps/s
+2020-02-27 19:20:13,497 - root - INFO: ep: 563| steps: 1001| total_steps: 279827| return_train: 543.500| ep_upright: 571| total_upright: 38324| total_return: 26030.900
+2020-02-27 19:20:16,189 - root - INFO: steps 280000, 64.08 steps/s
+2020-02-27 19:20:25,262 - root - INFO: steps 280000, ep_return_test 719.68(2.08)
+2020-02-27 19:20:38,195 - root - INFO: ep: 564| steps: 1001| total_steps: 280828| return_train: 688.000| ep_upright: 727| total_upright: 39051| total_return: 26718.900
+2020-02-27 19:20:40,904 - root - INFO: steps 281000, 40.46 steps/s
+2020-02-27 19:20:53,975 - root - INFO: ep: 565| steps: 1001| total_steps: 281829| return_train: 382.600| ep_upright: 432| total_upright: 39483| total_return: 27101.500
+2020-02-27 19:20:56,660 - root - INFO: steps 282000, 63.47 steps/s
+2020-02-27 19:21:09,734 - root - INFO: ep: 566| steps: 1001| total_steps: 282830| return_train: 748.300| ep_upright: 787| total_upright: 40270| total_return: 27849.800
+2020-02-27 19:21:12,456 - root - INFO: steps 283000, 63.31 steps/s
+2020-02-27 19:21:25,800 - root - INFO: ep: 567| steps: 1001| total_steps: 283831| return_train: 750.200| ep_upright: 777| total_upright: 41047| total_return: 28600.000
+2020-02-27 19:21:28,521 - root - INFO: steps 284000, 62.25 steps/s
+2020-02-27 19:21:41,929 - root - INFO: ep: 568| steps: 1001| total_steps: 284832| return_train: 57.500| ep_upright: 123| total_upright: 41170| total_return: 28657.500
+2020-02-27 19:21:44,732 - root - INFO: steps 285000, 61.69 steps/s
+2020-02-27 19:21:52,384 - root - INFO: steps 285000, ep_return_test 118.50(49.44)
+2020-02-27 19:22:05,749 - root - INFO: ep: 569| steps: 1001| total_steps: 285833| return_train: 432.500| ep_upright: 473| total_upright: 41643| total_return: 29090.000
+2020-02-27 19:22:08,420 - root - INFO: steps 286000, 42.22 steps/s
+2020-02-27 19:22:21,809 - root - INFO: ep: 570| steps: 1001| total_steps: 286834| return_train: 672.000| ep_upright: 716| total_upright: 42359| total_return: 29762.000
+2020-02-27 19:22:24,461 - root - INFO: steps 287000, 62.35 steps/s
+2020-02-27 19:22:37,841 - root - INFO: ep: 571| steps: 1001| total_steps: 287835| return_train: 394.500| ep_upright: 435| total_upright: 42794| total_return: 30156.500
+2020-02-27 19:22:40,574 - root - INFO: steps 288000, 62.06 steps/s
+2020-02-27 19:22:54,460 - root - INFO: ep: 572| steps: 1001| total_steps: 288836| return_train: 570.100| ep_upright: 598| total_upright: 43392| total_return: 30726.600
+2020-02-27 19:22:57,098 - root - INFO: steps 289000, 60.52 steps/s
+2020-02-27 19:23:10,361 - root - INFO: ep: 573| steps: 1001| total_steps: 289837| return_train: 1.200| ep_upright: 62| total_upright: 43454| total_return: 30727.800
+2020-02-27 19:23:12,059 - root - INFO: ep: 574| steps: 108| total_steps: 289945| return_train: -7.900| ep_upright: 0| total_upright: 43454| total_return: 30719.900
+2020-02-27 19:23:12,924 - root - INFO: steps 290000, 63.19 steps/s
+2020-02-27 19:23:20,937 - root - INFO: steps 290000, ep_return_test 141.19(63.10)
+2020-02-27 19:23:36,102 - root - INFO: ep: 575| steps: 1001| total_steps: 290946| return_train: 687.900| ep_upright: 716| total_upright: 44170| total_return: 31407.800
+2020-02-27 19:23:36,970 - root - INFO: steps 291000, 41.59 steps/s
+2020-02-27 19:23:52,194 - root - INFO: ep: 576| steps: 1001| total_steps: 291947| return_train: 709.900| ep_upright: 749| total_upright: 44919| total_return: 32117.700
+2020-02-27 19:23:53,057 - root - INFO: steps 292000, 62.17 steps/s
+2020-02-27 19:24:08,494 - root - INFO: ep: 577| steps: 983| total_steps: 292930| return_train: 472.200| ep_upright: 505| total_upright: 45424| total_return: 32589.900
+2020-02-27 19:24:09,625 - root - INFO: steps 293000, 60.36 steps/s
+2020-02-27 19:24:24,204 - root - INFO: ep: 578| steps: 1001| total_steps: 293931| return_train: 438.100| ep_upright: 487| total_upright: 45911| total_return: 33028.000
+2020-02-27 19:24:25,280 - root - INFO: steps 294000, 63.88 steps/s
+2020-02-27 19:24:39,876 - root - INFO: ep: 579| steps: 1001| total_steps: 294932| return_train: 773.600| ep_upright: 836| total_upright: 46747| total_return: 33801.600
+2020-02-27 19:24:40,939 - root - INFO: steps 295000, 63.87 steps/s
+2020-02-27 19:24:50,061 - root - INFO: steps 295000, ep_return_test 602.22(54.94)
+2020-02-27 19:25:04,717 - root - INFO: ep: 580| steps: 1001| total_steps: 295933| return_train: 719.400| ep_upright: 756| total_upright: 47503| total_return: 34521.000
+2020-02-27 19:25:05,764 - root - INFO: steps 296000, 40.28 steps/s
+2020-02-27 19:25:08,345 - root - INFO: ep: 581| steps: 231| total_steps: 296164| return_train: -16.300| ep_upright: 0| total_upright: 47503| total_return: 34504.700
+2020-02-27 19:25:21,522 - root - INFO: steps 297000, 63.47 steps/s
+2020-02-27 19:25:24,111 - root - INFO: ep: 582| steps: 1001| total_steps: 297165| return_train: -30.400| ep_upright: 40| total_upright: 47543| total_return: 34474.300
+2020-02-27 19:25:37,229 - root - INFO: steps 298000, 63.67 steps/s
+2020-02-27 19:25:39,818 - root - INFO: ep: 583| steps: 1001| total_steps: 298166| return_train: 750.300| ep_upright: 787| total_upright: 48330| total_return: 35224.600
+2020-02-27 19:25:52,995 - root - INFO: steps 299000, 63.43 steps/s
+2020-02-27 19:25:55,613 - root - INFO: ep: 584| steps: 1001| total_steps: 299167| return_train: 134.200| ep_upright: 187| total_upright: 48517| total_return: 35358.800
+2020-02-27 19:26:08,718 - root - INFO: steps 300000, 63.61 steps/s
+2020-02-27 19:26:16,824 - root - INFO: steps 300000, ep_return_test 36.21(15.88)
+2020-02-27 19:26:19,465 - root - INFO: ep: 585| steps: 1001| total_steps: 300168| return_train: -9.500| ep_upright: 24| total_upright: 48541| total_return: 35349.300
+2020-02-27 19:26:32,462 - root - INFO: steps 301000, 42.12 steps/s
+2020-02-27 19:26:35,103 - root - INFO: ep: 586| steps: 1001| total_steps: 301169| return_train: 18.300| ep_upright: 86| total_upright: 48627| total_return: 35367.600
+2020-02-27 19:26:48,169 - root - INFO: steps 302000, 63.67 steps/s
+2020-02-27 19:26:50,867 - root - INFO: ep: 587| steps: 1001| total_steps: 302170| return_train: 60.300| ep_upright: 95| total_upright: 48722| total_return: 35427.900
+2020-02-27 19:27:03,970 - root - INFO: steps 303000, 63.29 steps/s
+2020-02-27 19:27:06,653 - root - INFO: ep: 588| steps: 1001| total_steps: 303171| return_train: 683.300| ep_upright: 768| total_upright: 49490| total_return: 36111.200
+2020-02-27 19:27:19,744 - root - INFO: steps 304000, 63.40 steps/s
+2020-02-27 19:27:22,472 - root - INFO: ep: 589| steps: 1001| total_steps: 304172| return_train: 42.100| ep_upright: 94| total_upright: 49584| total_return: 36153.300
+2020-02-27 19:27:35,557 - root - INFO: steps 305000, 63.24 steps/s
+2020-02-27 19:27:44,661 - root - INFO: steps 305000, ep_return_test 692.35(44.92)
+2020-02-27 19:27:47,385 - root - INFO: ep: 590| steps: 1001| total_steps: 305173| return_train: 512.100| ep_upright: 557| total_upright: 50141| total_return: 36665.400
+2020-02-27 19:28:00,313 - root - INFO: steps 306000, 40.40 steps/s
+2020-02-27 19:28:03,047 - root - INFO: ep: 591| steps: 1001| total_steps: 306174| return_train: 345.400| ep_upright: 404| total_upright: 50545| total_return: 37010.800
+2020-02-27 19:28:15,992 - root - INFO: steps 307000, 63.79 steps/s
+2020-02-27 19:28:18,724 - root - INFO: ep: 592| steps: 1001| total_steps: 307175| return_train: 529.800| ep_upright: 605| total_upright: 51150| total_return: 37540.600
+2020-02-27 19:28:22,157 - root - INFO: ep: 593| steps: 220| total_steps: 307395| return_train: -7.000| ep_upright: 0| total_upright: 51150| total_return: 37533.600
+2020-02-27 19:28:31,593 - root - INFO: steps 308000, 64.10 steps/s
+2020-02-27 19:28:37,801 - root - INFO: ep: 594| steps: 1001| total_steps: 308396| return_train: 684.500| ep_upright: 737| total_upright: 51887| total_return: 38218.100
+2020-02-27 19:28:47,294 - root - INFO: steps 309000, 63.70 steps/s
+2020-02-27 19:28:53,614 - root - INFO: ep: 595| steps: 1001| total_steps: 309397| return_train: 710.900| ep_upright: 762| total_upright: 52649| total_return: 38929.000
+2020-02-27 19:29:03,090 - root - INFO: steps 310000, 63.31 steps/s
+2020-02-27 19:29:12,188 - root - INFO: steps 310000, ep_return_test 757.52(5.31)
+2020-02-27 19:29:18,475 - root - INFO: ep: 596| steps: 1001| total_steps: 310398| return_train: -72.200| ep_upright: 7| total_upright: 52656| total_return: 38856.800
+2020-02-27 19:29:27,934 - root - INFO: steps 311000, 40.25 steps/s
+2020-02-27 19:29:34,273 - root - INFO: ep: 597| steps: 1001| total_steps: 311399| return_train: 532.200| ep_upright: 584| total_upright: 53240| total_return: 39389.000
+2020-02-27 19:29:43,742 - root - INFO: steps 312000, 63.26 steps/s
+2020-02-27 19:29:50,034 - root - INFO: ep: 598| steps: 1001| total_steps: 312400| return_train: 727.500| ep_upright: 767| total_upright: 54007| total_return: 40116.500
+2020-02-27 19:29:59,498 - root - INFO: steps 313000, 63.47 steps/s
+2020-02-27 19:30:05,811 - root - INFO: ep: 599| steps: 1001| total_steps: 313401| return_train: 560.400| ep_upright: 608| total_upright: 54615| total_return: 40676.900
+2020-02-27 19:30:15,260 - root - INFO: steps 314000, 63.45 steps/s
+2020-02-27 19:30:15,660 - root - INFO: ep: 600| steps: 624| total_steps: 314025| return_train: 27.600| ep_upright: 69| total_upright: 54684| total_return: 40704.500
+2020-02-27 19:30:30,898 - root - INFO: steps 315000, 63.95 steps/s
+2020-02-27 19:30:38,736 - root - INFO: steps 315000, ep_return_test 360.58(72.72)
+2020-02-27 19:30:39,161 - root - INFO: ep: 601| steps: 1001| total_steps: 315026| return_train: 594.100| ep_upright: 643| total_upright: 55327| total_return: 41298.600
+2020-02-27 19:30:51,128 - root - INFO: ep: 602| steps: 753| total_steps: 315779| return_train: -54.600| ep_upright: 0| total_upright: 55327| total_return: 41244.000
+2020-02-27 19:30:54,636 - root - INFO: steps 316000, 42.13 steps/s
+2020-02-27 19:30:57,045 - root - INFO: ep: 603| steps: 372| total_steps: 316151| return_train: 8.100| ep_upright: 37| total_upright: 55364| total_return: 41252.100
+2020-02-27 19:31:10,466 - root - INFO: steps 317000, 63.18 steps/s
+2020-02-27 19:31:12,890 - root - INFO: ep: 604| steps: 1001| total_steps: 317152| return_train: 800.900| ep_upright: 847| total_upright: 56211| total_return: 42053.000
+2020-02-27 19:31:26,267 - root - INFO: steps 318000, 63.29 steps/s
+2020-02-27 19:31:28,669 - root - INFO: ep: 605| steps: 1001| total_steps: 318153| return_train: 732.400| ep_upright: 762| total_upright: 56973| total_return: 42785.400
+2020-02-27 19:31:42,033 - root - INFO: steps 319000, 63.43 steps/s
+2020-02-27 19:31:44,459 - root - INFO: ep: 606| steps: 1001| total_steps: 319154| return_train: 650.800| ep_upright: 689| total_upright: 57662| total_return: 43436.200
+2020-02-27 19:31:57,760 - root - INFO: steps 320000, 63.59 steps/s
+2020-02-27 19:32:03,552 - root - INFO: steps 320000, ep_return_test 211.04(105.22)
+2020-02-27 19:32:05,997 - root - INFO: ep: 607| steps: 1001| total_steps: 320155| return_train: 784.800| ep_upright: 834| total_upright: 58496| total_return: 44221.000
+2020-02-27 19:32:19,198 - root - INFO: steps 321000, 46.65 steps/s
+2020-02-27 19:32:21,625 - root - INFO: ep: 608| steps: 1001| total_steps: 321156| return_train: -50.800| ep_upright: 8| total_upright: 58504| total_return: 44170.200
+2020-02-27 19:32:34,780 - root - INFO: steps 322000, 64.18 steps/s
+2020-02-27 19:32:37,229 - root - INFO: ep: 609| steps: 1001| total_steps: 322157| return_train: 650.900| ep_upright: 702| total_upright: 59206| total_return: 44821.100
+2020-02-27 19:32:50,494 - root - INFO: steps 323000, 63.64 steps/s
+2020-02-27 19:32:52,973 - root - INFO: ep: 610| steps: 1001| total_steps: 323158| return_train: 649.200| ep_upright: 689| total_upright: 59895| total_return: 45470.300
+2020-02-27 19:33:06,174 - root - INFO: steps 324000, 63.78 steps/s
+2020-02-27 19:33:08,669 - root - INFO: ep: 611| steps: 1001| total_steps: 324159| return_train: 842.100| ep_upright: 861| total_upright: 60756| total_return: 46312.400
+2020-02-27 19:33:21,942 - root - INFO: steps 325000, 63.43 steps/s
+2020-02-27 19:33:31,079 - root - INFO: steps 325000, ep_return_test 618.34(8.71)
+2020-02-27 19:33:33,631 - root - INFO: ep: 612| steps: 1001| total_steps: 325160| return_train: 823.300| ep_upright: 857| total_upright: 61613| total_return: 47135.700
+2020-02-27 19:33:46,804 - root - INFO: steps 326000, 40.22 steps/s
+2020-02-27 19:33:49,338 - root - INFO: ep: 613| steps: 1001| total_steps: 326161| return_train: 819.700| ep_upright: 855| total_upright: 62468| total_return: 47955.400
+2020-02-27 19:34:02,395 - root - INFO: steps 327000, 64.14 steps/s
+2020-02-27 19:34:04,912 - root - INFO: ep: 614| steps: 1001| total_steps: 327162| return_train: -13.600| ep_upright: 21| total_upright: 62489| total_return: 47941.800
+2020-02-27 19:34:18,063 - root - INFO: steps 328000, 63.83 steps/s
+2020-02-27 19:34:20,593 - root - INFO: ep: 615| steps: 1001| total_steps: 328163| return_train: 829.600| ep_upright: 858| total_upright: 63347| total_return: 48771.400
+2020-02-27 19:34:33,570 - root - INFO: steps 329000, 64.49 steps/s
+2020-02-27 19:34:36,114 - root - INFO: ep: 616| steps: 1001| total_steps: 329164| return_train: 3.500| ep_upright: 41| total_upright: 63388| total_return: 48774.900
+2020-02-27 19:34:49,161 - root - INFO: steps 330000, 64.14 steps/s
+2020-02-27 19:34:57,593 - root - INFO: steps 330000, ep_return_test 292.61(63.97)
+2020-02-27 19:35:00,198 - root - INFO: ep: 617| steps: 1001| total_steps: 330165| return_train: 781.200| ep_upright: 810| total_upright: 64198| total_return: 49556.100
+2020-02-27 19:35:13,257 - root - INFO: steps 331000, 41.50 steps/s
+2020-02-27 19:35:15,862 - root - INFO: ep: 618| steps: 1001| total_steps: 331166| return_train: 343.600| ep_upright: 393| total_upright: 64591| total_return: 49899.700
+2020-02-27 19:35:19,643 - root - INFO: ep: 619| steps: 241| total_steps: 331407| return_train: -2.600| ep_upright: 0| total_upright: 64591| total_return: 49897.100
+2020-02-27 19:35:28,915 - root - INFO: steps 332000, 63.87 steps/s
+2020-02-27 19:35:32,089 - root - INFO: ep: 620| steps: 794| total_steps: 332201| return_train: -3.400| ep_upright: 33| total_upright: 64624| total_return: 49893.700
+2020-02-27 19:35:44,684 - root - INFO: steps 333000, 63.42 steps/s
+2020-02-27 19:35:47,871 - root - INFO: ep: 621| steps: 1001| total_steps: 333202| return_train: 580.800| ep_upright: 622| total_upright: 65246| total_return: 50474.500
+2020-02-27 19:36:00,356 - root - INFO: steps 334000, 63.81 steps/s
+2020-02-27 19:36:03,540 - root - INFO: ep: 622| steps: 1001| total_steps: 334203| return_train: 802.400| ep_upright: 820| total_upright: 66066| total_return: 51276.900
+2020-02-27 19:36:08,683 - root - INFO: ep: 623| steps: 324| total_steps: 334527| return_train: 29.300| ep_upright: 51| total_upright: 66117| total_return: 51306.200
+2020-02-27 19:36:16,177 - root - INFO: steps 335000, 63.21 steps/s
+2020-02-27 19:36:24,679 - root - INFO: steps 335000, ep_return_test 243.18(77.63)
+2020-02-27 19:36:25,589 - root - INFO: ep: 624| steps: 530| total_steps: 335057| return_train: 23.400| ep_upright: 46| total_upright: 66163| total_return: 51329.600
+2020-02-27 19:36:40,374 - root - INFO: steps 336000, 41.33 steps/s
+2020-02-27 19:36:41,289 - root - INFO: ep: 625| steps: 1001| total_steps: 336058| return_train: 30.300| ep_upright: 65| total_upright: 66228| total_return: 51359.900
+2020-02-27 19:36:56,238 - root - INFO: steps 337000, 63.04 steps/s
+2020-02-27 19:36:57,167 - root - INFO: ep: 626| steps: 1001| total_steps: 337059| return_train: 630.600| ep_upright: 688| total_upright: 66916| total_return: 51990.500
+2020-02-27 19:37:12,133 - root - INFO: steps 338000, 62.92 steps/s
+2020-02-27 19:37:13,076 - root - INFO: ep: 627| steps: 1001| total_steps: 338060| return_train: 829.400| ep_upright: 851| total_upright: 67767| total_return: 52819.900
+2020-02-27 19:37:17,444 - root - INFO: ep: 628| steps: 279| total_steps: 338339| return_train: 16.100| ep_upright: 38| total_upright: 67805| total_return: 52836.000
+2020-02-27 19:37:27,761 - root - INFO: steps 339000, 63.99 steps/s
+2020-02-27 19:37:33,131 - root - INFO: ep: 629| steps: 1001| total_steps: 339340| return_train: 429.700| ep_upright: 486| total_upright: 68291| total_return: 53265.700
+2020-02-27 19:37:43,534 - root - INFO: steps 340000, 63.40 steps/s
+2020-02-27 19:37:52,696 - root - INFO: steps 340000, ep_return_test 545.06(46.99)
+2020-02-27 19:37:58,058 - root - INFO: ep: 630| steps: 1001| total_steps: 340341| return_train: 677.600| ep_upright: 712| total_upright: 69003| total_return: 53943.300
+2020-02-27 19:38:01,728 - root - INFO: ep: 631| steps: 234| total_steps: 340575| return_train: -18.000| ep_upright: 0| total_upright: 69003| total_return: 53925.300
+2020-02-27 19:38:08,345 - root - INFO: steps 341000, 40.31 steps/s
+2020-02-27 19:38:17,373 - root - INFO: ep: 632| steps: 1001| total_steps: 341576| return_train: 727.300| ep_upright: 759| total_upright: 69762| total_return: 54652.600
+2020-02-27 19:38:23,999 - root - INFO: steps 342000, 63.89 steps/s
+2020-02-27 19:38:33,043 - root - INFO: ep: 633| steps: 1001| total_steps: 342577| return_train: 407.100| ep_upright: 460| total_upright: 70222| total_return: 55059.700
+2020-02-27 19:38:39,641 - root - INFO: steps 343000, 63.93 steps/s
+2020-02-27 19:38:40,069 - root - INFO: ep: 634| steps: 450| total_steps: 343027| return_train: 21.200| ep_upright: 50| total_upright: 70272| total_return: 55080.900
+2020-02-27 19:38:42,571 - root - INFO: ep: 635| steps: 159| total_steps: 343186| return_train: -9.800| ep_upright: 0| total_upright: 70272| total_return: 55071.100
+2020-02-27 19:38:55,463 - root - INFO: steps 344000, 63.21 steps/s
+2020-02-27 19:38:58,400 - root - INFO: ep: 636| steps: 1001| total_steps: 344187| return_train: 152.600| ep_upright: 218| total_upright: 70490| total_return: 55223.700
+2020-02-27 19:39:11,162 - root - INFO: steps 345000, 63.70 steps/s
+2020-02-27 19:39:20,242 - root - INFO: steps 345000, ep_return_test -25.75(8.66)
+2020-02-27 19:39:23,212 - root - INFO: ep: 637| steps: 1001| total_steps: 345188| return_train: 247.300| ep_upright: 292| total_upright: 70782| total_return: 55471.000
+2020-02-27 19:39:35,908 - root - INFO: steps 346000, 40.41 steps/s
+2020-02-27 19:39:38,860 - root - INFO: ep: 638| steps: 1001| total_steps: 346189| return_train: 547.200| ep_upright: 570| total_upright: 71352| total_return: 56018.200
+2020-02-27 19:39:51,560 - root - INFO: steps 347000, 63.89 steps/s
+2020-02-27 19:39:54,525 - root - INFO: ep: 639| steps: 1001| total_steps: 347190| return_train: 636.600| ep_upright: 672| total_upright: 72024| total_return: 56654.800
+2020-02-27 19:40:07,157 - root - INFO: steps 348000, 64.12 steps/s
+2020-02-27 19:40:10,144 - root - INFO: ep: 640| steps: 1001| total_steps: 348191| return_train: 802.500| ep_upright: 830| total_upright: 72854| total_return: 57457.300
+2020-02-27 19:40:22,747 - root - INFO: steps 349000, 64.15 steps/s
+2020-02-27 19:40:25,748 - root - INFO: ep: 641| steps: 1001| total_steps: 349192| return_train: 797.700| ep_upright: 826| total_upright: 73680| total_return: 58255.000
+2020-02-27 19:40:38,329 - root - INFO: steps 350000, 64.18 steps/s
+2020-02-27 19:40:46,838 - root - INFO: steps 350000, ep_return_test 670.65(68.79)
+2020-02-27 19:40:49,909 - root - INFO: ep: 642| steps: 1001| total_steps: 350193| return_train: 11.600| ep_upright: 88| total_upright: 73768| total_return: 58266.600
+2020-02-27 19:41:02,721 - root - INFO: steps 351000, 41.00 steps/s
+2020-02-27 19:41:05,778 - root - INFO: ep: 643| steps: 1001| total_steps: 351194| return_train: 267.700| ep_upright: 314| total_upright: 74082| total_return: 58534.300
+2020-02-27 19:41:18,474 - root - INFO: steps 352000, 63.49 steps/s
+2020-02-27 19:41:21,550 - root - INFO: ep: 644| steps: 1001| total_steps: 352195| return_train: 548.500| ep_upright: 592| total_upright: 74674| total_return: 59082.800
+2020-02-27 19:41:34,183 - root - INFO: steps 353000, 63.66 steps/s
+2020-02-27 19:41:37,247 - root - INFO: ep: 645| steps: 1001| total_steps: 353196| return_train: 415.000| ep_upright: 474| total_upright: 75148| total_return: 59497.800
+2020-02-27 19:41:49,810 - root - INFO: steps 354000, 64.00 steps/s
+2020-02-27 19:41:52,890 - root - INFO: ep: 646| steps: 1001| total_steps: 354197| return_train: 828.800| ep_upright: 854| total_upright: 76002| total_return: 60326.600
+2020-02-27 19:42:05,400 - root - INFO: steps 355000, 64.15 steps/s
+2020-02-27 19:42:14,524 - root - INFO: steps 355000, ep_return_test 691.30(49.16)
+2020-02-27 19:42:17,649 - root - INFO: ep: 647| steps: 1001| total_steps: 355198| return_train: 814.000| ep_upright: 839| total_upright: 76841| total_return: 61140.600
+2020-02-27 19:42:30,219 - root - INFO: steps 356000, 40.29 steps/s
+2020-02-27 19:42:33,331 - root - INFO: ep: 648| steps: 1001| total_steps: 356199| return_train: 743.900| ep_upright: 764| total_upright: 77605| total_return: 61884.500
+2020-02-27 19:42:45,929 - root - INFO: steps 357000, 63.66 steps/s
+2020-02-27 19:42:49,077 - root - INFO: ep: 649| steps: 1001| total_steps: 357200| return_train: 461.000| ep_upright: 516| total_upright: 78121| total_return: 62345.500
+2020-02-27 19:43:01,740 - root - INFO: steps 358000, 63.25 steps/s
+2020-02-27 19:43:04,884 - root - INFO: ep: 650| steps: 1001| total_steps: 358201| return_train: 665.200| ep_upright: 690| total_upright: 78811| total_return: 63010.700
+2020-02-27 19:43:17,408 - root - INFO: steps 359000, 63.83 steps/s
+2020-02-27 19:43:17,489 - root - INFO: ep: 651| steps: 804| total_steps: 359005| return_train: 293.200| ep_upright: 336| total_upright: 79147| total_return: 63303.900
+2020-02-27 19:43:33,088 - root - INFO: steps 360000, 63.78 steps/s
+2020-02-27 19:43:42,216 - root - INFO: steps 360000, ep_return_test 833.17(0.33)
+2020-02-27 19:43:42,325 - root - INFO: ep: 652| steps: 1001| total_steps: 360006| return_train: 709.900| ep_upright: 738| total_upright: 79885| total_return: 64013.800
+2020-02-27 19:43:44,334 - root - INFO: ep: 653| steps: 128| total_steps: 360134| return_train: -10.800| ep_upright: 0| total_upright: 79885| total_return: 64003.000
+2020-02-27 19:43:57,940 - root - INFO: steps 361000, 40.24 steps/s
+2020-02-27 19:44:00,055 - root - INFO: ep: 654| steps: 1001| total_steps: 361135| return_train: 282.500| ep_upright: 325| total_upright: 80210| total_return: 64285.500
+2020-02-27 19:44:13,596 - root - INFO: steps 362000, 63.88 steps/s
+2020-02-27 19:44:15,723 - root - INFO: ep: 655| steps: 1001| total_steps: 362136| return_train: 330.000| ep_upright: 376| total_upright: 80586| total_return: 64615.500
+2020-02-27 19:44:29,181 - root - INFO: steps 363000, 64.17 steps/s
+2020-02-27 19:44:31,324 - root - INFO: ep: 656| steps: 1001| total_steps: 363137| return_train: 110.600| ep_upright: 148| total_upright: 80734| total_return: 64726.100
+2020-02-27 19:44:44,857 - root - INFO: steps 364000, 63.80 steps/s
+2020-02-27 19:44:47,012 - root - INFO: ep: 657| steps: 1001| total_steps: 364138| return_train: 826.500| ep_upright: 851| total_upright: 81585| total_return: 65552.600
+2020-02-27 19:45:00,591 - root - INFO: steps 365000, 63.56 steps/s
+2020-02-27 19:45:09,703 - root - INFO: steps 365000, ep_return_test 694.46(66.71)
+2020-02-27 19:45:11,902 - root - INFO: ep: 658| steps: 1001| total_steps: 365139| return_train: 801.200| ep_upright: 829| total_upright: 82414| total_return: 66353.800
+2020-02-27 19:45:25,478 - root - INFO: steps 366000, 40.18 steps/s
+2020-02-27 19:45:27,674 - root - INFO: ep: 659| steps: 1001| total_steps: 366140| return_train: 472.100| ep_upright: 514| total_upright: 82928| total_return: 66825.900
+2020-02-27 19:45:41,252 - root - INFO: steps 367000, 63.40 steps/s
+2020-02-27 19:45:43,463 - root - INFO: ep: 660| steps: 1001| total_steps: 367141| return_train: 167.900| ep_upright: 211| total_upright: 83139| total_return: 66993.800
+2020-02-27 19:45:56,888 - root - INFO: steps 368000, 63.96 steps/s
+2020-02-27 19:45:59,110 - root - INFO: ep: 661| steps: 1001| total_steps: 368142| return_train: -28.700| ep_upright: 50| total_upright: 83189| total_return: 66965.100
+2020-02-27 19:46:12,545 - root - INFO: steps 369000, 63.87 steps/s
+2020-02-27 19:46:14,801 - root - INFO: ep: 662| steps: 1001| total_steps: 369143| return_train: 796.500| ep_upright: 818| total_upright: 84007| total_return: 67761.600
+2020-02-27 19:46:28,032 - root - INFO: steps 370000, 64.58 steps/s
+2020-02-27 19:46:33,565 - root - INFO: steps 370000, ep_return_test 25.50(5.84)
+2020-02-27 19:46:35,809 - root - INFO: ep: 663| steps: 1001| total_steps: 370144| return_train: 820.100| ep_upright: 851| total_upright: 84858| total_return: 68581.700
+2020-02-27 19:46:48,777 - root - INFO: steps 371000, 48.21 steps/s
+2020-02-27 19:46:50,996 - root - INFO: ep: 664| steps: 1001| total_steps: 371145| return_train: 777.600| ep_upright: 800| total_upright: 85658| total_return: 69359.300
+2020-02-27 19:47:04,171 - root - INFO: steps 372000, 64.96 steps/s
+2020-02-27 19:47:06,386 - root - INFO: ep: 665| steps: 1001| total_steps: 372146| return_train: 707.900| ep_upright: 747| total_upright: 86405| total_return: 70067.200
+2020-02-27 19:47:19,329 - root - INFO: steps 373000, 65.98 steps/s
+2020-02-27 19:47:21,547 - root - INFO: ep: 666| steps: 1001| total_steps: 373147| return_train: 812.100| ep_upright: 846| total_upright: 87251| total_return: 70879.300
+2020-02-27 19:47:34,634 - root - INFO: steps 374000, 65.34 steps/s
+2020-02-27 19:47:36,927 - root - INFO: ep: 667| steps: 1001| total_steps: 374148| return_train: 823.300| ep_upright: 845| total_upright: 88096| total_return: 71702.600
+2020-02-27 19:47:49,859 - root - INFO: steps 375000, 65.68 steps/s
+2020-02-27 19:47:58,554 - root - INFO: steps 375000, ep_return_test 814.56(1.25)
+2020-02-27 19:48:00,811 - root - INFO: ep: 668| steps: 1001| total_steps: 375149| return_train: 715.800| ep_upright: 739| total_upright: 88835| total_return: 72418.400
+2020-02-27 19:48:13,612 - root - INFO: steps 376000, 42.10 steps/s
+2020-02-27 19:48:15,874 - root - INFO: ep: 669| steps: 1001| total_steps: 376150| return_train: 756.300| ep_upright: 778| total_upright: 89613| total_return: 73174.700
+2020-02-27 19:48:28,560 - root - INFO: steps 377000, 66.90 steps/s
+2020-02-27 19:48:30,812 - root - INFO: ep: 670| steps: 1001| total_steps: 377151| return_train: 806.600| ep_upright: 828| total_upright: 90441| total_return: 73981.300
+2020-02-27 19:48:43,492 - root - INFO: steps 378000, 66.98 steps/s
+2020-02-27 19:48:45,793 - root - INFO: ep: 671| steps: 1001| total_steps: 378152| return_train: 702.700| ep_upright: 733| total_upright: 91174| total_return: 74684.000
+2020-02-27 19:48:58,910 - root - INFO: steps 379000, 64.86 steps/s
+2020-02-27 19:49:01,272 - root - INFO: ep: 672| steps: 1001| total_steps: 379153| return_train: 703.000| ep_upright: 733| total_upright: 91907| total_return: 75387.000
+2020-02-27 19:49:14,126 - root - INFO: steps 380000, 65.73 steps/s
+2020-02-27 19:49:22,402 - root - INFO: steps 380000, ep_return_test 638.16(67.18)
+2020-02-27 19:49:24,732 - root - INFO: ep: 673| steps: 1001| total_steps: 380154| return_train: 784.800| ep_upright: 813| total_upright: 92720| total_return: 76171.800
+2020-02-27 19:49:37,626 - root - INFO: steps 381000, 42.56 steps/s
+2020-02-27 19:49:40,066 - root - INFO: ep: 674| steps: 1001| total_steps: 381155| return_train: 813.400| ep_upright: 834| total_upright: 93554| total_return: 76985.200
+2020-02-27 19:49:52,903 - root - INFO: steps 382000, 65.47 steps/s
+2020-02-27 19:49:55,277 - root - INFO: ep: 675| steps: 1001| total_steps: 382156| return_train: 812.300| ep_upright: 851| total_upright: 94405| total_return: 77797.500
+2020-02-27 19:50:07,966 - root - INFO: steps 383000, 66.39 steps/s
+2020-02-27 19:50:10,312 - root - INFO: ep: 676| steps: 1001| total_steps: 383157| return_train: 808.500| ep_upright: 831| total_upright: 95236| total_return: 78606.000
+2020-02-27 19:50:23,220 - root - INFO: steps 384000, 65.56 steps/s
+2020-02-27 19:50:25,574 - root - INFO: ep: 677| steps: 1001| total_steps: 384158| return_train: 813.500| ep_upright: 836| total_upright: 96072| total_return: 79419.500
+2020-02-27 19:50:38,131 - root - INFO: steps 385000, 67.07 steps/s
+2020-02-27 19:50:46,869 - root - INFO: steps 385000, ep_return_test 592.21(1.57)
+2020-02-27 19:50:49,290 - root - INFO: ep: 678| steps: 1001| total_steps: 385159| return_train: 723.500| ep_upright: 754| total_upright: 96826| total_return: 80143.000
+2020-02-27 19:51:02,312 - root - INFO: steps 386000, 41.36 steps/s
+2020-02-27 19:51:04,758 - root - INFO: ep: 679| steps: 1001| total_steps: 386160| return_train: 830.500| ep_upright: 852| total_upright: 97678| total_return: 80973.500
+2020-02-27 19:51:17,646 - root - INFO: steps 387000, 65.22 steps/s
+2020-02-27 19:51:20,140 - root - INFO: ep: 680| steps: 1001| total_steps: 387161| return_train: 561.900| ep_upright: 586| total_upright: 98264| total_return: 81535.400
+2020-02-27 19:51:32,894 - root - INFO: steps 388000, 65.59 steps/s
+2020-02-27 19:51:35,313 - root - INFO: ep: 681| steps: 1001| total_steps: 388162| return_train: 811.900| ep_upright: 833| total_upright: 99097| total_return: 82347.300
+2020-02-27 19:51:48,030 - root - INFO: steps 389000, 66.07 steps/s
+2020-02-27 19:51:50,471 - root - INFO: ep: 682| steps: 1001| total_steps: 389163| return_train: 209.100| ep_upright: 273| total_upright: 99370| total_return: 82556.400
+2020-02-27 19:51:55,877 - root - INFO: ep: 683| steps: 348| total_steps: 389511| return_train: 27.100| ep_upright: 52| total_upright: 99422| total_return: 82583.500
+2020-02-27 19:52:03,238 - root - INFO: steps 390000, 65.76 steps/s
+2020-02-27 19:52:10,345 - root - INFO: steps 390000, ep_return_test 166.87(65.96)
+2020-02-27 19:52:18,112 - root - INFO: ep: 684| steps: 1001| total_steps: 390512| return_train: 149.400| ep_upright: 215| total_upright: 99637| total_return: 82732.900
+2020-02-27 19:52:22,931 - root - INFO: ep: 685| steps: 318| total_steps: 390830| return_train: 55.500| ep_upright: 75| total_upright: 99712| total_return: 82788.400
+2020-02-27 19:52:25,485 - root - INFO: steps 391000, 44.95 steps/s
+2020-02-27 19:52:28,577 - root - INFO: ep: 686| steps: 376| total_steps: 391206| return_train: 75.500| ep_upright: 98| total_upright: 99810| total_return: 82863.900
+2020-02-27 19:52:40,531 - root - INFO: steps 392000, 66.47 steps/s
+2020-02-27 19:52:43,735 - root - INFO: ep: 687| steps: 1001| total_steps: 392207| return_train: 95.300| ep_upright: 154| total_upright: 99964| total_return: 82959.200
+2020-02-27 19:52:55,868 - root - INFO: steps 393000, 65.20 steps/s
+2020-02-27 19:52:59,011 - root - INFO: ep: 688| steps: 1001| total_steps: 393208| return_train: 151.600| ep_upright: 213| total_upright: 100177| total_return: 83110.800
+2020-02-27 19:53:10,928 - root - INFO: steps 394000, 66.41 steps/s
+2020-02-27 19:53:14,130 - root - INFO: ep: 689| steps: 1001| total_steps: 394209| return_train: 166.800| ep_upright: 219| total_upright: 100396| total_return: 83277.600
+2020-02-27 19:53:26,109 - root - INFO: steps 395000, 65.88 steps/s
+2020-02-27 19:53:34,522 - root - INFO: steps 395000, ep_return_test 42.18(5.30)
+2020-02-27 19:53:37,710 - root - INFO: ep: 690| steps: 1001| total_steps: 395210| return_train: 788.800| ep_upright: 811| total_upright: 101207| total_return: 84066.400
+2020-02-27 19:53:49,584 - root - INFO: steps 396000, 42.60 steps/s
+2020-02-27 19:53:52,771 - root - INFO: ep: 691| steps: 1001| total_steps: 396211| return_train: 6.700| ep_upright: 63| total_upright: 101270| total_return: 84073.100
+2020-02-27 19:54:04,664 - root - INFO: steps 397000, 66.32 steps/s
+2020-02-27 19:54:07,912 - root - INFO: ep: 692| steps: 1001| total_steps: 397212| return_train: 841.200| ep_upright: 863| total_upright: 102133| total_return: 84914.300
+2020-02-27 19:54:19,865 - root - INFO: steps 398000, 65.79 steps/s
+2020-02-27 19:54:23,040 - root - INFO: ep: 693| steps: 1001| total_steps: 398213| return_train: 112.400| ep_upright: 188| total_upright: 102321| total_return: 85026.700
+2020-02-27 19:54:27,519 - root - INFO: ep: 694| steps: 301| total_steps: 398514| return_train: 52.600| ep_upright: 67| total_upright: 102388| total_return: 85079.300
+2020-02-27 19:54:34,763 - root - INFO: steps 399000, 67.13 steps/s
+2020-02-27 19:54:42,498 - root - INFO: ep: 695| steps: 1001| total_steps: 399515| return_train: 447.500| ep_upright: 486| total_upright: 102874| total_return: 85526.800
+2020-02-27 19:54:49,801 - root - INFO: steps 400000, 66.51 steps/s
+2020-02-27 19:54:58,358 - root - INFO: steps 400000, ep_return_test 39.09(8.97)
+2020-02-27 19:55:06,287 - root - INFO: ep: 696| steps: 1001| total_steps: 400516| return_train: 443.500| ep_upright: 492| total_upright: 103366| total_return: 85970.300
+2020-02-27 19:55:09,931 - root - INFO: ep: 697| steps: 236| total_steps: 400752| return_train: -14.200| ep_upright: 0| total_upright: 103366| total_return: 85956.100
+2020-02-27 19:55:13,720 - root - INFO: steps 401000, 41.81 steps/s
+2020-02-27 19:55:25,076 - root - INFO: ep: 698| steps: 1001| total_steps: 401753| return_train: 101.300| ep_upright: 171| total_upright: 103537| total_return: 86057.400
+2020-02-27 19:55:28,935 - root - INFO: steps 402000, 65.73 steps/s
+2020-02-27 19:55:40,495 - root - INFO: ep: 699| steps: 1001| total_steps: 402754| return_train: 518.300| ep_upright: 555| total_upright: 104092| total_return: 86575.700
+2020-02-27 19:55:44,174 - root - INFO: steps 403000, 65.62 steps/s
+2020-02-27 19:55:55,476 - root - INFO: ep: 700| steps: 1001| total_steps: 403755| return_train: 99.500| ep_upright: 158| total_upright: 104250| total_return: 86675.200
+2020-02-27 19:55:59,116 - root - INFO: steps 404000, 66.93 steps/s
+2020-02-27 19:56:10,420 - root - INFO: ep: 701| steps: 1001| total_steps: 404756| return_train: 45.300| ep_upright: 116| total_upright: 104366| total_return: 86720.500
+2020-02-27 19:56:14,144 - root - INFO: steps 405000, 66.54 steps/s
+2020-02-27 19:56:22,968 - root - INFO: steps 405000, ep_return_test 327.80(90.76)
+2020-02-27 19:56:34,266 - root - INFO: ep: 702| steps: 1001| total_steps: 405757| return_train: 230.800| ep_upright: 297| total_upright: 104663| total_return: 86951.300
+2020-02-27 19:56:37,922 - root - INFO: steps 406000, 42.06 steps/s
+2020-02-27 19:56:49,390 - root - INFO: ep: 703| steps: 1001| total_steps: 406758| return_train: 843.500| ep_upright: 862| total_upright: 105525| total_return: 87794.800
+2020-02-27 19:56:53,121 - root - INFO: steps 407000, 65.80 steps/s
+2020-02-27 19:57:01,890 - root - INFO: ep: 704| steps: 809| total_steps: 407567| return_train: 142.400| ep_upright: 192| total_upright: 105717| total_return: 87937.200
+2020-02-27 19:57:08,467 - root - INFO: steps 408000, 65.17 steps/s
+2020-02-27 19:57:17,253 - root - INFO: ep: 705| steps: 1001| total_steps: 408568| return_train: 111.400| ep_upright: 181| total_upright: 105898| total_return: 88048.600
+2020-02-27 19:57:23,856 - root - INFO: steps 409000, 64.99 steps/s
+2020-02-27 19:57:32,486 - root - INFO: ep: 706| steps: 1001| total_steps: 409569| return_train: 544.800| ep_upright: 578| total_upright: 106476| total_return: 88593.400
+2020-02-27 19:57:39,116 - root - INFO: steps 410000, 65.53 steps/s
+2020-02-27 19:57:41,892 - root - INFO: steps 410000, ep_return_test 61.63(4.44)
+2020-02-27 19:57:50,431 - root - INFO: ep: 707| steps: 1001| total_steps: 410570| return_train: 93.400| ep_upright: 147| total_upright: 106623| total_return: 88686.800
+2020-02-27 19:57:56,890 - root - INFO: steps 411000, 56.27 steps/s
+2020-02-27 19:58:05,417 - root - INFO: ep: 708| steps: 1001| total_steps: 411571| return_train: 551.200| ep_upright: 588| total_upright: 107211| total_return: 89238.000
+2020-02-27 19:58:11,850 - root - INFO: steps 412000, 66.85 steps/s
+2020-02-27 19:58:20,596 - root - INFO: ep: 709| steps: 1001| total_steps: 412572| return_train: 724.500| ep_upright: 760| total_upright: 107971| total_return: 89962.500
+2020-02-27 19:58:26,972 - root - INFO: steps 413000, 66.13 steps/s
+2020-02-27 19:58:35,515 - root - INFO: ep: 710| steps: 1001| total_steps: 413573| return_train: 789.900| ep_upright: 813| total_upright: 108784| total_return: 90752.400
+2020-02-27 19:58:41,922 - root - INFO: steps 414000, 66.90 steps/s
+2020-02-27 19:58:50,669 - root - INFO: ep: 711| steps: 1001| total_steps: 414574| return_train: 684.000| ep_upright: 715| total_upright: 109499| total_return: 91436.400
+2020-02-27 19:58:57,277 - root - INFO: steps 415000, 65.13 steps/s
+2020-02-27 19:59:00,663 - root - INFO: steps 415000, ep_return_test -16.96(4.94)
+2020-02-27 19:59:05,798 - root - INFO: ep: 712| steps: 767| total_steps: 415341| return_train: 85.600| ep_upright: 124| total_upright: 109623| total_return: 91522.000
+2020-02-27 19:59:10,725 - root - INFO: ep: 713| steps: 325| total_steps: 415666| return_train: -23.300| ep_upright: 0| total_upright: 109623| total_return: 91498.700
+2020-02-27 19:59:15,860 - root - INFO: steps 416000, 53.82 steps/s
+2020-02-27 19:59:25,983 - root - INFO: ep: 714| steps: 1001| total_steps: 416667| return_train: 62.000| ep_upright: 117| total_upright: 109740| total_return: 91560.700
+2020-02-27 19:59:31,080 - root - INFO: steps 417000, 65.71 steps/s
+2020-02-27 19:59:35,516 - root - INFO: ep: 715| steps: 618| total_steps: 417285| return_train: 5.600| ep_upright: 46| total_upright: 109786| total_return: 91566.300
+2020-02-27 19:59:46,233 - root - INFO: steps 418000, 66.00 steps/s
+2020-02-27 19:59:50,497 - root - INFO: ep: 716| steps: 1001| total_steps: 418286| return_train: 490.000| ep_upright: 530| total_upright: 110316| total_return: 92056.300
+2020-02-27 19:59:53,933 - root - INFO: ep: 717| steps: 230| total_steps: 418516| return_train: 14.100| ep_upright: 35| total_upright: 110351| total_return: 92070.400
+2020-02-27 20:00:01,155 - root - INFO: steps 419000, 67.02 steps/s
+2020-02-27 20:00:08,900 - root - INFO: ep: 718| steps: 1001| total_steps: 419517| return_train: 557.300| ep_upright: 589| total_upright: 110940| total_return: 92627.700
+2020-02-27 20:00:16,224 - root - INFO: steps 420000, 66.36 steps/s
+2020-02-27 20:00:24,968 - root - INFO: steps 420000, ep_return_test 675.23(5.17)
+2020-02-27 20:00:32,724 - root - INFO: ep: 719| steps: 1001| total_steps: 420518| return_train: 736.700| ep_upright: 756| total_upright: 111696| total_return: 93364.400
+2020-02-27 20:00:39,936 - root - INFO: steps 421000, 42.18 steps/s
+2020-02-27 20:00:47,925 - root - INFO: ep: 720| steps: 1001| total_steps: 421519| return_train: 813.100| ep_upright: 835| total_upright: 112531| total_return: 94177.500
+2020-02-27 20:00:55,377 - root - INFO: steps 422000, 64.77 steps/s
+2020-02-27 20:01:03,300 - root - INFO: ep: 721| steps: 1001| total_steps: 422520| return_train: 747.800| ep_upright: 775| total_upright: 113306| total_return: 94925.300
+2020-02-27 20:01:10,639 - root - INFO: steps 423000, 65.53 steps/s
+2020-02-27 20:01:18,648 - root - INFO: ep: 722| steps: 1001| total_steps: 423521| return_train: 59.800| ep_upright: 90| total_upright: 113396| total_return: 94985.100
+2020-02-27 20:01:26,038 - root - INFO: steps 424000, 64.95 steps/s
+2020-02-27 20:01:33,889 - root - INFO: ep: 723| steps: 995| total_steps: 424516| return_train: 550.200| ep_upright: 581| total_upright: 113977| total_return: 95535.300
+2020-02-27 20:01:41,300 - root - INFO: steps 425000, 65.53 steps/s
+2020-02-27 20:01:49,981 - root - INFO: steps 425000, ep_return_test 838.23(0.73)
+2020-02-27 20:01:57,763 - root - INFO: ep: 724| steps: 1001| total_steps: 425517| return_train: 837.700| ep_upright: 857| total_upright: 114834| total_return: 96373.000
+2020-02-27 20:02:05,068 - root - INFO: steps 426000, 42.08 steps/s
+2020-02-27 20:02:12,825 - root - INFO: ep: 725| steps: 1001| total_steps: 426518| return_train: 841.400| ep_upright: 862| total_upright: 115696| total_return: 97214.400
+2020-02-27 20:02:20,161 - root - INFO: steps 427000, 66.26 steps/s
+2020-02-27 20:02:22,734 - root - INFO: ep: 726| steps: 654| total_steps: 427172| return_train: 40.700| ep_upright: 67| total_upright: 115763| total_return: 97255.100
+2020-02-27 20:02:35,137 - root - INFO: steps 428000, 66.78 steps/s
+2020-02-27 20:02:37,711 - root - INFO: ep: 727| steps: 1001| total_steps: 428173| return_train: 835.700| ep_upright: 864| total_upright: 116627| total_return: 98090.800
+2020-02-27 20:02:50,287 - root - INFO: steps 429000, 66.01 steps/s
+2020-02-27 20:02:52,935 - root - INFO: ep: 728| steps: 1001| total_steps: 429174| return_train: 814.900| ep_upright: 837| total_upright: 117464| total_return: 98905.700
+2020-02-27 20:03:01,491 - root - INFO: ep: 729| steps: 548| total_steps: 429722| return_train: -16.500| ep_upright: 16| total_upright: 117480| total_return: 98889.200
+2020-02-27 20:03:05,692 - root - INFO: steps 430000, 64.92 steps/s
+2020-02-27 20:03:14,511 - root - INFO: steps 430000, ep_return_test 746.90(0.46)
+2020-02-27 20:03:25,532 - root - INFO: ep: 730| steps: 1001| total_steps: 430723| return_train: 711.500| ep_upright: 738| total_upright: 118218| total_return: 99600.700
+2020-02-27 20:03:29,676 - root - INFO: steps 431000, 41.70 steps/s
+2020-02-27 20:03:40,668 - root - INFO: ep: 731| steps: 1001| total_steps: 431724| return_train: 729.700| ep_upright: 755| total_upright: 118973| total_return: 100330.400
+2020-02-27 20:03:44,817 - root - INFO: steps 432000, 66.05 steps/s
+2020-02-27 20:03:55,762 - root - INFO: ep: 732| steps: 1001| total_steps: 432725| return_train: 269.700| ep_upright: 321| total_upright: 119294| total_return: 100600.100
+2020-02-27 20:03:59,856 - root - INFO: steps 433000, 66.50 steps/s
+2020-02-27 20:04:02,212 - root - INFO: ep: 733| steps: 433| total_steps: 433158| return_train: 23.100| ep_upright: 49| total_upright: 119343| total_return: 100623.200
+2020-02-27 20:04:14,825 - root - INFO: steps 434000, 66.81 steps/s
+2020-02-27 20:04:16,802 - root - INFO: ep: 734| steps: 970| total_steps: 434128| return_train: 34.500| ep_upright: 60| total_upright: 119403| total_return: 100657.700
+2020-02-27 20:04:27,308 - root - INFO: ep: 735| steps: 701| total_steps: 434829| return_train: 44.300| ep_upright: 60| total_upright: 119463| total_return: 100702.000
+2020-02-27 20:04:29,858 - root - INFO: steps 435000, 66.53 steps/s
+2020-02-27 20:04:38,476 - root - INFO: steps 435000, ep_return_test 395.51(45.01)
+2020-02-27 20:04:51,077 - root - INFO: ep: 736| steps: 1001| total_steps: 435830| return_train: 156.200| ep_upright: 216| total_upright: 119679| total_return: 100858.200
+2020-02-27 20:04:53,693 - root - INFO: steps 436000, 41.96 steps/s
+2020-02-27 20:05:00,526 - root - INFO: ep: 737| steps: 615| total_steps: 436445| return_train: 55.800| ep_upright: 98| total_upright: 119777| total_return: 100914.000
+2020-02-27 20:05:09,132 - root - INFO: steps 437000, 64.78 steps/s
+2020-02-27 20:05:15,984 - root - INFO: ep: 738| steps: 1001| total_steps: 437446| return_train: 765.800| ep_upright: 788| total_upright: 120565| total_return: 101679.800
+2020-02-27 20:05:24,339 - root - INFO: steps 438000, 65.77 steps/s
+2020-02-27 20:05:30,999 - root - INFO: ep: 739| steps: 1001| total_steps: 438447| return_train: 86.400| ep_upright: 145| total_upright: 120710| total_return: 101766.200
+2020-02-27 20:05:39,476 - root - INFO: steps 439000, 66.07 steps/s
+2020-02-27 20:05:46,319 - root - INFO: ep: 740| steps: 1001| total_steps: 439448| return_train: 373.600| ep_upright: 420| total_upright: 121130| total_return: 102139.800
+2020-02-27 20:05:54,638 - root - INFO: steps 440000, 65.96 steps/s
+2020-02-27 20:06:03,297 - root - INFO: steps 440000, ep_return_test 663.11(31.35)
+2020-02-27 20:06:10,062 - root - INFO: ep: 741| steps: 1001| total_steps: 440449| return_train: 672.700| ep_upright: 703| total_upright: 121833| total_return: 102812.500
+2020-02-27 20:06:18,317 - root - INFO: steps 441000, 42.23 steps/s
+2020-02-27 20:06:25,120 - root - INFO: ep: 742| steps: 1001| total_steps: 441450| return_train: 543.900| ep_upright: 578| total_upright: 122411| total_return: 103356.400
+2020-02-27 20:06:33,389 - root - INFO: steps 442000, 66.35 steps/s
+2020-02-27 20:06:40,158 - root - INFO: ep: 743| steps: 1001| total_steps: 442451| return_train: 713.300| ep_upright: 738| total_upright: 123149| total_return: 104069.700
+2020-02-27 20:06:48,528 - root - INFO: steps 443000, 66.06 steps/s
+2020-02-27 20:06:55,529 - root - INFO: ep: 744| steps: 1001| total_steps: 443452| return_train: 834.800| ep_upright: 854| total_upright: 124003| total_return: 104904.500
+2020-02-27 20:07:03,972 - root - INFO: steps 444000, 64.76 steps/s
+2020-02-27 20:07:10,931 - root - INFO: ep: 745| steps: 1001| total_steps: 444453| return_train: 830.300| ep_upright: 851| total_upright: 124854| total_return: 105734.800
+2020-02-27 20:07:19,445 - root - INFO: steps 445000, 64.63 steps/s
+2020-02-27 20:07:28,279 - root - INFO: steps 445000, ep_return_test 510.64(6.60)
+2020-02-27 20:07:35,172 - root - INFO: ep: 746| steps: 1001| total_steps: 445454| return_train: 493.800| ep_upright: 541| total_upright: 125395| total_return: 106228.600
+2020-02-27 20:07:43,495 - root - INFO: steps 446000, 41.58 steps/s
+2020-02-27 20:07:50,383 - root - INFO: ep: 747| steps: 1001| total_steps: 446455| return_train: 624.600| ep_upright: 660| total_upright: 126055| total_return: 106853.200
+2020-02-27 20:07:58,589 - root - INFO: steps 447000, 66.25 steps/s
+2020-02-27 20:08:05,522 - root - INFO: ep: 748| steps: 1001| total_steps: 447456| return_train: 817.100| ep_upright: 840| total_upright: 126895| total_return: 107670.300
+2020-02-27 20:08:14,119 - root - INFO: steps 448000, 64.40 steps/s
+2020-02-27 20:08:21,053 - root - INFO: ep: 749| steps: 1001| total_steps: 448457| return_train: 838.100| ep_upright: 856| total_upright: 127751| total_return: 108508.400
+2020-02-27 20:08:29,151 - root - INFO: steps 449000, 66.53 steps/s
+2020-02-27 20:08:35,976 - root - INFO: ep: 750| steps: 1001| total_steps: 449458| return_train: 838.100| ep_upright: 855| total_upright: 128606| total_return: 109346.500
+2020-02-27 20:08:44,153 - root - INFO: steps 450000, 66.66 steps/s
+2020-02-27 20:08:53,063 - root - INFO: steps 450000, ep_return_test 838.27(0.32)
+2020-02-27 20:09:00,314 - root - INFO: ep: 751| steps: 1001| total_steps: 450459| return_train: 838.500| ep_upright: 856| total_upright: 129462| total_return: 110185.000
+2020-02-27 20:09:08,673 - root - INFO: steps 451000, 40.78 steps/s
+2020-02-27 20:09:15,860 - root - INFO: ep: 752| steps: 1001| total_steps: 451460| return_train: 736.000| ep_upright: 762| total_upright: 130224| total_return: 110921.000
+2020-02-27 20:09:24,047 - root - INFO: steps 452000, 65.05 steps/s
+2020-02-27 20:09:31,016 - root - INFO: ep: 753| steps: 1001| total_steps: 452461| return_train: 605.500| ep_upright: 642| total_upright: 130866| total_return: 111526.500
+2020-02-27 20:09:39,218 - root - INFO: steps 453000, 65.92 steps/s
+2020-02-27 20:09:46,383 - root - INFO: ep: 754| steps: 1001| total_steps: 453462| return_train: 822.400| ep_upright: 843| total_upright: 131709| total_return: 112348.900
+2020-02-27 20:09:54,526 - root - INFO: steps 454000, 65.33 steps/s
+2020-02-27 20:10:01,439 - root - INFO: ep: 755| steps: 1001| total_steps: 454463| return_train: 838.900| ep_upright: 859| total_upright: 132568| total_return: 113187.800
+2020-02-27 20:10:09,467 - root - INFO: steps 455000, 66.93 steps/s
+2020-02-27 20:10:18,190 - root - INFO: steps 455000, ep_return_test 835.11(0.81)
+2020-02-27 20:10:25,123 - root - INFO: ep: 756| steps: 1001| total_steps: 455464| return_train: 839.200| ep_upright: 859| total_upright: 133427| total_return: 114027.000
+2020-02-27 20:10:33,134 - root - INFO: steps 456000, 42.25 steps/s
+2020-02-27 20:10:40,117 - root - INFO: ep: 757| steps: 1001| total_steps: 456465| return_train: 827.900| ep_upright: 850| total_upright: 134277| total_return: 114854.900
+2020-02-27 20:10:48,514 - root - INFO: steps 457000, 65.02 steps/s
+2020-02-27 20:10:55,691 - root - INFO: ep: 758| steps: 1001| total_steps: 457466| return_train: 62.200| ep_upright: 132| total_upright: 134409| total_return: 114917.100
+2020-02-27 20:11:03,962 - root - INFO: steps 458000, 64.74 steps/s
+2020-02-27 20:11:11,045 - root - INFO: ep: 759| steps: 1001| total_steps: 458467| return_train: 356.300| ep_upright: 394| total_upright: 134803| total_return: 115273.400
+2020-02-27 20:11:16,136 - root - INFO: ep: 760| steps: 335| total_steps: 458802| return_train: 8.700| ep_upright: 36| total_upright: 134839| total_return: 115282.100
+2020-02-27 20:11:19,130 - root - INFO: steps 459000, 65.93 steps/s
+2020-02-27 20:11:21,046 - root - INFO: ep: 761| steps: 325| total_steps: 459127| return_train: 91.400| ep_upright: 115| total_upright: 134954| total_return: 115373.500
+2020-02-27 20:11:34,220 - root - INFO: steps 460000, 66.28 steps/s
+2020-02-27 20:11:42,784 - root - INFO: steps 460000, ep_return_test 724.91(65.61)
+2020-02-27 20:11:44,736 - root - INFO: ep: 762| steps: 1001| total_steps: 460128| return_train: 624.800| ep_upright: 658| total_upright: 135612| total_return: 115998.300
+2020-02-27 20:11:57,961 - root - INFO: steps 461000, 42.12 steps/s
+2020-02-27 20:11:59,921 - root - INFO: ep: 763| steps: 1001| total_steps: 461129| return_train: 769.400| ep_upright: 792| total_upright: 136404| total_return: 116767.700
+2020-02-27 20:12:12,999 - root - INFO: steps 462000, 66.51 steps/s
+2020-02-27 20:12:14,961 - root - INFO: ep: 764| steps: 1001| total_steps: 462130| return_train: 362.500| ep_upright: 415| total_upright: 136819| total_return: 117130.200
+2020-02-27 20:12:28,507 - root - INFO: steps 463000, 64.49 steps/s
+2020-02-27 20:12:30,046 - root - INFO: ep: 765| steps: 972| total_steps: 463102| return_train: 475.100| ep_upright: 514| total_upright: 137333| total_return: 117605.300
+2020-02-27 20:12:43,583 - root - INFO: steps 464000, 66.33 steps/s
+2020-02-27 20:12:45,142 - root - INFO: ep: 766| steps: 1001| total_steps: 464103| return_train: 64.600| ep_upright: 130| total_upright: 137463| total_return: 117669.900
+2020-02-27 20:12:58,928 - root - INFO: steps 465000, 65.17 steps/s
+2020-02-27 20:13:07,786 - root - INFO: steps 465000, ep_return_test 419.43(15.38)
+2020-02-27 20:13:09,375 - root - INFO: ep: 767| steps: 1001| total_steps: 465104| return_train: 465.300| ep_upright: 502| total_upright: 137965| total_return: 118135.200
+2020-02-27 20:13:23,296 - root - INFO: steps 466000, 41.04 steps/s
+2020-02-27 20:13:24,939 - root - INFO: ep: 768| steps: 1001| total_steps: 466105| return_train: 700.600| ep_upright: 732| total_upright: 138697| total_return: 118835.800
+2020-02-27 20:13:38,757 - root - INFO: steps 467000, 64.69 steps/s
+2020-02-27 20:13:40,382 - root - INFO: ep: 769| steps: 1001| total_steps: 467106| return_train: 703.700| ep_upright: 728| total_upright: 139425| total_return: 119539.500
+2020-02-27 20:13:53,905 - root - INFO: steps 468000, 66.02 steps/s
+2020-02-27 20:13:55,520 - root - INFO: ep: 770| steps: 1001| total_steps: 468107| return_train: 824.000| ep_upright: 843| total_upright: 140268| total_return: 120363.500
+2020-02-27 20:14:08,961 - root - INFO: steps 469000, 66.42 steps/s
+2020-02-27 20:14:10,580 - root - INFO: ep: 771| steps: 1001| total_steps: 469108| return_train: 654.400| ep_upright: 686| total_upright: 140954| total_return: 121017.900
+2020-02-27 20:14:24,100 - root - INFO: steps 470000, 66.06 steps/s
+2020-02-27 20:14:32,390 - root - INFO: steps 470000, ep_return_test 470.92(72.64)
+2020-02-27 20:14:34,029 - root - INFO: ep: 772| steps: 1001| total_steps: 470109| return_train: 563.200| ep_upright: 601| total_upright: 141555| total_return: 121581.100
+2020-02-27 20:14:47,635 - root - INFO: steps 471000, 42.49 steps/s
+2020-02-27 20:14:49,401 - root - INFO: ep: 773| steps: 1001| total_steps: 471110| return_train: 765.000| ep_upright: 788| total_upright: 142343| total_return: 122346.100
+2020-02-27 20:15:03,168 - root - INFO: steps 472000, 64.38 steps/s
+2020-02-27 20:15:04,844 - root - INFO: ep: 774| steps: 1001| total_steps: 472111| return_train: 639.600| ep_upright: 674| total_upright: 143017| total_return: 122985.700
+2020-02-27 20:15:18,240 - root - INFO: steps 473000, 66.36 steps/s
+2020-02-27 20:15:19,931 - root - INFO: ep: 775| steps: 1001| total_steps: 473112| return_train: 684.400| ep_upright: 711| total_upright: 143728| total_return: 123670.100
+2020-02-27 20:15:33,354 - root - INFO: steps 474000, 66.17 steps/s
+2020-02-27 20:15:35,062 - root - INFO: ep: 776| steps: 1001| total_steps: 474113| return_train: 811.100| ep_upright: 834| total_upright: 144562| total_return: 124481.200
+2020-02-27 20:15:48,543 - root - INFO: steps 475000, 65.84 steps/s
+2020-02-27 20:15:57,282 - root - INFO: steps 475000, ep_return_test 759.39(0.57)
+2020-02-27 20:15:59,029 - root - INFO: ep: 777| steps: 1001| total_steps: 475114| return_train: 635.200| ep_upright: 673| total_upright: 145235| total_return: 125116.400
+2020-02-27 20:16:12,288 - root - INFO: steps 476000, 42.12 steps/s
+2020-02-27 20:16:14,058 - root - INFO: ep: 778| steps: 1001| total_steps: 476115| return_train: 805.200| ep_upright: 827| total_upright: 146062| total_return: 125921.600
+2020-02-27 20:16:27,673 - root - INFO: steps 477000, 65.00 steps/s
+2020-02-27 20:16:29,426 - root - INFO: ep: 779| steps: 1001| total_steps: 477116| return_train: 831.400| ep_upright: 854| total_upright: 146916| total_return: 126753.000
+2020-02-27 20:16:42,736 - root - INFO: steps 478000, 66.40 steps/s
+2020-02-27 20:16:44,509 - root - INFO: ep: 780| steps: 1001| total_steps: 478117| return_train: 455.800| ep_upright: 497| total_upright: 147413| total_return: 127208.800
+2020-02-27 20:16:58,007 - root - INFO: steps 479000, 65.49 steps/s
+2020-02-27 20:16:59,868 - root - INFO: ep: 781| steps: 1001| total_steps: 479118| return_train: 824.800| ep_upright: 846| total_upright: 148259| total_return: 128033.600
+2020-02-27 20:17:13,428 - root - INFO: steps 480000, 64.85 steps/s
+2020-02-27 20:17:22,155 - root - INFO: steps 480000, ep_return_test 781.88(22.74)
+2020-02-27 20:17:23,958 - root - INFO: ep: 782| steps: 1001| total_steps: 480119| return_train: 600.400| ep_upright: 638| total_upright: 148897| total_return: 128634.000
+2020-02-27 20:17:37,225 - root - INFO: steps 481000, 42.02 steps/s
+2020-02-27 20:17:39,107 - root - INFO: ep: 783| steps: 1001| total_steps: 481120| return_train: 790.600| ep_upright: 814| total_upright: 149711| total_return: 129424.600
+2020-02-27 20:17:52,398 - root - INFO: steps 482000, 65.92 steps/s
+2020-02-27 20:17:54,214 - root - INFO: ep: 784| steps: 1001| total_steps: 482121| return_train: 839.900| ep_upright: 861| total_upright: 150572| total_return: 130264.500
+2020-02-27 20:18:07,513 - root - INFO: steps 483000, 66.16 steps/s
+2020-02-27 20:18:09,337 - root - INFO: ep: 785| steps: 1001| total_steps: 483122| return_train: 689.400| ep_upright: 721| total_upright: 151293| total_return: 130953.900
+2020-02-27 20:18:22,678 - root - INFO: steps 484000, 65.95 steps/s
+2020-02-27 20:18:24,513 - root - INFO: ep: 786| steps: 1001| total_steps: 484123| return_train: 679.100| ep_upright: 700| total_upright: 151993| total_return: 131633.000
+2020-02-27 20:18:37,653 - root - INFO: steps 485000, 66.78 steps/s
+2020-02-27 20:18:46,464 - root - INFO: steps 485000, ep_return_test 708.92(15.78)
+2020-02-27 20:18:48,347 - root - INFO: ep: 787| steps: 1001| total_steps: 485124| return_train: 833.200| ep_upright: 856| total_upright: 152849| total_return: 132466.200
+2020-02-27 20:19:01,847 - root - INFO: steps 486000, 41.34 steps/s
+2020-02-27 20:19:03,813 - root - INFO: ep: 788| steps: 1001| total_steps: 486125| return_train: 833.200| ep_upright: 857| total_upright: 153706| total_return: 133299.400
+2020-02-27 20:19:17,139 - root - INFO: steps 487000, 65.40 steps/s
+2020-02-27 20:19:19,085 - root - INFO: ep: 789| steps: 1001| total_steps: 487126| return_train: 427.500| ep_upright: 467| total_upright: 154173| total_return: 133726.900
+2020-02-27 20:19:32,442 - root - INFO: steps 488000, 65.36 steps/s
+2020-02-27 20:19:34,353 - root - INFO: ep: 790| steps: 1001| total_steps: 488127| return_train: 193.100| ep_upright: 244| total_upright: 154417| total_return: 133920.000
+2020-02-27 20:19:47,831 - root - INFO: steps 489000, 64.99 steps/s
+2020-02-27 20:19:49,782 - root - INFO: ep: 791| steps: 1001| total_steps: 489128| return_train: 490.700| ep_upright: 517| total_upright: 154934| total_return: 134410.700
+2020-02-27 20:20:02,855 - root - INFO: steps 490000, 66.56 steps/s
+2020-02-27 20:20:11,520 - root - INFO: steps 490000, ep_return_test 608.55(3.05)
+2020-02-27 20:20:13,462 - root - INFO: ep: 792| steps: 1001| total_steps: 490129| return_train: 547.600| ep_upright: 586| total_upright: 155520| total_return: 134958.300
+2020-02-27 20:20:26,535 - root - INFO: steps 491000, 42.23 steps/s
+2020-02-27 20:20:28,472 - root - INFO: ep: 793| steps: 1001| total_steps: 491130| return_train: 598.900| ep_upright: 625| total_upright: 156145| total_return: 135557.200
+2020-02-27 20:20:41,567 - root - INFO: steps 492000, 66.53 steps/s
+2020-02-27 20:20:43,554 - root - INFO: ep: 794| steps: 1001| total_steps: 492131| return_train: 550.500| ep_upright: 588| total_upright: 156733| total_return: 136107.700
+2020-02-27 20:20:56,882 - root - INFO: steps 493000, 65.30 steps/s
+2020-02-27 20:20:58,954 - root - INFO: ep: 795| steps: 1001| total_steps: 493132| return_train: 731.400| ep_upright: 752| total_upright: 157485| total_return: 136839.100
+2020-02-27 20:21:04,462 - root - INFO: ep: 796| steps: 355| total_steps: 493487| return_train: 31.000| ep_upright: 60| total_upright: 157545| total_return: 136870.100
+2020-02-27 20:21:12,209 - root - INFO: steps 494000, 65.25 steps/s
+2020-02-27 20:21:19,778 - root - INFO: ep: 797| steps: 1001| total_steps: 494488| return_train: 687.000| ep_upright: 720| total_upright: 158265| total_return: 137557.100
+2020-02-27 20:21:27,493 - root - INFO: steps 495000, 65.43 steps/s
+2020-02-27 20:21:29,685 - root - INFO: steps 495000, ep_return_test 17.88(1.55)
+2020-02-27 20:21:37,045 - root - INFO: ep: 798| steps: 1001| total_steps: 495489| return_train: 541.600| ep_upright: 578| total_upright: 158843| total_return: 138098.700
+2020-02-27 20:21:44,888 - root - INFO: steps 496000, 57.49 steps/s
+2020-02-27 20:21:52,376 - root - INFO: ep: 799| steps: 1001| total_steps: 496490| return_train: 839.600| ep_upright: 861| total_upright: 159704| total_return: 138938.300
+2020-02-27 20:22:00,008 - root - INFO: steps 497000, 66.14 steps/s
+2020-02-27 20:22:07,412 - root - INFO: ep: 800| steps: 1001| total_steps: 497491| return_train: 568.500| ep_upright: 597| total_upright: 160301| total_return: 139506.800
+2020-02-27 20:22:15,014 - root - INFO: steps 498000, 66.65 steps/s
+2020-02-27 20:22:22,420 - root - INFO: ep: 801| steps: 1001| total_steps: 498492| return_train: 384.600| ep_upright: 435| total_upright: 160736| total_return: 139891.400
+2020-02-27 20:22:30,000 - root - INFO: steps 499000, 66.73 steps/s
+2020-02-27 20:22:37,366 - root - INFO: ep: 802| steps: 1001| total_steps: 499493| return_train: 250.600| ep_upright: 296| total_upright: 161032| total_return: 140142.000
+2020-02-27 20:22:45,026 - root - INFO: steps 500000, 66.56 steps/s
+2020-02-27 20:22:53,825 - root - INFO: steps 500000, ep_return_test 634.86(7.31)

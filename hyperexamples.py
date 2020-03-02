@@ -26,7 +26,7 @@ def sweep(game, tag, model_fn, trials=50, manual=False):
         'replay_size': [int(1e6), int(1e7)],
         'replay_bs': [32, 64, 128],
         # 'dist': ['categorical', 'multinomial', 'multivariate_normal']
-        'dist': ['categorical']
+        'dist': ['softmax']
     }
     # manually define
     if manual:
@@ -76,7 +76,7 @@ def dqn_pixel(**kwargs):
     config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=config.lr, alpha=0.95, eps=0.01, centered=True)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim, NatureConvBody(in_channels=config.history_length),
                                                 hidden=config.hidden, dist=config.dist, particles=config.particles)
-    config.random_action_prob = LinearSchedule(0.1, 0.001, 1e6)
+    config.random_action_prob = LinearSchedule(0.1, 0.0001, 1e6)
     # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.batch_size = config.replay_bs
@@ -109,7 +109,7 @@ def n_step_dqn_pixel(**kwargs):
     config.optimizer_fn = lambda params: torch.optim.RMSprop(params, lr=1e-4, alpha=0.99, eps=1e-5)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim, NatureConvBody(), hidden=config.hidden,
                                                 dist=config.dist, particles=config.particles)
-    config.random_action_prob = LinearSchedule(0.1, 0.01, 1e6)
+    config.random_action_prob = LinearSchedule(0.1, 0.01, 1e4)
     config.state_normalizer = ImageNormalizer()
     config.reward_normalizer = SignNormalizer()
     config.discount = 0.99
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'pong_trials_cat'
-    game = 'FreewayNoFrameskip-v4'
+    tag = 'pong_trials_softmax_1e4random2'
+    game = 'PongNoFrameskip-v4'
     sweep(game, tag, dqn_pixel, trials=50, manual=True)
 

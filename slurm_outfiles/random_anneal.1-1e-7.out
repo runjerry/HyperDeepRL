@@ -1,0 +1,41 @@
+cuda:0
+=========================================================
+Running Manually Defined Single Trial, [1/1]
+Running Config: 
+game : bsuite-cartpole_swingup/0
+tb_tag : softmax-random.1-1e-7-32p_async
+alpha_i : 10
+alpha_f : 0.1
+anneal : 500000.0
+lr : 0.0001
+freq : 100
+grad_clip : None
+hidden : 256
+replay_size : 100000
+replay_bs : 128
+dist : softmax
+(256, 256)
+(256, 256)
+DuelingHyperNet(
+  (fc_value): LinearGenerator(
+    (linear1): Linear(in_features=32, out_features=256, bias=False)
+    (linear2): Linear(in_features=256, out_features=256, bias=False)
+  )
+  (fc_advantage): LinearGenerator(
+    (linear1): Linear(in_features=32, out_features=256, bias=False)
+    (linear2): Linear(in_features=256, out_features=768, bias=False)
+  )
+  (features): CartFCHyperBody(
+    (layers): ModuleList(
+      (0): LinearGenerator(
+        (linear1): Linear(in_features=32, out_features=64, bias=False)
+        (linear2): Linear(in_features=64, out_features=2048, bias=False)
+      )
+      (1): LinearGenerator(
+        (linear1): Linear(in_features=32, out_features=64, bias=False)
+        (linear2): Linear(in_features=64, out_features=65536, bias=False)
+      )
+    )
+  )
+)
+pure exploration finished

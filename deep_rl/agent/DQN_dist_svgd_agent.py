@@ -31,8 +31,10 @@ class DQNDistSVGDActor(BaseActor):
             particle_max = q_values.argmax(-1)
             abs_max = q_values.max(2)[0].argmax()
             q_max = q_values[abs_max]
-            
+    
         q_max = to_np(q_max).flatten()
+        q_var = to_np(q_values.var(0))
+        q_mean = to_np(q_values.mean(0))
         ## we want a best action to take, as well as an action for each particle
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
@@ -50,6 +52,9 @@ class DQNDistSVGDActor(BaseActor):
             self._network.sample_model_seed()
             if self._task.record:
                 self._task.record_or_not(info)
+
+        info[0]['q_mean'] = q_mean.mean()
+        info[0]['q_var'] = q_var.mean()
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
@@ -158,21 +163,17 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             q_next_frozen.detach()
 
             td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
-            # print (td_loss.mean())
             
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
             
-            # print ('q grad', q_grad.shape)
             q_eps = q + torch.rand_like(q) * 1e-8
             q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
 
             kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
-            # print (kappa.shape, grad_kappa.shape)
             kappa = kappa.unsqueeze(-1)
             
             kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
-            # print ('klop', kernel_logp.shape)
             svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
             
             self.optimizer.zero_grad()
@@ -187,7 +188,12 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
             with config.lock:
                 self.optimizer.step()
+            
+            self.logger.add_scalar('td_loss', td_loss.mean(), self.total_steps)
+            self.logger.add_scalar('kernel_grad', grad_kappa.mean(), self.total_steps)
+            self.logger.add_scalar('kernel', kappa.mean(), self.total_steps)
 
         if self.total_steps / self.config.sgd_update_frequency % \
                 self.config.target_network_update_freq == 0:
             self.target_network.load_state_dict(self.network.state_dict())
+

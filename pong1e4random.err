@@ -1,0 +1,8 @@
+2020-03-02 13:41:17,743 - root - INFO: steps 0, 72315586.21 steps/s
+2020-03-02 13:41:38,419 - root - INFO: ep: 1| steps: 763| total_steps: 760| return_train: -21.000| total_return: -21.000
+2020-03-02 13:41:45,069 - root - INFO: steps 1000, 36.60 steps/s
+2020-03-02 13:42:02,591 - root - INFO: ep: 2| steps: 880| total_steps: 1638| return_train: -21.000| total_return: -42.000
+2020-03-02 13:42:11,599 - root - INFO: steps 2000, 37.70 steps/s
+2020-03-02 13:42:23,094 - root - INFO: ep: 3| steps: 1004| total_steps: 2640| return_train: -19.000| total_return: -61.000
+2020-03-02 13:42:29,517 - root - INFO: steps 3000, 55.81 steps/s
+2020-03-02 13:42:38,277 - root - INFO: ep: 4| steps: 848| total_steps: 3486| return_train: -21.000| total_return: -82.000

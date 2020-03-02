@@ -55,5 +55,6 @@ class NoiseSampler(object):
             sample_aux = self.aux_dist.sample()
             #sample = sample.unsqueeze(0).repeat(self.particles, 1)
             sample += sample_aux
+            sample = sample.clamp(min=0.0, max=1.0)
         return sample
 
