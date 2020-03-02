@@ -13,3 +13,7 @@ log/
 *.swi
 *.spj
 *.swk
+
+
+*.out
+*.err
