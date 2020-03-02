@@ -1,0 +1,9 @@
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+               292      dgx2 maintrai nguyehu5 PD       0:00      1 (QOSMaxGRESPerUser)
+               306      dgx2 neale_ql ratzlafn PD       0:00      1 (QOSMaxJobsPerUserLimit)
+               288      dgx2     bash nguyenkh  R   11:03:22      1 compute-dgx2-2
+               290      dgx2     bash nguyehu5  R   10:56:04      1 compute-dgx2-2
+               300      dgx2     bash nguyenkh  R    2:52:21      1 compute-dgx2-2
+               303      dgx2      zsh  yangyil  R      54:09      1 compute-dgx2-3
+               304      dgx2 neale_ql ratzlafn  R       3:30      1 compute-dgx2-6
+               305      dgx2 neale_ql ratzlafn  R       2:52      1 compute-dgx2-6

@@ -38,6 +38,7 @@ class NoiseSampler(object):
             #high = torch.ones(self.particles, self.z_dim) * .005
             #low = torch.zeros(self.particles, self.z_dim)
             self.aux_dist = torch.distributions.Uniform(low, high)
+
         elif self.dist_type == 'multinomial':
             total_count = self.z_dim
             probs = torch.ones(self.z_dim)
@@ -55,5 +56,6 @@ class NoiseSampler(object):
             sample_aux = self.aux_dist.sample()
             #sample = sample.unsqueeze(0).repeat(self.particles, 1)
             sample += sample_aux
+            sample = sample.clamp(min=0.0, max=1.0)
         return sample
 
