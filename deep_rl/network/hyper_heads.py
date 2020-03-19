@@ -38,12 +38,14 @@ class DuelingHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, body, hidden, dist, particles):
         super(DuelingHyperNet, self).__init__()
         self.mixer = False
-        
+        self.action_dim = action_dim
+
         self.config = DuelingNet_config(body.feature_dim, action_dim)
         self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
         self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
         self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
         self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
+        self.fc_gumbel = LinearGenerator(self.config['fc_gumbel']).cuda()
         self.features = body
         
         self.s_dim = self.config['s_dim']
@@ -62,6 +64,7 @@ class DuelingHyperNet(nn.Module, BaseNet):
             'features_z': sample_z,
             'value_z': sample_z[0],
             'advantage_z': sample_z[0],
+            'gumbel_z': sample_z[0],
         }
     
     def set_model_seed(self, seed):
@@ -85,6 +88,26 @@ class DuelingHyperNet(nn.Module, BaseNet):
         advantage = self.fc_advantage(self.model_seed['advantage_z'], phi)
         q = value.expand_as(advantage) + (advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
         return q
+
+    def param_explore(self, phi, rewards):
+        conf_interval = .9
+        params = self.fc_gumbel(self.model_seed['gumbel_z'], phi)
+        params = params.mean(0)
+        loc, scale = torch.split(params, self.action_dim, dim=1)
+        samples, icdf_samples = [], []
+        for i in range(self.action_dim):
+            mean_action_i = loc.squeeze(0)[i]
+            scale_action_i = scale.squeeze(0)[i]
+            # dist = torch.distributions.Gumbel(mean_action_i, scale_action_i)
+            reward_i = torch.tensor(rewards[i]).cuda().float().mean()
+            dist = torch.distributions.Gumbel(mean_action_i, reward_i)
+            sample = dist.sample().cuda()
+            samples.append(sample)
+            icdf = dist.icdf(torch.tensor([conf_interval]).cuda())
+            icdf_samples.append(icdf)
+        samples = torch.stack(samples)
+        icdf_samples = torch.stack(icdf_samples)
+        return samples, icdf_samples  # Gumbel Q values
 
     def sample_model(self, component):
         param_sets = []

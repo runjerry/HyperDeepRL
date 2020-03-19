@@ -20,6 +20,7 @@ class DQNDistSVGDActor(BaseActor):
         BaseActor.__init__(self, config)
         self.config = config
         self.start()
+        self.rewards = [[0.] for _ in range(self.config.action_dim)]
 
     def _transition(self):
         if self._state is None:
@@ -35,22 +36,28 @@ class DQNDistSVGDActor(BaseActor):
         q_max = to_np(q_max).flatten()
         q_var = to_np(q_values.var(0))
         q_mean = to_np(q_values.mean(0))
-        
-        ## we want a best action to take, as well as an action for each particle
-        #model_action_prob = 1.0
-        #if self._total_steps < config.exploration_steps:
-        #    model_action_prob = np.random.rand() # 0.5 prob of taking a model steps during exploration
-        
+
+        phi = self._network.body(state)
+        prior_explore = self._network.param_explore(phi, self.rewards)
+        dist_samples, icdf_values = prior_explore
+
+        print (q_mean)
+        print (icdf_values)
+        print ('-----')
+        q_explore = to_np(icdf_values.T) + q_mean  # wooo
+
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
                 action = np.random.randint(0, len(q_max))
                 actions_log = np.random.randint(0, len(q_max), size=(config.particles, 1))
         else:
             # action = np.argmax(q_max)  # Max Action
-            action = np.argmax(q_mean)  # Mean Action
+            action = np.argmax(q_explore)#mean)  # Mean Action
             actions_log = to_np(particle_max)
         
         next_state, reward, done, info = self._task.step([action])
+        self.rewards[action].append(reward[0])
+
         if config.render and self._task.record_now:
             self._task.render()
         if done:
@@ -61,6 +68,8 @@ class DQNDistSVGDActor(BaseActor):
         # Add Q value estimates to info
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
+        info[0]['prior_val'] = dist_samples.mean()
+        info[0]['prior_icdf'] = icdf_values.mean()
 
         entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1

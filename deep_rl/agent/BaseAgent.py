@@ -80,6 +80,8 @@ class BaseAgent:
             steps = info['ep_steps']
             q_mean = info['q_mean']
             q_var = info['q_var']
+            prior_val = info['prior_val']
+            prior_icdf = info['prior_icdf']
             if ret is not None:
                 self.logger.add_scalar('episodic_return_train', ret, self.total_steps + offset)
                 self.logger.add_scalar('episodic_steps', steps, self.total_steps + offset)
@@ -89,6 +91,8 @@ class BaseAgent:
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
                 self.logger.add_scalar('Q_values_mean_actor', q_mean, self.total_steps + offset)
                 self.logger.add_scalar('Q_values_var_actor', q_var, self.total_steps + offset)
+                self.logger.add_scalar('prior_values', prior_val, self.total_steps + offset)
+                self.logger.add_scalar('prior_icdf', prior_icdf, self.total_steps + offset)
                 self.logger.add_scalar('episode', ep, self.total_steps + offset)
                 self.logger.info('ep: %d| steps: %s| total_steps: %d| return_train: %.3f| ep_upright: %s| total_upright: %s| total_return: %.3f' % (
                     ep,

@@ -42,9 +42,10 @@ def DuelingNet_config(feature_dim, action_dim, mixer=False):
     net_config = {
             'fc_value': dueling_net(d_input=feature_dim, d_output=1, z_dim=32),
             'fc_advantage': dueling_net(d_input=feature_dim, d_output=action_dim, z_dim=32),
+            'fc_gumbel': dueling_net(d_input=feature_dim, d_output=2*action_dim, z_dim=32),
             'z_dim': 32,
             's_dim': 32,
-            'n_gen': 2
+            'n_gen': 3
             }
     if mixer:
         net_config['mixer'] = dueling_net(d_hidden=64, d_output=None, n_gen=2)
