@@ -18,7 +18,7 @@ from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv, VecEnv
 
 import bsuite
 from bsuite.utils import gym_wrapper
-
+from bsuite import bsuite
 from ..utils import *
 
 try:
@@ -249,7 +249,10 @@ class Task:
             if env_id.startswith('bsuite'):
                 id = env_id.split('bsuite-')[1]
                 self.video_enabled = False
-                bsuite_env = bsuite.load_from_id(id)
+                bsuite_env = bsuite.load_and_record_to_csv(
+                        bsuite_id=id,
+                        results_dir='bsuite_logs/',
+                )
                 env = gym_wrapper.GymFromDMEnv(bsuite_env)
             
             elif env_id.startswith("dm"):

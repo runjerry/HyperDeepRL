@@ -85,7 +85,6 @@ def dqn_feature(**kwargs):
                                     CartFCHyperBody(config.state_dim, hidden=config.hidden),
                                 hidden=config.hidden, dist=config.dist, particles=config.particles)
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
-    # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
     config.random_action_prob = LinearSchedule(1e-1, 1e-2, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
@@ -111,7 +110,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'softmax-random.1-1e-2-32p_async'
-    game = 'bsuite-cartpole_swingup/0'
+    tag = 'deepsea_softmax_bsuitetest'
+    game = 'bsuite-deepsea/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
