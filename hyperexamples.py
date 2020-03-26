@@ -78,7 +78,7 @@ def dqn_feature(**kwargs):
     config.generate_log_handles()
     config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
-    config.particles = 32
+    config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'softmax-random.1-1e-2-32p_async'
+    tag = 'new/softmax_random-24p_4'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 

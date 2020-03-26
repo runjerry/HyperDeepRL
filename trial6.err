@@ -1,0 +1,18 @@
+2020-03-26 10:59:44.674953: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/apps/cuda/cuda-9.0/lib64:/usr/local/apps/cuda/cuda-9.0/lib:/nfs/stak/users/ratzlafn/nccl/lib
+2020-03-26 10:59:44.681512: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /usr/local/apps/cuda/cuda-9.0/lib64:/usr/local/apps/cuda/cuda-9.0/lib:/nfs/stak/users/ratzlafn/nccl/lib
+2020-03-26 10:59:44.682032: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2020-03-26 11:00:20,430 - root - INFO: steps 0, 322638769.23 steps/s
+2020-03-26 11:00:28,985 - root - INFO: steps 0, ep_return_test 0.00(0.00)
+2020-03-26 11:00:33,743 - root - INFO: ep: 1| steps: 364| total_steps: 363| return_train: -20.600| ep_upright: 0| total_upright: 0| total_return: -20.600
+2020-03-26 11:00:41,855 - root - INFO: ep: 2| steps: 615| total_steps: 978| return_train: -5.600| ep_upright: 28| total_upright: 28| total_return: -26.200
+2020-03-26 11:00:42,146 - root - INFO: steps 1000, 46.05 steps/s
+2020-03-26 11:00:47,305 - root - INFO: ep: 3| steps: 413| total_steps: 1391| return_train: -22.100| ep_upright: 0| total_upright: 28| total_return: -48.300
+2020-03-26 11:00:48,996 - root - INFO: ep: 4| steps: 128| total_steps: 1519| return_train: -9.100| ep_upright: 0| total_upright: 28| total_return: -57.400
+2020-03-26 11:00:52,635 - root - INFO: ep: 5| steps: 276| total_steps: 1795| return_train: -18.600| ep_upright: 0| total_upright: 28| total_return: -76.000
+2020-03-26 11:00:55,332 - root - INFO: steps 2000, 75.85 steps/s
+2020-03-26 11:00:59,275 - root - INFO: ep: 6| steps: 504| total_steps: 2299| return_train: -27.900| ep_upright: 0| total_upright: 28| total_return: -103.900
+2020-03-26 11:01:04,750 - root - INFO: ep: 7| steps: 415| total_steps: 2714| return_train: -18.500| ep_upright: 0| total_upright: 28| total_return: -122.400
+2020-03-26 11:01:08,364 - root - INFO: ep: 8| steps: 274| total_steps: 2988| return_train: -17.300| ep_upright: 0| total_upright: 28| total_return: -139.700
+2020-03-26 11:01:08,522 - root - INFO: steps 3000, 75.82 steps/s
+2020-03-26 11:01:11,934 - root - INFO: ep: 9| steps: 271| total_steps: 3259| return_train: -20.800| ep_upright: 0| total_upright: 28| total_return: -160.500
+slurmstepd: error: *** JOB 2187 ON compute-dgx2-3 CANCELLED AT 2020-03-26T11:01:15 ***
