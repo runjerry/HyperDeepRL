@@ -51,7 +51,7 @@ class NoiseSampler(object):
             self.base_dist = torch.distributions.MultivariateNormal(loc, cov)
 
     def sample(self):
-        sample = self.base_dist.sample()
+        sample = self.base_dist.sample([self.particles])
         if self.aux_dist is not None:
             sample_aux = self.aux_dist.sample()
             #sample = sample.unsqueeze(0).repeat(self.particles, 1)

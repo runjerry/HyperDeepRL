@@ -111,7 +111,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'new/softmax_random-24p_4'
+    tag = 'regret_analysis/diverse_samples3'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
