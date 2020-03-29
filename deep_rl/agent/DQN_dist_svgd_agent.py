@@ -40,9 +40,6 @@ class DQNDistSVGDActor(BaseActor):
         q_prob = q_values.max(0)[0]
         q_prob = q_prob + q_prob.min().abs() + 1e-8 # to avoid negative or 0 probability of taking an action
 
-        print (q_values)
-        print (q_mean)
-        
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
                 action = np.random.randint(0, len(q_max))
@@ -50,7 +47,7 @@ class DQNDistSVGDActor(BaseActor):
         else:
             # action = np.argmax(q_max)  # Max Action
             action = np.argmax(q_mean)  # Mean Action
-            # action = np.argmax(q_random)  # Random Head Action
+            #action = np.argmax(q_random)  # Random Head Action
             # action = torch.multinomial(q_prob.cpu(), 1, replacement=True).numpy()[0] # Sampled Action
             actions_log = to_np(particle_max)
         

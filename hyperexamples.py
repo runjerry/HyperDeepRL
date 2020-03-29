@@ -20,12 +20,13 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         'alpha_f': [.1, 0.01],
         'anneal': [500e3],
         'lr': [2e-4, 1e-4],
-        'freq' : [100, 150],
+        'freq' : [10, 100],
         'grad_clip': [None, 5],
         'hidden': [256, 128, 512],
         'replay_size': [int(1e5)],
-        'replay_bs': [128],
-        'dist': ['categorical', 'multinomial', 'normal', 'uniform']
+        'replay_bs': [128, 64],
+        'sgd_freq': [1, 4, 10],
+        'dist': ['softmax', 'multinomial', 'normal', 'uniform']
         # 'dist': ['multinomial']
     }
     # manually define
@@ -42,6 +43,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'freq': 100,
             'grad_clip': None,
             'hidden': 256,
+            'sgd_freq': 1,
             'replay_size': int(1e5),
             'replay_bs': 128,
             'dist': 'softmax'
@@ -58,7 +60,18 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
     for i, idx in enumerate(ordering):
         setting = search_space[idx]
         setting['game'] = game
-        setting['tb_tag'] = tag
+        tag_append='_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}-sgd{}'.format(
+                setting['alpha_i'],
+                setting['alpha_f'],
+                setting['lr'],
+                setting['freq'],
+                setting['grad_clip'],
+                setting['hidden'],
+                setting['dist'],
+                setting['replay_bs'],
+                setting['sgd_freq'])
+
+        setting['tb_tag'] = tag+tag_append
         print ('=========================================================')
         print ('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
             len(search_space), i+1, trials, int(float(i+1)/trials*100.)))
@@ -78,7 +91,7 @@ def dqn_feature(**kwargs):
     config.generate_log_handles()
     config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
-    config.particles = 24
+    config.particles = 10
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
@@ -87,12 +100,12 @@ def dqn_feature(**kwargs):
     config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
     # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(1e-1, 1e-2, 1e4)  # eps greedy params
+    config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4)#1e-1, 1e-7, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
-    config.sgd_update_frequency = 1  # how often to do learning
+    config.sgd_update_frequency = config.sgd_freq  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
     config.eval_interval = int(5e3) 
     config.max_steps = 500e3
@@ -111,7 +124,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'regret_analysis/diverse_samples3'
+    tag = 'cartpole_particles/10particles_1'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
