@@ -43,7 +43,6 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'freq': 100,
             'grad_clip': None,
             'hidden': 256,
-            'sgd_freq': 1,
             'replay_size': int(1e5),
             'replay_bs': 128,
             'dist': 'softmax'
@@ -60,7 +59,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
     for i, idx in enumerate(ordering):
         setting = search_space[idx]
         setting['game'] = game
-        tag_append='_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}-sgd{}'.format(
+        tag_append='_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}'.format(
                 setting['alpha_i'],
                 setting['alpha_f'],
                 setting['lr'],
@@ -68,8 +67,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
                 setting['grad_clip'],
                 setting['hidden'],
                 setting['dist'],
-                setting['replay_bs'],
-                setting['sgd_freq'])
+                setting['replay_bs'])
 
         setting['tb_tag'] = tag+tag_append
         print ('=========================================================')
@@ -105,7 +103,7 @@ def dqn_feature(**kwargs):
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0#config.replay_bs  # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
-    config.sgd_update_frequency = config.sgd_freq  # how often to do learning
+    config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
     config.eval_interval = int(5e3) 
     config.max_steps = 500e3
@@ -124,7 +122,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'moment_loss/check_var1'
+    tag = 'episode_update/trial_targetep2'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
