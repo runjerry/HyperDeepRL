@@ -103,7 +103,7 @@ def dqn_feature(**kwargs):
     config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4)#1e-1, 1e-7, 1e4)  # eps greedy params
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
-    config.exploration_steps = 0  # random actions taken at the beginning to fill the replay buffer
+    config.exploration_steps = 0#config.replay_bs  # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
     config.sgd_update_frequency = config.sgd_freq  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'cartpole_particles/10particles_1'
+    tag = 'moment_loss/check_var1'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 

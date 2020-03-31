@@ -140,15 +140,14 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             next_states = self.config.state_normalizer(next_states)
             terminals = tensor(terminals)
             rewards = tensor(rewards)
-            
+            sample_z = self.network.sample_model_seed(return_seed=True) 
             ## Get target q values
-            q_next = self.target_network(next_states).detach()  # [particles, batch, action]
+            q_next = self.target_network(next_states, seed=sample_z).detach()  # [particles, batch, action]
             if self.config.double_q:
                 ## Double DQN
-                q = self.network(next_states)  # choose random particle (Q function)  [batch, action]
-                best_actions = torch.argmax(q, dim=-1)  # get best action  [batch]
-                q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])
-                # q_next = q_next[:, self.batch_indices, best_actions]
+                q = self.network(next_states, seed=sample_z)  # [particles, batch, action]
+                best_actions = torch.argmax(q, dim=-1)  # get best action  [particles, batch]
+                q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)]) # [p, batch, 1]
             else:
                 q_next = q_next.max(1)[0]
             q_next = self.config.discount * q_next * (1 - terminals)
@@ -156,22 +155,28 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
             actions = tensor(actions).long()
 
             ## Get main Q values
-            phi = self.network.body(states)
-            q = self.network.head(phi)
-            actions = actions.transpose(0, 1).squeeze(-1)
-            q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)])
-            
+            phi = self.network.body(states, seed=sample_z)
+            q = self.network.head(phi, seed=sample_z) # [particles, batch, action]
+            # if actions.dim() != 1:
+            actions = actions.transpose(0, 1).squeeze(-1)  # [particles, batch, actions]
+
+            q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)]) # [particles, batch]
+            # q = torch.gather(q, dim=2, index=actions.unsqueeze(0).unsqueeze(-1).repeat(config.particles, 1, 1)) # :/
             alpha = self.alpha_schedule.value(self.total_steps)
-            q = q.transpose(0, 1).unsqueeze(-1)
-            q_next = q_next.transpose(0, 1).unsqueeze(-1)
+            q = q.transpose(0, 1).unsqueeze(-1) # [particles, batch, 1]
+            q_next = q_next.transpose(0, 1).unsqueeze(-1)  # [particles, batch, 1]
             
             q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
             q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
 
             q_frozen.detach()
             q_next_frozen.detach()
-
-            td_loss = (q_next - q).pow(2).mul(0.5) #.mean()
+            
+            moment1_loss = (self.config.discount*q_next.mean(1) - q.mean(1)).pow(2).mul(.5)
+            moment2_loss = (self.confq_next.var(1) - q.var(1)).pow(2).mul(.5)
+            print (q.shape, q.var(1), q_next.var(1))
+        
+            td_loss = (q_next - q).pow(2).mul(0.5) + moment2_loss + moment1_loss 
             
             q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
             q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]

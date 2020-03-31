@@ -54,35 +54,41 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.sample_model_seed()
         self.to(Config.DEVICE)
     
-    def sample_model_seed(self):
+    def sample_model_seed(self, return_seed=False):
         sample_z = self.noise_sampler.sample().to(Config.DEVICE)
         sample_z = sample_z.unsqueeze(0).repeat(self.features.config['n_gen'], 1, 1)
         # sample_z = sample_z.unsqueeze(0).unsqueeze(0).repeat(self.features.config['n_gen'], self.particles, 1)
-        self.model_seed = {
+        model_seed = {
             'features_z': sample_z,
             'value_z': sample_z[0],
             'advantage_z': sample_z[0],
         }
+        if return_seed:
+            return model_seed
+        else:
+            self.model_seed = model_seed
     
     def set_model_seed(self, seed):
         self.model_seed = seed
 
-    def forward(self, x, to_numpy=False, theta=None):
+    def forward(self, x, seed=None, to_numpy=False, theta=None):
         if not isinstance(x, torch.cuda.FloatTensor):
             x = tensor(x)
         if x.shape[0] == 1 and x.shape[1] == 1: ## dm_env returns one too many dimensions
             x = x[0]
-        phi = self.body(x)
-        return self.head(phi)
+        phi = self.body(x, seed)
+        return self.head(phi, seed)
 
-    def body(self, x=None):
+    def body(self, x=None, seed=None):
         if not isinstance(x, torch.cuda.FloatTensor):
             x = tensor(x)
-        return self.features(x, self.model_seed['features_z'])
+        z = seed if seed != None else self.model_seed
+        return self.features(x, z['features_z'])
 
-    def head(self, phi):
-        value = self.fc_value(self.model_seed['value_z'], phi)
-        advantage = self.fc_advantage(self.model_seed['advantage_z'], phi)
+    def head(self, phi, seed=None):
+        z = seed if seed != None else self.model_seed
+        value = self.fc_value(z['value_z'], phi)
+        advantage = self.fc_advantage(z['advantage_z'], phi)
         q = value.expand_as(advantage) + (advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
         return q
 
