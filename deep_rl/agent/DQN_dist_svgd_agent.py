@@ -72,7 +72,7 @@ class DQNDistSVGDActor(BaseActor):
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
 
-        entry = [self._state[0], actions_log, reward[0], next_state[0], int(done[0]), info]
+        entry = [self._state[0], action, actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state
         self.episode_steps += 1
@@ -134,18 +134,19 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
 
         transitions = self.actor.step()
         experiences = []
-        for state, action, reward, next_state, done, info in transitions:
+        for state, action, max_actions, reward, next_state, done, info in transitions:
             self.record_online_return(info)
             self.total_steps += 1
             reward = config.reward_normalizer(reward)
-            experiences.append([state, action, reward, next_state, done])
+            experiences.append([state, action, max_actions, reward, next_state, done])
         self.replay.feed_batch(experiences)
         if self.total_steps == self.config.exploration_steps+1:
             print ('pure exploration finished')
+
         if self.total_steps > self.config.exploration_steps and self.actor.update:
             for update in tqdm(range(self.actor.update_steps), desc='SGD Q updates'):
                 experiences = self.replay.sample()
-                states, actions, rewards, next_states, terminals = experiences
+                states, actions, max_actions, rewards, next_states, terminals = experiences
                 states = self.config.state_normalizer(states)
                 next_states = self.config.state_normalizer(next_states)
                 terminals = tensor(terminals)
@@ -162,36 +163,52 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
                     q_next = q_next.max(1)[0]
                 q_next = self.config.discount * q_next * (1 - terminals)
                 q_next.add_(rewards)
-                actions = tensor(actions).long()
 
+                actions = tensor(actions).long()
+                max_actions = tensor(max_actions).long()
+                
                 ## Get main Q values
                 phi = self.network.body(states, seed=sample_z)
                 q = self.network.head(phi, seed=sample_z) # [particles, batch, action]
-                # if actions.dim() != 1:
-                actions = actions.transpose(0, 1).squeeze(-1)  # [particles, batch, actions]
+               
+                max_actions = max_actions.transpose(0, 1).squeeze(-1)  # [particles, batch, actions]
 
-                q = torch.stack([q[i, self.batch_indices, actions[i]] for i in range(config.particles)]) # [particles, batch]
-                # q = torch.gather(q, dim=2, index=actions.unsqueeze(0).unsqueeze(-1).repeat(config.particles, 1, 1)) # :/
+                ## define q values with respect to all max actions (q), or the action taken (q_a)
+                q_a = torch.gather(q, dim=2, index=actions.unsqueeze(0).unsqueeze(-1).repeat(config.particles, 1, 1)) # :/
+                q = torch.stack([q[i, self.batch_indices, max_actions[i]] for i in range(config.particles)]) # [particles, batch]
+
                 alpha = self.alpha_schedule.value(self.total_steps)
                 q = q.transpose(0, 1).unsqueeze(-1) # [particles, batch, 1]
+                q_a = q_a.transpose(0, 1) # [particles, batch, 1]
                 q_next = q_next.transpose(0, 1).unsqueeze(-1)  # [particles, batch, 1]
                 
                 q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+                q_a, q_a_frozen = torch.split(q_a, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
                 q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
 
                 q_frozen.detach()
+                q_a_frozen.detach()
                 q_next_frozen.detach()
                 
-                moment1_loss = (self.config.discount*q_next.mean(1) - q.mean(1)).pow(2).mul(.5)
-                moment2_loss = (self.config.discount*q_next.var(1) - q.var(1)).pow(2).mul(.5)
-            
-                td_loss = (q_next - q).pow(2).mul(0.5) #+ moment2_loss + moment1_loss 
+                # Loss functions
+                moment1_loss = (q_next.mean(1) - q.mean(1)).pow(2).mul(.5)
+                moment2_loss = (q_next.var(1) - q.var(1)).pow(2).mul(.5)
+                action_loss = (q_next - q_a).pow(2).mul(0.5)
+                sample_loss = (q_next - q).pow(2).mul(0.5) 
                 
-                q_grad = autograd.grad(td_loss.sum(), inputs=q)[0]
+                # choose which Q to learn with respect to
+                if config.svgd_q == 'sample':
+                    svgd_q, svgd_q_frozen = q, q_frozen
+                    td_loss = sample_loss
+                elif config.svgd_q == 'action':
+                    svgd_q, svgd_q_frozen = q_a, q_a_frozen
+                    td_loss = action_loss
+
+                q_grad = autograd.grad(td_loss.sum(), inputs=svgd_q)[0]
                 q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
                 
-                q_eps = q + torch.rand_like(q) * 1e-8
-                q_frozen_eps = q_frozen + torch.rand_like(q_frozen) * 1e-8
+                q_eps = svgd_q + torch.rand_like(svgd_q) * 1e-8
+                q_frozen_eps = q_frozen + torch.rand_like(svgd_q_frozen) * 1e-8
 
                 kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
                 kappa = kappa.unsqueeze(-1)
@@ -200,7 +217,7 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
                 svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
                 
                 self.optimizer.zero_grad()
-                autograd.backward(q, grad_tensors=svgd.detach())
+                autograd.backward(svgd_q, grad_tensors=svgd.detach())
                 
                 for param in self.network.parameters():
                     if param.grad is not None:
