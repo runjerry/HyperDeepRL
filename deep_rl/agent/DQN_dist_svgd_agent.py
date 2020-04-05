@@ -143,96 +143,97 @@ class DQN_Dist_SVGD_Agent(BaseAgent):
         if self.total_steps == self.config.exploration_steps+1:
             print ('pure exploration finished')
 
-        if self.total_steps > self.config.exploration_steps and self.actor.update:
-            for update in tqdm(range(self.actor.update_steps), desc='SGD Q updates'):
-                experiences = self.replay.sample()
-                states, actions, max_actions, rewards, next_states, terminals = experiences
-                states = self.config.state_normalizer(states)
-                next_states = self.config.state_normalizer(next_states)
-                terminals = tensor(terminals)
-                rewards = tensor(rewards)
-                sample_z = self.network.sample_model_seed(return_seed=True) 
-                ## Get target q values
-                q_next = self.target_network(next_states, seed=sample_z).detach()  # [particles, batch, action]
-                if self.config.double_q:
-                    ## Double DQN
-                    q = self.network(next_states, seed=sample_z)  # [particles, batch, action]
-                    best_actions = torch.argmax(q, dim=-1)  # get best action  [particles, batch]
-                    q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])#[p, batch, 1]
-                else:
-                    q_next = q_next.max(1)[0]
-                q_next = self.config.discount * q_next * (1 - terminals)
-                q_next.add_(rewards)
+        if self.total_steps > self.config.exploration_steps:# and self.actor.update:
+            #for update in tqdm(range(self.actor.update_steps), desc='SGD Q updates'):
+            experiences = self.replay.sample()
+            states, actions, max_actions, rewards, next_states, terminals = experiences
+            states = self.config.state_normalizer(states)
+            next_states = self.config.state_normalizer(next_states)
+            terminals = tensor(terminals)
+            rewards = tensor(rewards)
+            sample_z = self.network.sample_model_seed(return_seed=True) 
+            ## Get target q values
+            q_next = self.target_network(next_states, seed=sample_z).detach()  # [particles, batch, action]
+            if self.config.double_q:
+                ## Double DQN
+                q = self.network(next_states, seed=sample_z)  # [particles, batch, action]
+                best_actions = torch.argmax(q, dim=-1)  # get best action  [particles, batch]
+                q_next = torch.stack([q_next[i, self.batch_indices, best_actions[i]] for i in range(config.particles)])#[p, batch, 1]
+            else:
+                q_next = q_next.max(1)[0]
+            q_next = self.config.discount * q_next * (1 - terminals)
+            q_next.add_(rewards)
 
-                actions = tensor(actions).long()
-                max_actions = tensor(max_actions).long()
-                
-                ## Get main Q values
-                phi = self.network.body(states, seed=sample_z)
-                q = self.network.head(phi, seed=sample_z) # [particles, batch, action]
-               
-                max_actions = max_actions.transpose(0, 1).squeeze(-1)  # [particles, batch, actions]
-
-                ## define q values with respect to all max actions (q), or the action taken (q_a)
-                q_a = torch.gather(q, dim=2, index=actions.unsqueeze(0).unsqueeze(-1).repeat(config.particles, 1, 1)) # :/
-                q = torch.stack([q[i, self.batch_indices, max_actions[i]] for i in range(config.particles)]) # [particles, batch]
-
-                alpha = self.alpha_schedule.value(self.total_steps)
-                q = q.transpose(0, 1).unsqueeze(-1) # [particles, batch, 1]
-                q_a = q_a.transpose(0, 1) # [particles, batch, 1]
-                q_next = q_next.transpose(0, 1).unsqueeze(-1)  # [particles, batch, 1]
-                
-                q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
-                q_a, q_a_frozen = torch.split(q_a, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
-                q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
-
-                q_frozen.detach()
-                q_a_frozen.detach()
-                q_next_frozen.detach()
-                
-                # Loss functions
-                moment1_loss = (q_next.mean(1) - q.mean(1)).pow(2).mul(.5)
-                moment2_loss = (q_next.var(1) - q.var(1)).pow(2).mul(.5)
-                action_loss = (q_next - q_a).pow(2).mul(0.5)
-                sample_loss = (q_next - q).pow(2).mul(0.5) 
-                
-                # choose which Q to learn with respect to
-                if config.svgd_q == 'sample':
-                    svgd_q, svgd_q_frozen = q, q_frozen
-                    td_loss = sample_loss
-                elif config.svgd_q == 'action':
-                    svgd_q, svgd_q_frozen = q_a, q_a_frozen
-                    td_loss = action_loss
-
-                q_grad = autograd.grad(td_loss.sum(), inputs=svgd_q)[0]
-                q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
-                
-                q_eps = svgd_q + torch.rand_like(svgd_q) * 1e-8
-                q_frozen_eps = q_frozen + torch.rand_like(svgd_q_frozen) * 1e-8
-
-                kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
-                kappa = kappa.unsqueeze(-1)
-                
-                kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
-                svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
-                
-                self.optimizer.zero_grad()
-                autograd.backward(svgd_q, grad_tensors=svgd.detach())
-                
-                for param in self.network.parameters():
-                    if param.grad is not None:
-                        param.grad.data *= 1./config.particles
-                
-                if self.config.gradient_clip: 
-                    nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
-
-                with config.lock:
-                    self.optimizer.step()
-                self.logger.add_scalar('td_loss', td_loss.mean(), self.total_steps)
-                self.logger.add_scalar('grad_kappa', grad_kappa.mean(), self.total_steps)
-                self.logger.add_scalar('kappa', kappa.mean(), self.total_steps)
+            actions = tensor(actions).long()
+            max_actions = tensor(max_actions).long()
             
-                #if self.total_steps / self.config.sgd_update_frequency % \
-                #        self.config.target_network_update_freq == 0:
-            self.target_network.load_state_dict(self.network.state_dict())
-            self.actor.update = False 
+            ## Get main Q values
+            phi = self.network.body(states, seed=sample_z)
+            q = self.network.head(phi, seed=sample_z) # [particles, batch, action]
+           
+            max_actions = max_actions.transpose(0, 1).squeeze(-1)  # [particles, batch, actions]
+
+            ## define q values with respect to all max actions (q), or the action taken (q_a)
+            q_a = torch.gather(q, dim=2, index=actions.unsqueeze(0).unsqueeze(-1).repeat(config.particles, 1, 1)) # :/
+            q = torch.stack([q[i, self.batch_indices, max_actions[i]] for i in range(config.particles)]) # [particles, batch]
+
+            alpha = self.alpha_schedule.value(self.total_steps)
+            q = q.transpose(0, 1).unsqueeze(-1) # [particles, batch, 1]
+            q_a = q_a.transpose(0, 1) # [particles, batch, 1]
+            q_next = q_next.transpose(0, 1).unsqueeze(-1)  # [particles, batch, 1]
+            
+            q, q_frozen = torch.split(q, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            q_a, q_a_frozen = torch.split(q_a, self.config.particles//2, dim=1)  # [batch, particles//2, 1]
+            q_next, q_next_frozen = torch.split(q_next, self.config.particles//2, dim=1) # [batch, particles/2, 1]
+
+            q_frozen.detach()
+            q_a_frozen.detach()
+            q_next_frozen.detach()
+            
+            # Loss functions
+            moment1_loss = (q_next.mean(1) - q.mean(1)).pow(2).mul(.5).mean()
+            moment2_loss = (q_next.var(1) - q.var(1)).pow(2).mul(.5).mean()
+            action_loss = (q_next - q_a).pow(2).mul(0.5)
+            sample_loss = (q_next - q).pow(2).mul(0.5) 
+            
+            # choose which Q to learn with respect to
+            if config.svgd_q == 'sample':
+                svgd_q, svgd_q_frozen = q, q_frozen
+                td_loss = sample_loss# + moment1_loss# + moment1_loss
+            elif config.svgd_q == 'action':
+                svgd_q, svgd_q_frozen = q_a, q_a_frozen
+                td_loss = action_loss# + moment1_loss + moment2_loss
+
+            q_grad = autograd.grad(td_loss.sum(), inputs=svgd_q)[0]
+            q_grad = q_grad.unsqueeze(2)  # [particles//2. batch, 1, 1]
+            
+            q_eps = svgd_q + torch.rand_like(svgd_q) * 1e-8
+            q_frozen_eps = q_frozen + torch.rand_like(svgd_q_frozen) * 1e-8
+
+            kappa, grad_kappa = batch_rbf_xy(q_frozen_eps, q_eps) 
+            kappa = kappa.unsqueeze(-1)
+            
+            kernel_logp = torch.matmul(kappa.detach(), q_grad) # [n, 1]
+            svgd = (kernel_logp + alpha * grad_kappa).mean(1) # [n, theta]
+            
+            self.optimizer.zero_grad()
+            autograd.backward(svgd_q, grad_tensors=svgd.detach())
+            
+            for param in self.network.parameters():
+                if param.grad is not None:
+                    param.grad.data *= 1./config.particles
+            
+            if self.config.gradient_clip: 
+                nn.utils.clip_grad_norm_(self.network.parameters(), self.config.gradient_clip)
+
+            with config.lock:
+                self.optimizer.step()
+            self.logger.add_scalar('td_loss', td_loss.mean(), self.total_steps)
+            self.logger.add_scalar('grad_kappa', grad_kappa.mean(), self.total_steps)
+            self.logger.add_scalar('kappa', kappa.mean(), self.total_steps)
+        
+            if self.total_steps / self.config.sgd_update_frequency % \
+                    self.config.target_network_update_freq == 0:
+                 self.target_network.load_state_dict(self.network.state_dict())
+            #self.target_network.load_state_dict(self.network.state_dict())
+            #self.actor.update = False 

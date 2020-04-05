@@ -89,7 +89,7 @@ def dqn_feature(**kwargs):
     config.generate_log_handles()
     config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
-    config.particles = 10
+    config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
     config.network_fn = lambda: DuelingHyperNet(config.action_dim,
@@ -111,8 +111,8 @@ def dqn_feature(**kwargs):
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
-    config.svgd_q = 'action'
-    config.update = 'thompson'
+    config.svgd_q = 'sample'
+    config.update = 'sgd'
     run_steps(DQN_Dist_SVGD_Agent(config))
 
 
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'switch_q_test/trial_action1'
+    tag = 'ptest/p24_sample_sgd_3'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
