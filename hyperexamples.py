@@ -99,6 +99,7 @@ def dqn_feature(**kwargs):
     # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
     config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4)#1e-1, 1e-7, 1e4)  # eps greedy params
+    #config.log_random_action_prob = 0.05
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     config.exploration_steps = 0#config.replay_bs  # random actions taken at the beginning to fill the replay buffer
@@ -111,8 +112,8 @@ def dqn_feature(**kwargs):
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
-    config.svgd_q = 'sample'
-    config.update = 'sgd'
+    config.svgd_q = 'action'
+    config.update = 'thompson'
     run_steps(DQN_Dist_SVGD_Agent(config))
 
 
@@ -124,7 +125,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'ptest/p24_sample_sgd_3'
+    tag = 'random_test00/p24_action_thompson3'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
