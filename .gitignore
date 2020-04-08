@@ -16,3 +16,6 @@ log/
 *.swk
 *.out
 *.err
+
+Vis_Normal/
+vis/
