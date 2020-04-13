@@ -74,7 +74,9 @@ class DQNDistSVGDActor(BaseActor):
 
         #if np.random.rand() < config.log_random_action_prob:
         #    action = np.random.randint(0, len(q_max))
-
+        #softmax_prob = torch.nn.functional.softmax(q_values.mean(0), dim=-1)
+        #softmax_prob_np = softmax_prob.view(-1).detach().cpu().numpy()
+        #softmax_action = np.random.choice(3, 1, softmax_prob_np)
         entry = [self._state[0], action, actions_log, reward[0], next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state
