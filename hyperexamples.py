@@ -112,9 +112,14 @@ def dqn_feature(**kwargs):
     config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
-    config.svgd_q = 'action'
-    config.update = 'thompson'
-    run_steps(DQN_Dist_SVGD_Agent(config))
+    config.svgd_q = 'sample'
+    config.update = 'sgd'
+
+    #run_steps(DQN_Param_SVGD_Agent(config))
+    if config.update == 'sgd':
+        run_steps(DQN_SGD_Agent(config))
+    elif config.update == 'thompson':
+        run_steps(DQN_Thompson_Agent(config))
 
 
 if __name__ == '__main__':
@@ -125,7 +130,7 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'random_test00/p24_action_thompson3'
+    tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 

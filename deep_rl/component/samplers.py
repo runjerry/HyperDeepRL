@@ -60,5 +60,6 @@ class NoiseSampler(object):
             # print (sample)
         else:
             sample = self.base_dist.sample([self.particles])
+            sample = sample.clamp(min=0.0, max=1.0)
         return sample
 
