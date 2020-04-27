@@ -87,22 +87,25 @@ def dqn_feature(**kwargs):
     config.hyper = True
     config.tag = config.tb_tag
     config.generate_log_handles()
-    config.task_fn = lambda: Task(config.game, video=False, gif=False, log_dir=config.tf_log_handle)
+    config.task_fn = lambda: Task(
+        config.game, video=False, gif=False, log_dir=config.tf_log_handle)
     config.eval_env = config.task_fn()
     config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
-    config.network_fn = lambda: DuelingHyperNet(config.action_dim,
+    config.network_fn = lambda: DynamicsDuelingHyperNet(config.action_dim,
                                     CartFCHyperBody(config.state_dim, hidden=config.hidden),
                                 hidden=config.hidden, dist=config.dist, particles=config.particles)
-    config.replay_fn = lambda: Replay(memory_size=config.replay_size, batch_size=config.replay_bs)
+    config.replay_fn = lambda: Replay(
+    # config.replay_fn = lambda: BalancedReplay(
+        memory_size=config.replay_size, batch_size=config.replay_bs)
     # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4)#1e-1, 1e-7, 1e4)  # eps greedy params
+    config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4) # eps greedy params
     #config.log_random_action_prob = 0.05
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
-    config.exploration_steps = 0#config.replay_bs  # random actions taken at the beginning to fill the replay buffer
+    config.exploration_steps = 1000 # random actions taken at the beginning to fill the replay buffer
     config.double_q = True  # use double q update
     config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
@@ -117,7 +120,7 @@ def dqn_feature(**kwargs):
 
     #run_steps(DQN_Param_SVGD_Agent(config))
     if config.update == 'sgd':
-        run_steps(DQN_SGD_Agent(config))
+        run_steps(Dynamics_DQN_Agent(config))
     elif config.update == 'thompson':
         run_steps(DQN_Thompson_Agent(config))
 
@@ -130,7 +133,8 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
+    # tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
+    tag = 'imagined_training/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
 
