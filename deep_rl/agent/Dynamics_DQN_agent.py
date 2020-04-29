@@ -180,19 +180,21 @@ class Dynamics_DQN_Agent(BaseAgent):
         if len(neg_experiences) > 0:
             self.replay.feed_neg_batch(neg_experiences)
 
-        if self.total_steps == self.config.exploration_steps+1:
+        if self.total_steps == self.config.exploration_steps:
             print('pure exploration finished')
             self.train_mdp(train_steps=1000)
+            self.mdp.sample_model_seed(particles=1)
 
         # models training
         if self.total_steps > self.config.exploration_steps:
             alpha = self.alpha_schedule.value(self.total_steps)
 
             # mdp training
-            self.train_mdp()
-            # if self.actor.mdp_update:
-            # self.train_mdp(alpha=alpha)
-            # self.actor.mdp_update = False
+            # self.train_mdp()
+            if self.actor.mdp_update:
+                self.train_mdp()
+                self.actor.mdp_update = False
+                self.mdp.sample_model_seed(particles=1)
 
             # sample training exp from the replay buffer
             # experiences = self.replay.sample()
@@ -201,11 +203,11 @@ class Dynamics_DQN_Agent(BaseAgent):
             states = self.config.state_normalizer(states)
             next_states = self.config.state_normalizer(next_states)
             next_states = tensor(next_states)
-            next_states = gen_ensemble_tensor(
-                next_states, self.config.particles)
+            # next_states = gen_ensemble_tensor(
+            #     next_states, self.config.particles)
             terminals = tensor(terminals)
             rewards = tensor(rewards)
-            rewards = gen_ensemble_tensor(rewards, self.config.particles)
+            # rewards = gen_ensemble_tensor(rewards, self.config.particles)
 
             # actions = tensor(actions).long()
             sample_z = self.network.sample_model_seed(return_seed=True)
@@ -226,25 +228,28 @@ class Dynamics_DQN_Agent(BaseAgent):
             actions_rand = tensor(actions_rand).long()
 
             # get extended rewards and next_states
-            mdp_z = self.mdp.sample_model_seed(return_seed=True)
             next_states_rand, rewards_rand = self.mdp(
-                states, actions_rand, seed=mdp_z)  # [particles, batch, d_output]
-            next_states_rand = next_states_rand.detach()
-            next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
+                states, actions_rand)  # [particles=1, batch, d_output]
+            next_states_rand = next_states_rand.transpose(0, 1).detach()
+            # next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
+            next_states_ext = torch.cat([next_states, next_states_rand], dim=0)
+
             rewards_rand = rewards_rand.detach()
-            rewards_ext = torch.cat([rewards, rewards_rand.squeeze(-1)], dim=1)
+            # rewards_ext = torch.cat([rewards, rewards_rand.squeeze(-1)], dim=1)
+            rewards_ext = torch.cat([rewards, rewards_rand.squeeze()], dim=0)
 
             # get target q values
             q_next = self.target_network(
-                next_states_ext, ensemble_input=True, seed=sample_z).detach()
+                # next_states_ext, ensemble_input=True, seed=sample_z).detach()
+                next_states_ext, seed=sample_z).detach()
             if self.config.double_q:
                 # [particles, batch, actions]
                 q = self.network(
-                    next_states_ext, ensemble_input=True, seed=sample_z)
+                    # next_states_ext, ensemble_input=True, seed=sample_z)
+                    next_states_ext, seed=sample_z)
                 best_actions = torch.argmax(
                     q, dim=-1, keepdim=True)  # [particles, batch, 1]
-                # [particles, batch]
-                q_next = q_next.gather(-1, best_actions).squeeze(-1)
+                q_next = q_next.gather(-1, best_actions).squeeze(-1) # [particles, batch]
             else:
                 q_next = q_next.max(-1)[0]
             q_target = self.config.discount * \
@@ -309,7 +314,8 @@ class Dynamics_DQN_Agent(BaseAgent):
         if alpha is None:
             alpha = self.mdp_alpha_schedule.value(self.total_steps)
         if train_steps is None:
-            train_steps = 1  # self.actor.update_steps
+            train_steps = self.actor.update_steps
+            # train_steps = 1
         for trian_iter in range(train_steps):
             experiences = self.replay.sample()
             # experiences = self.replay.sample_balanced()

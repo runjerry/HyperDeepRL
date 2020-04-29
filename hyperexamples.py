@@ -49,7 +49,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'replay_size': int(1e5),
             'replay_bs': 128,
             'dist': 'softmax',
-            'dist_mdp': 'normal'
+            'dist_mdp': 'softmax'
         }
         print('Running Config: ')
         for (k, v) in setting.items():

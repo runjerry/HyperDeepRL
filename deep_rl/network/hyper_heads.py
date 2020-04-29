@@ -50,7 +50,7 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.z_dim = self.config['z_dim']
         self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
         self.particles = particles
-        self.noise_sampler = NoiseSampler(dist, self.z_dim, self.particles)
+        self.noise_sampler = NoiseSampler(dist, self.z_dim, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)
     
@@ -153,12 +153,13 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.particles = particles
         self.state_dim = body.state_dim
         self.action_dim = action_dim
-        self.noise_sampler = NoiseSampler(dist, self.z_dim, self.particles)
+        self.noise_sampler = NoiseSampler(
+            dist, self.z_dim, aux_scale=1e-3, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)
 
-    def sample_model_seed(self, return_seed=False):
-        sample_z = self.noise_sampler.sample().to(Config.DEVICE)
+    def sample_model_seed(self, particles=None, return_seed=False):
+        sample_z = self.noise_sampler.sample(particles).to(Config.DEVICE)
         sample_z = sample_z.unsqueeze(0).repeat(self.features.config['n_gen'], 1, 1)
         # sample_z = sample_z.unsqueeze(0).unsqueeze(0).repeat(
         #     self.features.config['n_gen'], self.particles, 1) # [n_gen, particles, z_dim]
