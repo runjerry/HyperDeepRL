@@ -54,6 +54,20 @@ def DuelingNet_config(feature_dim, action_dim, mixer=False):
     return net_config
 
 
+mdp_net = namedtuple('mdp_net', ' '.join(fields))
+mdp_net.__new__.__defaults__ = defaults  # python 3.6
+def MdpNet_config(input_dim, feature_dim, mixer=False):
+    net_config = {
+        'fc_mdp': mdp_net(d_input=feature_dim, d_output=input_dim + 1, z_dim=24),
+        'z_dim': 24,
+        's_dim': 32,
+        'n_gen': 2
+    }
+    if mixer:
+        net_config['mixer'] = mdp_net(d_hidden=64, d_output=None, n_gen=2)
+    return net_config
+
+
 dynamics_dueling_net = namedtuple('dynamics_dueling_net', ' '.join(fields))
 dynamics_dueling_net.__new__.__defaults__ = defaults  # python 3.6
 def DynamicsDuelingNet_config(input_dim, feature_dim, action_dim, mixer=False):

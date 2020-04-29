@@ -112,6 +112,43 @@ class CartFCHyperBody(nn.Module):
             if x.size(2) == 1:  # DM lab has incompatible sizing with gym
                 x = x.squeeze(2)
 
+        for i, layer in enumerate(self.layers):
+            x = self.gate(layer(z[i], x))
+        return x
+
+
+class MdpHyperBody(nn.Module):
+    def __init__(self, state_dim, feature_dim, action_dim=None, gate=F.relu, hidden=256):
+        super(MdpHyperBody, self).__init__()
+        self.mixer = False
+        self.feature_dim = feature_dim
+        if action_dim:
+            feature_dim = action_dim * feature_dim
+        hidden_units = (hidden, feature_dim)
+        print(hidden_units)
+        dims = (state_dim,) + hidden_units
+        self.config = FCBody_config(state_dim, hidden_units, gate)
+        self.gate = gate
+        self.state_dim = state_dim
+        n_layers = self.config['n_gen']
+        self.layers = nn.ModuleList(
+            [LinearGenerator(self.config['fc{}'.format(i+1)]).cuda() for i in range(n_layers)])
+
+    def forward(self, x=None, z=None, theta=None, ensemble_input=False):
+        if x is None:
+            weights = []
+            for i, layer in enumerate(self.layers):
+                w, b = layer(z[i])
+                weights.append(w)
+                weights.append(b)
+            return weights
+
+        if not ensemble_input:
+            ones_mask = torch.ones(x.dim()).long().tolist()
+            x = x.unsqueeze(0).repeat(z.shape[1], *ones_mask) # z.shape[1] = particles
+            if x.size(2) == 1:  # DM lab has incompatible sizing with gym
+                x = x.squeeze(2)
+
         input = x
         for i, layer in enumerate(self.layers):
             input = self.gate(layer(z[i], input))

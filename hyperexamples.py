@@ -8,11 +8,13 @@ from deep_rl import *
 import itertools
 import pprint
 
+
 def product_dict(kwargs):
     keys = kwargs.keys()
     vals = kwargs.values()
     for instance in itertools.product(*vals):
         yield dict(zip(keys, instance))
+
 
 def sweep(game, tag, model_fn, trials=50, manual=True):
     hyperparams = {
@@ -20,7 +22,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         'alpha_f': [.1, 0.01],
         'anneal': [500e3],
         'lr': [2e-4, 1e-4],
-        'freq' : [10, 100],
+        'freq': [10, 100],
         'grad_clip': [None, 5],
         'hidden': [256, 128, 512],
         'replay_size': [int(1e5)],
@@ -31,8 +33,8 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
     }
     # manually define
     if manual:
-        print ('=========================================================')
-        print ('Running Manually Defined Single Trial, [1/1]')
+        print('=========================================================')
+        print('Running Manually Defined Single Trial, [1/1]')
         setting = {
             'game': game,
             'tb_tag': tag,
@@ -47,9 +49,9 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'replay_bs': 128,
             'dist': 'softmax'
         }
-        print ('Running Config: ')
+        print('Running Config: ')
         for (k, v) in setting.items():
-            print ('{} : {}'.format(k, v))
+            print('{} : {}'.format(k, v))
         model_fn(**setting)
         return
 
@@ -59,26 +61,26 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
     for i, idx in enumerate(ordering):
         setting = search_space[idx]
         setting['game'] = game
-        tag_append='_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}'.format(
-                setting['alpha_i'],
-                setting['alpha_f'],
-                setting['lr'],
-                setting['freq'],
-                setting['grad_clip'],
-                setting['hidden'],
-                setting['dist'],
-                setting['replay_bs'])
+        tag_append = '_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}'.format(
+            setting['alpha_i'],
+            setting['alpha_f'],
+            setting['lr'],
+            setting['freq'],
+            setting['grad_clip'],
+            setting['hidden'],
+            setting['dist'],
+            setting['replay_bs'])
 
         setting['tb_tag'] = tag+tag_append
-        print ('=========================================================')
-        print ('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
+        print('=========================================================')
+        print('Search Space Contains {} Trials, Running [{}/{}] ---- ({}%)'.format(
             len(search_space), i+1, trials, int(float(i+1)/trials*100.)))
-        print ('Running Config: ')
+        print('Running Config: ')
         for (k, v) in setting.items():
-            print ('{} : {}'.format(k, v))
+            print('{} : {}'.format(k, v))
         dqn_feature(**setting)
-    
-   
+
+
 def dqn_feature(**kwargs):
     generate_tag(kwargs)
     kwargs.setdefault('log_level', 0)
@@ -93,32 +95,43 @@ def dqn_feature(**kwargs):
     config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
-    config.network_fn = lambda: DynamicsDuelingHyperNet(config.action_dim,
-                                    CartFCHyperBody(config.state_dim, hidden=config.hidden),
-                                hidden=config.hidden, dist=config.dist, particles=config.particles)
-    config.replay_fn = lambda: Replay(
-    # config.replay_fn = lambda: BalancedReplay(
+    config.network_fn = lambda: DuelingHyperNet(
+        config.action_dim,
+        CartFCHyperBody(config.state_dim, hidden=config.hidden),
+        hidden=config.hidden,
+        dist=config.dist,
+        particles=config.particles)
+    config.mdp_fn = lambda: MdpHyperNet(
+        config.action_dim,
+        MdpHyperBody(
+            config.state_dim, config.hidden, action_dim=config.action_dim),
+        hidden=config.hidden,
+        dist=config.dist,
+        particles=config.particles)
+    config.replay_fn = lambda: BalancedReplay(
         memory_size=config.replay_size, batch_size=config.replay_bs)
-    # config.replay_fn = lambda: AsyncReplay(memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
-    config.random_action_prob = LinearSchedule(1e-1, 1e-7, 1e4) # eps greedy params
+    config.random_action_prob = LinearSchedule(
+        1e-1, 1e-7, 1e4)  # eps greedy params
     #config.log_random_action_prob = 0.05
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
-    config.exploration_steps = 1000 # random actions taken at the beginning to fill the replay buffer
+    # random actions taken at the beginning to fill the replay buffer
+    config.exploration_steps = 1000
     config.double_q = True  # use double q update
     config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
-    config.eval_interval = int(5e3) 
+    config.eval_interval = int(5e3)
     config.max_steps = 500e3
     config.async_actor = False
-    config.alpha_anneal = config.anneal  # how long to anneal SVGD alpha from init to final
+    # how long to anneal SVGD alpha from init to final
+    config.alpha_anneal = config.anneal
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
     config.svgd_q = 'sample'
     config.update = 'sgd'
 
-    #run_steps(DQN_Param_SVGD_Agent(config))
+    # run_steps(DQN_Param_SVGD_Agent(config))
     if config.update == 'sgd':
         run_steps(Dynamics_DQN_Agent(config))
     elif config.update == 'thompson':
@@ -134,7 +147,6 @@ if __name__ == '__main__':
     select_device(0)
 
     # tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
-    tag = 'imagined_training/p24_sgd'
+    tag = 'mdp-q-indep/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
-
