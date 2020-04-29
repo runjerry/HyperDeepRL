@@ -211,7 +211,7 @@ class Dynamics_DQN_Agent(BaseAgent):
 
             actions = tensor(actions).long()
             max_actions = tensor(max_actions).long()
-            max_actions = max_actions.transpose(0, 1).squeeze(-1) # [p, batch]
+            max_actions = max_actions.transpose(0, 1) # [p, batch, 1]
 
             sample_z = self.network.sample_model_seed(return_seed=True)
             # self.mdp.set_model_seed(sample_z)
@@ -242,7 +242,7 @@ class Dynamics_DQN_Agent(BaseAgent):
             # rewards_ext = torch.cat([rewards, rewards_rand.squeeze()], dim=0)
             
             states_ext = states
-            actions_ext = actions 
+            actions_ext = max_actions 
             next_states_ext = next_states
             rewards_ext = rewards
 
@@ -266,9 +266,9 @@ class Dynamics_DQN_Agent(BaseAgent):
 
             # get main Q values
             q = self.network(states_ext, seed=sample_z)
-            import pdb; pdb.set_trace()
             batch_indices = range_tensor(self.replay.batch_size) # * 2)
-            q = q[:, batch_indices, actions_ext]  # [particles, batch]
+            q = q[:, batch_indices, actions]  # [particles, batch]
+            # q = q.gather(-1, actions_ext).squeeze(-1)
 
             q = q.transpose(0, 1).unsqueeze(-1)  # [batch, particles, 1]
             q_target = q_target.transpose(
