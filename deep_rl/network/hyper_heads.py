@@ -63,7 +63,8 @@ class DuelingHyperNet(nn.Module, BaseNet):
             'features_z': sample_z,
             'value_z': sample_z[0],
             'advantage_z': sample_z[0],
-            'mdp_z': sample_z[0],
+            'dynamic_z': sample_z[0],
+            'reward_z': sample_z[0],
         }
         if return_seed:
             return model_seed
@@ -142,9 +143,12 @@ class MdpHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, body, hidden, dist, particles): 
         super(MdpHyperNet, self).__init__()
         self.config = MdpNet_config(body.state_dim, body.feature_dim)
-        self.config['fc_mdp'] = self.config['fc_mdp']._replace(
+        self.config['fc_dynamic'] = self.config['fc_dynamic']._replace(
             d_hidden=hidden)
-        self.fc_mdp = LinearGenerator(self.config['fc_mdp']).cuda()
+        self.config['fc_reward'] = self.config['fc_reward']._replace(
+            d_hidden=hidden)
+        self.fc_dynamic = LinearGenerator(self.config['fc_dynamic']).cuda()
+        self.fc_reward = LinearGenerator(self.config['fc_reward']).cuda()
         self.features = body
 
         self.s_dim = self.config['s_dim']
@@ -164,7 +168,8 @@ class MdpHyperNet(nn.Module, BaseNet):
         #     self.features.config['n_gen'], self.particles, 1) # [n_gen, particles, z_dim]
         model_seed = {
             'features_z': sample_z,
-            'mdp_z': sample_z[0],
+            'dynamic_z': sample_z[0],
+            'reward_z': sample_z[0],
         }
         if return_seed:
             return model_seed
@@ -179,7 +184,8 @@ class MdpHyperNet(nn.Module, BaseNet):
             batch = batch.unsqueeze(0).repeat(self.features.config['n_gen'], 1, 1)
             model_seed = {
                 'features_z': batch,
-                'mdp_z': batch[0],
+                'dynamic_z': batch[0],
+                'reward_z': batch[0],
             }
             samples.append(model_seed)
         return samples
@@ -207,8 +213,9 @@ class MdpHyperNet(nn.Module, BaseNet):
 
     def head(self, phi, seed=None):
         z = seed if seed != None else self.model_seed
-        mdp_out = self.fc_mdp(z['mdp_z'], phi)
-        delta_x, reward = torch.split(mdp_out, [self.state_dim, 1], dim=-1)
+        # delta_x, reward = torch.split(mdp_out, [self.state_dim, 1], dim=-1)
+        delta_x = self.fc_dynamic(z['dynamic_z'], phi)
+        reward = self.fc_reward(z['reward_z'], phi)
         return delta_x, reward
         
     #def sample_model(self, component='q', seed=None):
