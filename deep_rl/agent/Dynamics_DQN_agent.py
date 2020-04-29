@@ -209,7 +209,7 @@ class Dynamics_DQN_Agent(BaseAgent):
 
             # actions = tensor(actions).long()
             sample_z = self.network.sample_model_seed(return_seed=True)
-            self.mdp.set_model_seed(sample_z)
+            # self.mdp.set_model_seed(sample_z)
 
             # repeat states batch to get extended states batch
             ones_mask = np.ones(states.ndim - 1, dtype=np.int32).tolist()
@@ -226,8 +226,9 @@ class Dynamics_DQN_Agent(BaseAgent):
             actions_rand = tensor(actions_rand).long()
 
             # get extended rewards and next_states
+            mdp_z = self.mdp.sample_model_seed(return_seed=True)
             next_states_rand, rewards_rand = self.mdp(
-                states, actions_rand)  # [particles, batch, d_output]
+                states, actions_rand, seed=mdp_z)  # [particles, batch, d_output]
             next_states_rand = next_states_rand.detach()
             next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
             rewards_rand = rewards_rand.detach()

@@ -42,13 +42,14 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'alpha_f': 0.1,
             'anneal': 500e3,
             'lr': 1e-4,
-            'lr_mdp': 2e-5,
+            'lr_mdp': 1e-4,
             'freq': 100,
             'grad_clip': None,
             'hidden': 256,
             'replay_size': int(1e5),
             'replay_bs': 128,
-            'dist': 'softmax'
+            'dist': 'softmax',
+            'dist_mdp': 'normal'
         }
         print('Running Config: ')
         for (k, v) in setting.items():
@@ -71,6 +72,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             setting['grad_clip'],
             setting['hidden'],
             setting['dist'],
+            setting['dist_mdp'],
             setting['replay_bs'])
 
         setting['tb_tag'] = tag+tag_append
@@ -109,7 +111,7 @@ def dqn_feature(**kwargs):
         MdpHyperBody(
             config.state_dim, config.hidden, action_dim=config.action_dim),
         hidden=config.hidden,
-        dist=config.dist,
+        dist=config.dist_mdp,
         particles=config.particles)
     config.replay_fn = lambda: BalancedReplay(
         memory_size=config.replay_size, batch_size=config.replay_bs)
