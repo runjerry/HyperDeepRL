@@ -115,11 +115,11 @@ class Dynamics_DQN_Agent(BaseAgent):
         self.target_network.load_state_dict(self.network.state_dict())
         self.mdp = config.mdp_fn()
         self.optimizer = config.optimizer_fn(self.network.parameters())
-        self.mdp_optimizer = config.optimizer_fn(self.mdp.parameters())
+        self.mdp_optimizer = config.mdp_optimizer_fn(self.mdp.parameters())
         self.alpha_schedule = BaselinesLinearSchedule(
             config.alpha_anneal, config.alpha_final, config.alpha_init)
         self.mdp_alpha_schedule = BaselinesLinearSchedule(
-            config.alpha_anneal, config.alpha_final, 5.0)
+            config.alpha_anneal, config.alpha_final, config.alpha_init)
         self.actor.set_network(self.network)
 
         self.total_steps = 0

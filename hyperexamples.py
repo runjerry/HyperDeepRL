@@ -42,6 +42,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'alpha_f': 0.1,
             'anneal': 500e3,
             'lr': 1e-4,
+            'lr_mdp': 2e-5,
             'freq': 100,
             'grad_clip': None,
             'hidden': 256,
@@ -65,6 +66,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             setting['alpha_i'],
             setting['alpha_f'],
             setting['lr'],
+            setting['lr_mdp'],
             setting['freq'],
             setting['grad_clip'],
             setting['hidden'],
@@ -95,6 +97,7 @@ def dqn_feature(**kwargs):
     config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
+    config.mdp_optimizer_fn = lambda params: torch.optim.Adam(params, config.lr_mdp)
     config.network_fn = lambda: DuelingHyperNet(
         config.action_dim,
         CartFCHyperBody(config.state_dim, hidden=config.hidden),
