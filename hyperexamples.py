@@ -122,7 +122,7 @@ def dqn_feature(**kwargs):
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     # random actions taken at the beginning to fill the replay buffer
-    config.exploration_steps = 1000
+    config.exploration_steps = 0 # 1000
     config.double_q = True  # use double q update
     config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
