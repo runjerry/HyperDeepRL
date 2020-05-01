@@ -155,6 +155,7 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.action_dim = action_dim
         self.noise_sampler = NoiseSampler(
             dist, self.z_dim, aux_scale=1e-3, particles=self.particles)
+            # dist, self.z_dim, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)
 
@@ -189,14 +190,19 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.model_seed = seed
 
     def forward(self, x, a, seed=None, to_numpy=False, ensemble_input=False):
-        phi, x = self.body(x, seed=seed, ensemble_input=ensemble_input) # [p, bs, d_out]
+        # when ensemble_input=True: both x and a are of the shape [p, batch, d_input]
+        phi, x = self.body(x, seed=seed, ensemble_input=ensemble_input) # [p, batch, d_out]
         all_but_last_dims = phi.shape[:-1]
         phi = phi.view(*all_but_last_dims, -1, self.action_dim)
-        batch_indices = range_tensor(phi.shape[1])
-        phi = phi[:, batch_indices, :, a]  
-        phi = torch.transpose(phi, 0, 1) # [p, bs, feature_dim]
-        delta_x, rewards = self.head(phi, seed=seed)
-        return delta_x + x, rewards
+        if ensemble_input:
+            a = a.unsqueeze(2).repeat(1, 1, phi.shape[2], 1)
+            phi = phi.gather(-1, a).squeeze(-1)
+        else:
+            batch_indices = range_tensor(phi.shape[1])
+            phi = phi[:, batch_indices, :, a]  
+            phi = torch.transpose(phi, 0, 1) # [p, bs, feature_dim]
+        delta_x = self.head(phi, seed=seed)
+        return delta_x + x # , rewards
 
     def body(self, x=None, seed=None, theta=None, ensemble_input=False):
         if not isinstance(x, torch.cuda.FloatTensor):
@@ -208,9 +214,9 @@ class MdpHyperNet(nn.Module, BaseNet):
 
     def head(self, phi, seed=None):
         z = seed if seed != None else self.model_seed
-        mdp_out = self.fc_mdp(z['mdp_z'], phi)
-        delta_x, reward = torch.split(mdp_out, [self.state_dim, 1], dim=-1)
-        return delta_x, reward
+        delta_x = self.fc_mdp(z['mdp_z'], phi)
+        # delta_x, reward = torch.split(mdp_out, [self.state_dim, 1], dim=-1)
+        return delta_x # , reward
         
     #def sample_model(self, component='q', seed=None):
     #    seed = seed if seed is not None else self.model_seed

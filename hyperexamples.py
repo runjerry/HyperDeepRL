@@ -152,6 +152,6 @@ if __name__ == '__main__':
     select_device(0)
 
     # tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
-    tag = 'mdp-q-indep/p24_sgd'
+    tag = 'mdp-q-indep_max-action/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)

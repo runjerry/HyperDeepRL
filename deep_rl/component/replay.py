@@ -88,7 +88,7 @@ class BalancedReplay:
 
     def feed_pos(self, experience):
         self.feed(experience)
-        if experience[2] <= 0:
+        if experience[3] <= 0:
             return
         if self.pos_loc >= len(self.pos_data):
             self.pos_data.append(experience)
@@ -100,7 +100,7 @@ class BalancedReplay:
         if np.random.rand() < self.drop_prob:
             return
         self.feed(experience)
-        if experience[2] > 0:
+        if experience[3] > 0:
             return
         if self.neg_loc >= len(self.neg_data):
             self.neg_data.append(experience)
