@@ -67,13 +67,10 @@ class DynamicsDQNActor(BaseActor):
         if self._total_steps < config.exploration_steps \
                 or np.random.rand() < config.random_action_prob():
             action = np.random.randint(0, len(q_max))
-            actions_log = np.random.randint(
-                0, len(q_max), size=(config.particles, 1))
         else:
             # action = np.argmax(q_max)  # Max Action
             # action = np.argmax(q_mean)  # Mean Action
             action = np.argmax(q_random)  # Random Head Action
-            actions_log = to_np(particle_max)
 
         next_state, reward, done, info = self._task.step([action])
         if config.render and self._task.record_now:
@@ -91,8 +88,8 @@ class DynamicsDQNActor(BaseActor):
         info[0]['q_mean'] = q_mean.mean()
         info[0]['q_var'] = q_var.mean()
 
-        entry = [self._state[0], action, actions_log, 
-            reward[0], next_state[0], int(done[0]), info]
+        entry = [self._state[0], action, reward[0], 
+            next_state[0], int(done[0]), info]
         self._total_steps += 1
         self._state = next_state
         self.episode_steps += 1
@@ -160,17 +157,17 @@ class Dynamics_DQN_Agent(BaseAgent):
         # experiences = []
         pos_experiences = []
         neg_experiences = []
-        for state, action, max_action, reward, next_state, done, info in transitions:
+        for state, action, reward, next_state, done, info in transitions:
             self.record_online_return(info)
             self.total_steps += 1
             reward = config.reward_normalizer(reward)
 
             if reward > 0:
                 pos_experiences.append(
-                    [state, action, max_action, reward, next_state, done])
+                    [state, action, reward, next_state, done])
             else:
                 neg_experiences.append(
-                    [state, action, max_action, reward, next_state, done])
+                    [state, action, reward, next_state, done])
 
             # experiences.append([state, action, reward, next_state, done])
         # self.replay.feed_batch(experiences)
@@ -191,60 +188,58 @@ class Dynamics_DQN_Agent(BaseAgent):
 
             ## mdp training
             self.train_mdp()
-            self.mdp.sample_model_seed()
+            # self.mdp.sample_model_seed()
             # if self.actor.mdp_update:
             #     self.train_mdp()
             #     self.actor.mdp_update = False
             #     self.mdp.sample_model_seed()
 
             ## sample training exp from the replay buffer
-            # experiences = self.replay.sample()
             experiences = self.replay.sample_balanced()
-            states, actions, max_actions, rewards, next_states, terminals = experiences
+            states, actions, rewards, next_states, terminals = experiences
             states = self.config.state_normalizer(states)
             next_states = self.config.state_normalizer(next_states)
+            actions = tensor(actions).long()
+            terminals = tensor(terminals)
+            sample_z = self.network.sample_model_seed(return_seed=True)
+
+            ## compute max actions for states
+            q_ensemble = self.network(states, seed=sample_z).detach()
+            actions_max = torch.argmax(q_ensemble, dim=-1, keepdim=True) # [p, batch, 1]
+            # print('actions_max var:{}'.format(actions_max.double().var(dim=0).mean()))
+
+            ## form extended actions for q learning
+            ensemble_actions = gen_ensemble_tensor(actions, self.config.particles)
+            ensemble_actions = ensemble_actions.unsqueeze(-1)
+            # [particles, 2 * batch, 1]
+            actions_ext = torch.cat([ensemble_actions, actions_max], dim=1).long()
+            
+            ## repeat states batch to get states_ext
+            ones_mask = np.ones(states.ndim - 1, dtype=np.int32).tolist()
+            states_ext = np.tile(states, [2, ] + ones_mask)
+            states = tensor(states)
+            states = gen_ensemble_tensor(states, self.config.particles)
+            
+            ## repeat rewards batch
+            rewards = tensor(rewards).repeat(2)
+
+            ## get pred next_states for (states, actions_max)
+            # [particles, batch, d_output]
+            next_states_pred = self.mdp(
+                states, actions_max, seed=sample_z, ensemble_input=True)  
+            # next_states_pred = next_states_pred.transpose(0, 1).detach()
+
+            ## concat next_staes and pred_next_states
             next_states = tensor(next_states)
             next_states = gen_ensemble_tensor(
                 next_states, self.config.particles)
-            terminals = tensor(terminals)
-
-            actions = tensor(actions).long()
-            ensemble_actions = gen_ensemble_tensor(actions, self.config.particles)
-            ensemble_actions = ensemble_actions.unsqueeze(-1)
-            max_actions = tensor(max_actions).transpose(0, 1) # [p, batch, 1]
-            actions_ext = torch.cat([ensemble_actions, max_actions], dim=1).long()
-            # [particles, 2 * batch, 1]
-            
-            sample_z = self.network.sample_model_seed(return_seed=True)
-
-            ## repeat states batch and rewards batch 
-            ones_mask = np.ones(states.ndim - 1, dtype=np.int32).tolist()
-            states_ext = np.tile(states, [2, ] + ones_mask)
-            rewards = tensor(rewards).repeat(2)
-
-            # ## sample random actions for extended states
-            # perturb = np.random.randint(
-            #     1, self.config.action_dim, size=actions.shape[0])
-            # actions_rand = np.remainder(
-            #     actions + perturb, self.config.action_dim)
-            # actions_ext = np.concatenate([actions, actions_rand], axis=0)
-            # actions_rand = tensor(actions_rand).long()
-            # actions_ext = tensor(actions_ext).long()
-
-            ## get extended pred next_states
-            states = tensor(states)
-            states = gen_ensemble_tensor(states, self.config.particles)
-            next_states_pred = self.mdp(
-                states, max_actions, ensemble_input=True)  # [particles, batch, d_output]
-            # next_states_pred = next_states_pred.transpose(0, 1).detach()
-            # next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
             next_states_ext = torch.cat([next_states, next_states_pred], dim=1)
 
             ## get target q values
+            # [particles, 2*batch, actions]
             q_next = self.target_network(
                 next_states_ext, ensemble_input=True, seed=sample_z).detach()
             if self.config.double_q:
-                # [particles, 2*batch, actions]
                 q = self.network(
                     next_states_ext, ensemble_input=True, seed=sample_z)
                 best_actions = torch.argmax(
@@ -266,28 +261,28 @@ class Dynamics_DQN_Agent(BaseAgent):
             # q = q.transpose(0, 1).unsqueeze(-1)  # [batch, particles, 1]
 
             q_target = q_target.transpose(
-                0, 1).unsqueeze(-1)  # [batch, particles, 1]
+                0, 1).unsqueeze(-1)  # [2*batch, particles, 1]
 
-            # [batch, particles/2, 1]
+            # [2*batch, particles/2, 1]
             q_i, q_j = torch.split(q, self.config.particles//2, dim=1)
-            # [batch, particles/2, 1]
+            # [2*batch, particles/2, 1]
             qi_target, qj_target = torch.split(
                 q_target, self.config.particles//2, dim=1)
 
             td_loss = (qj_target.detach() - q_j).pow(2).mul(0.5)
             q_grad = autograd.grad(td_loss.sum(), inputs=q_j)[0]
-            q_grad = q_grad.unsqueeze(2)  # [batch, particles//2. 1, 1]
+            q_grad = q_grad.unsqueeze(2)  # [2*batch, particles//2. 1, 1]
 
             qi_eps = q_i + torch.rand_like(q_i) * 1e-8
             qj_eps = q_j + torch.rand_like(q_j) * 1e-8
 
-            # kappa, grad_kappa: [batch, particles/2, particles/2, 1]
+            # kappa, grad_kappa: [2*batch, particles/2, particles/2, 1]
             kappa, grad_kappa = batch_rbf_xy(qj_eps, qi_eps)
             kappa = kappa.unsqueeze(-1)
 
-            # [batch, particles/2, particles/2, 1]
+            # [2*batch, particles/2, particles/2, 1]
             kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
-            # [batch, particles/2, 1]
+            # [2*batch, particles/2, 1]
             svgd = (kernel_logp + alpha * grad_kappa).mean(1)
 
             self.optimizer.zero_grad()
@@ -322,7 +317,7 @@ class Dynamics_DQN_Agent(BaseAgent):
         for trian_iter in range(train_steps):
             experiences = self.replay.sample()
             # experiences = self.replay.sample_balanced()
-            states, actions, _, _, next_states, _ = experiences
+            states, actions, _, next_states, _ = experiences
             states = self.config.state_normalizer(states, read_only=True)
             next_states = self.config.state_normalizer(
                 next_states, read_only=True)
