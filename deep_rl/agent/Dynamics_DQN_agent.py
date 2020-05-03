@@ -234,10 +234,10 @@ class Dynamics_DQN_Agent(BaseAgent):
             ## get extended pred next_states
             states = tensor(states)
             states = gen_ensemble_tensor(states, self.config.particles)
+            # [particles, batch, d_output]
             next_states_pred = self.mdp(
-                states, max_actions, ensemble_input=True)  # [particles, batch, d_output]
+                states, max_actions, ensemble_input=True)  
             # next_states_pred = next_states_pred.transpose(0, 1).detach()
-            # next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
             next_states_ext = torch.cat([next_states, next_states_pred], dim=1)
 
             ## get target q values
