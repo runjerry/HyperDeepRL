@@ -34,25 +34,40 @@ class VanillaHyperNet(nn.Module, BaseNet):
         return y
 
 
-class DuelingHyperNet(nn.Module, BaseNet):
+class DynamicsDuelingHyperNet(nn.Module, BaseNet):
     def __init__(self, action_dim, body, hidden, dist, particles):
-        super(DuelingHyperNet, self).__init__()
+        super(DynamicsDuelingHyperNet, self).__init__()
         self.mixer = False
         
-        self.config = DuelingNet_config(body.feature_dim, action_dim)
-        self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
-        self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
+        self.config = DynamicsDuelingNet_config(
+            body.state_dim, body.feature_dim, action_dim)
+        self.config['fc_value'] = self.config['fc_value']._replace(
+            d_hidden=hidden)
+        self.config['fc_advantage'] = self.config['fc_advantage']._replace(
+            d_hidden=hidden)
+        self.config['fc_mdp'] = self.config['fc_mdp']._replace(
+            d_hidden=hidden)
         self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
         self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
+        self.fc_mdp = LinearGenerator(self.config['fc_mdp']).cuda()
         self.features = body
+
+        # self.config = DuelingNet_config(body.feature_dim, action_dim)
+        # self.config['fc_value'] = self.config['fc_value']._replace(d_hidden=hidden)
+        # self.config['fc_advantage'] = self.config['fc_advantage']._replace(d_hidden=hidden)
+        # self.fc_value = LinearGenerator(self.config['fc_value']).cuda()
+        # self.fc_advantage = LinearGenerator(self.config['fc_advantage']).cuda()
+        # self.features = body
         
         self.s_dim = self.config['s_dim']
         self.z_dim = self.config['z_dim']
         self.n_gen = self.config['n_gen'] + self.features.config['n_gen'] + 1
         self.particles = particles
+        self.state_dim = body.state_dim
+        self.action_dim = action_dim
         self.noise_sampler = NoiseSampler(
-            # dist, self.z_dim, aux_scale=1e-4, particles=self.particles)
-            dist, self.z_dim, particles=self.particles)
+            dist, self.z_dim, aux_scale=1e-5, particles=self.particles)
+            # dist, self.z_dim, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)
     
@@ -82,6 +97,7 @@ class DuelingHyperNet(nn.Module, BaseNet):
                 'features_z': batch,
                 'value_z': batch[0],
                 'advantage_z': batch[0],
+                'mdp_z': batch[0],
             }
             samples.append(model_seed)
         return samples
@@ -90,8 +106,23 @@ class DuelingHyperNet(nn.Module, BaseNet):
         self.model_seed = seed
 
     def forward(self, x, seed=None, to_numpy=False, ensemble_input=False):
-        phi = self.body(x, seed=seed, ensemble_input=ensemble_input)
-        return self.head(phi, seed=seed)
+        return self.q_fn(x, seed=seed, ensemble_input=ensemble_input)
+        # phi = self.body(x, seed=seed, ensemble_input=ensemble_input)
+        # return self.head(phi, seed=seed)
+
+    def mdp(self, x, a, ensemble_input=False, seed=None):
+        # when ensemble_input=True: both x and a are of the shape [p, batch, d_input]
+        phi, x = self.body(x, seed=seed, ensemble_input=ensemble_input) # [p, batch, d_out]
+        return x + self.mdp_head(phi, a, seed=seed, ensemble_input=ensemble_input)
+
+    def q_fn(self, x, ensemble_input=False, seed=None):
+        if not isinstance(x, torch.cuda.FloatTensor):
+            x = tensor(x)
+        if x.shape[0] == 1 and x.shape[1] == 1:  # dm_env returns one too many dimensions
+            x = x[0]
+        phi, _ = self.body(x, ensemble_input=ensemble_input, seed=seed)
+        q = self.q_head(phi, seed=seed)
+        return q
 
     def body(self, x=None, seed=None, theta=None, ensemble_input=False):
         if not isinstance(x, torch.cuda.FloatTensor):
@@ -101,11 +132,32 @@ class DuelingHyperNet(nn.Module, BaseNet):
         z = seed if seed != None else self.model_seed
         return self.features(x, z['features_z'], theta, ensemble_input=ensemble_input)
 
-    def head(self, phi, seed=None, theta_v=None, theta_a=None):
+    def mdp_head(self, phi, a, seed=None, ensemble_input=False):
+        if not isinstance(a, torch.Tensor):
+            a = tensor(a, dtype=torch.int64)
+        all_but_last_dims = phi.shape[:-1]
+        phi = phi.view(*all_but_last_dims, -1, self.action_dim)
+        if ensemble_input:
+            a = a.unsqueeze(2).repeat(1, 1, phi.shape[2], 1)
+            phi = phi.gather(-1, a).squeeze(-1)
+        else:
+            batch_indices = range_tensor(phi.shape[1])
+            phi = phi[:, batch_indices, :, a]  
+            phi = torch.transpose(phi, 0, 1) # [p, bs, feature_dim]
+            if a.dim() == 1:
+                a = a.unsqueeze(-1)
+            ones_mask = torch.ones(a.dim()).long().tolist()
+            a = a.unsqueeze(0).repeat(self.particles, *ones_mask)
+
+        z = seed if seed is not None else self.model_seed
+        return self.fc_mdp(z['mdp_z'], phi)
+
+    def q_head(self, phi, seed=None, theta_v=None, theta_a=None):
         z = seed if seed != None else self.model_seed
         value = self.fc_value(z['value_z'], phi, theta_v)
         advantage = self.fc_advantage(z['advantage_z'], phi, theta_a)
-        q = value.expand_as(advantage) + (advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
+        q = value.expand_as(advantage) + (
+            advantage - advantage.mean(-1, keepdim=True).expand_as(advantage))
         return q
 
     def sample_model(self, component='q', seed=None):

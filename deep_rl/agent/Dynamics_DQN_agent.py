@@ -113,9 +113,8 @@ class Dynamics_DQN_Agent(BaseAgent):
         self.network.share_memory()
         self.target_network = config.network_fn()
         self.target_network.load_state_dict(self.network.state_dict())
-        self.mdp = config.mdp_fn()
         self.optimizer = config.optimizer_fn(self.network.parameters())
-        self.mdp_optimizer = config.mdp_optimizer_fn(self.mdp.parameters())
+        # self.mdp_optimizer = config.mdp_optimizer_fn(self.mdp.parameters())
         self.alpha_schedule = BaselinesLinearSchedule(
             config.alpha_anneal, config.alpha_final, config.alpha_init)
         self.mdp_alpha_schedule = BaselinesLinearSchedule(
@@ -182,70 +181,62 @@ class Dynamics_DQN_Agent(BaseAgent):
 
         if self.total_steps == self.config.exploration_steps:
             print('pure exploration finished')
-            self.train_mdp(train_steps=1000)
-            self.mdp.sample_model_seed()
+            # self.train_mdp(train_steps=1000)
+            # self.mdp.sample_model_seed()
 
-        # models training
+        ## models training
         if self.total_steps > self.config.exploration_steps:
             alpha = self.alpha_schedule.value(self.total_steps)
 
             ## mdp training
-            self.train_mdp()
-            self.mdp.sample_model_seed()
+            # self.train_mdp()
+            # self.mdp.sample_model_seed()
             # if self.actor.mdp_update:
             #     self.train_mdp()
             #     self.actor.mdp_update = False
             #     self.mdp.sample_model_seed()
 
             ## sample training exp from the replay buffer
-            # experiences = self.replay.sample()
             experiences = self.replay.sample_balanced()
             states, actions, max_actions, rewards, next_states, terminals = experiences
             states = self.config.state_normalizer(states)
             next_states = self.config.state_normalizer(next_states)
-            next_states = tensor(next_states)
-            next_states = gen_ensemble_tensor(
-                next_states, self.config.particles)
-            terminals = tensor(terminals)
-
             actions = tensor(actions).long()
-            ensemble_actions = gen_ensemble_tensor(actions, self.config.particles)
-            ensemble_actions = ensemble_actions.unsqueeze(-1)
-            max_actions = tensor(max_actions).transpose(0, 1) # [p, batch, 1]
-            actions_ext = torch.cat([ensemble_actions, max_actions], dim=1).long()
-            # [particles, 2 * batch, 1]
-            
+            terminals = tensor(terminals)
             sample_z = self.network.sample_model_seed(return_seed=True)
+
+            ## form extended actions for q learning 
+            ensemble_actions = gen_ensemble_tensor(actions, self.config.particles)
+            ensemble_actions = ensemble_actions.unsqueeze(-1).long()
+            max_actions = tensor(max_actions).transpose(0, 1).long() # [p, batch, 1]
+            # [particles, 2 * batch, 1]
+            actions_ext = torch.cat([ensemble_actions, max_actions], dim=1)
 
             ## repeat states batch and rewards batch 
             ones_mask = np.ones(states.ndim - 1, dtype=np.int32).tolist()
             states_ext = np.tile(states, [2, ] + ones_mask)
-            rewards = tensor(rewards).repeat(2)
-
-            # ## sample random actions for extended states
-            # perturb = np.random.randint(
-            #     1, self.config.action_dim, size=actions.shape[0])
-            # actions_rand = np.remainder(
-            #     actions + perturb, self.config.action_dim)
-            # actions_ext = np.concatenate([actions, actions_rand], axis=0)
-            # actions_rand = tensor(actions_rand).long()
-            # actions_ext = tensor(actions_ext).long()
-
-            ## get extended pred next_states
             states = tensor(states)
             states = gen_ensemble_tensor(states, self.config.particles)
+            rewards = tensor(rewards).repeat(2)
+
+            ## get pred next_states for (states, max_actions)
             # [particles, batch, d_output]
-            next_states_pred = self.mdp(
-                states, max_actions, ensemble_input=True)  
+            next_states_pred = self.network.mdp(
+                states, max_actions, ensemble_input=True).detach() 
             # next_states_pred = next_states_pred.transpose(0, 1).detach()
+
+            ## concat next_states and pred next_states 
+            next_states = tensor(next_states)
+            next_states = gen_ensemble_tensor(
+                next_states, self.config.particles)
             next_states_ext = torch.cat([next_states, next_states_pred], dim=1)
 
             ## get target q values
-            q_next = self.target_network(
+            q_next = self.target_network.q_fn(
                 next_states_ext, ensemble_input=True, seed=sample_z).detach()
             if self.config.double_q:
                 # [particles, 2*batch, actions]
-                q = self.network(
+                q = self.network.q_fn(
                     next_states_ext, ensemble_input=True, seed=sample_z)
                 best_actions = torch.argmax(
                     q, dim=-1, keepdim=True)  # [particles, 2*batch, 1]
@@ -255,20 +246,15 @@ class Dynamics_DQN_Agent(BaseAgent):
             q_target = self.config.discount * \
                 q_next * (1 - terminals.repeat(2))
             q_target.add_(rewards)
+            q_target = q_target.transpose(
+                0, 1).unsqueeze(-1)  # [2*batch, particles, 1]
 
             ## get main Q values
-            q = self.network(states_ext, seed=sample_z) # [particles, 2*batch, 3]
+            q = self.network.q_fn(states_ext, seed=sample_z) # [particles, 2*batch, 3]
             q = q.gather(-1, actions_ext) # [particles, 2*batch, 1]
             q = q.transpose(0, 1) # [2*batch, particles, 1]
 
-            # batch_indices = range_tensor(self.replay.batch_size * 2)
-            # q = q[:, batch_indices, actions_ext]  # [particles, batch]
-            # q = q.transpose(0, 1).unsqueeze(-1)  # [batch, particles, 1]
-
-            q_target = q_target.transpose(
-                0, 1).unsqueeze(-1)  # [batch, particles, 1]
-
-            # [batch, particles/2, 1]
+            ## q-learning through svgd
             q_i, q_j = torch.split(q, self.config.particles//2, dim=1)
             # [batch, particles/2, 1]
             qi_target, qj_target = torch.split(
@@ -291,8 +277,39 @@ class Dynamics_DQN_Agent(BaseAgent):
             svgd = (kernel_logp + alpha * grad_kappa).mean(1)
 
             self.optimizer.zero_grad()
-            autograd.backward(q_i, grad_tensors=svgd.detach())
+            autograd.backward(q_i, grad_tensors=svgd.detach(), retain_graph=True)
 
+            ## mdp training through svgd
+            preds = self.network.mdp(
+                states, ensemble_actions, seed=sample_z, ensemble_input=True)
+            # preds = torch.cat([pred_states, pred_rewards], dim=-1)
+            preds = preds.transpose(0, 1)  # [batch, particles, d_state]
+            targets = next_states.transpose(0, 1)
+
+            # [batch, particles/2, d_state+1]
+            preds_i, preds_j = torch.split(
+                preds, config.particles//2, dim=1)
+            targets_i, targets_j = torch.split(
+                targets, config.particles//2, dim=1)
+
+            ## mdp function svgd 
+            logp_loss = F.mse_loss(
+                preds_j, targets_j.detach(), reduction='none')
+            logp_grad = autograd.grad(logp_loss.sum(), inputs=preds_j)[0]
+            logp_grad = logp_grad.unsqueeze(2) # [batch, particles//2, 1, d_state+1]
+
+            # grad_kappa: [batch, particles/2, particles/2, d_state+1]
+            kappa, grad_kappa = batch_rbf_xy(preds_j, preds_i)
+            kappa = kappa.unsqueeze(-1)  # [batch, particles/2, particles/2, 1]
+
+            # [batch, particles/2, particles/2, d_state+1]
+            kernel_grad = torch.matmul(kappa.detach(), logp_grad)
+            # [batch, particles/2, d_state+1]
+            svgd = (kernel_grad + alpha * grad_kappa).mean(1)
+
+            autograd.backward(preds_i, grad_tensors=svgd.detach())
+
+            ## update network parameters
             for param in self.network.parameters():
                 if param.grad is not None:
                     param.grad.data *= 1./config.particles
@@ -307,10 +324,16 @@ class Dynamics_DQN_Agent(BaseAgent):
             self.logger.add_scalar(
                 'q_grad_kappa', grad_kappa.mean(), self.total_steps)
             self.logger.add_scalar('q_kappa', kappa.mean(), self.total_steps)
+            self.logger.add_scalar(
+                'mdp_logp', logp_loss.mean(), self.total_steps)
+            self.logger.add_scalar('mdp_kappa', kappa.mean(), self.total_steps)
+            self.logger.add_scalar(
+                'mdp_kappa', grad_kappa.mean(), self.total_steps)
 
         if self.total_steps / self.config.sgd_update_frequency % \
                 self.config.target_network_update_freq == 0:
             self.target_network.load_state_dict(self.network.state_dict())
+
 
     def train_mdp(self, alpha=None, train_steps=None):
         config = self.config

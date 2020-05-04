@@ -99,20 +99,28 @@ def dqn_feature(**kwargs):
     config.particles = 24
 
     config.optimizer_fn = lambda params: torch.optim.Adam(params, config.lr)
-    config.mdp_optimizer_fn = lambda params: torch.optim.Adam(params, config.lr_mdp)
-    config.network_fn = lambda: DuelingHyperNet(
+    # config.mdp_optimizer_fn = lambda params: torch.optim.Adam(params, config.lr_mdp)
+    config.network_fn = lambda: DynamicsDuelingHyperNet(
         config.action_dim,
-        CartFCHyperBody(config.state_dim, hidden=config.hidden),
-        hidden=config.hidden,
-        dist=config.dist,
-        particles=config.particles)
-    config.mdp_fn = lambda: MdpHyperNet(
-        config.action_dim,
+        # CartFCHyperBody(config.state_dim, hidden=config.hidden),
         MdpHyperBody(
             config.state_dim, config.hidden, action_dim=config.action_dim),
         hidden=config.hidden,
-        dist=config.dist_mdp,
+        dist=config.dist, 
         particles=config.particles)
+    # config.network_fn = lambda: DuelingHyperNet(
+    #     config.action_dim,
+    #     CartFCHyperBody(config.state_dim, hidden=config.hidden),
+    #     hidden=config.hidden,
+    #     dist=config.dist,
+    #     particles=config.particles)
+    # config.mdp_fn = lambda: MdpHyperNet(
+    #     config.action_dim,
+    #     MdpHyperBody(
+    #         config.state_dim, config.hidden, action_dim=config.action_dim),
+    #     hidden=config.hidden,
+    #     dist=config.dist_mdp,
+    #     particles=config.particles)
     config.replay_fn = lambda: BalancedReplay(
         memory_size=config.replay_size, batch_size=config.replay_bs)
     config.render = True  # Render environment at every train step
@@ -122,7 +130,7 @@ def dqn_feature(**kwargs):
     config.discount = 0.99  # horizon
     config.target_network_update_freq = config.freq  # hard update to target network
     # random actions taken at the beginning to fill the replay buffer
-    config.exploration_steps = 1000
+    config.exploration_steps = 0 # 1000
     config.double_q = True  # use double q update
     config.sgd_update_frequency = 1  # how often to do learning
     config.gradient_clip = config.grad_clip  # max gradient norm
@@ -151,7 +159,6 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    # tag = 'fval_fixq2_gsvgd_cartpole/p24_action_thompson3'
-    tag = 'mdp-q-indep_max-action/p24_sgd'
+    tag = 'mdp-q_share-feature/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
