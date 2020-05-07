@@ -50,6 +50,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'replay_bs': 128,
             'dist': 'softmax',
             'dist_mdp': 'softmax'
+            # 'dist_mdp': 'normal'
         }
         print('Running Config: ')
         for (k, v) in setting.items():
@@ -151,6 +152,6 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'mdp-q-indep_sample-action/p24_sgd'
+    tag = 'mdp-r-q-indep_sample-action/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)

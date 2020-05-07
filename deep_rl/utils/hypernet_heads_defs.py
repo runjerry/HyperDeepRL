@@ -59,6 +59,7 @@ mdp_net.__new__.__defaults__ = defaults  # python 3.6
 def MdpNet_config(input_dim, feature_dim, mixer=False):
     net_config = {
         'fc_mdp': mdp_net(d_input=feature_dim, d_output=input_dim, z_dim=24),
+        'fc_reward': mdp_net(d_input=feature_dim, d_output=1, z_dim=24),
         'z_dim': 24,
         's_dim': 32,
         'n_gen': 2

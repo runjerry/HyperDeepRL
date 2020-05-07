@@ -146,7 +146,10 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.config = MdpNet_config(body.state_dim, body.feature_dim)
         self.config['fc_mdp'] = self.config['fc_mdp']._replace(
             d_hidden=hidden)
+        self.config['fc_reward'] = self.config['fc_reward']._replace(
+            d_hidden=hidden)
         self.fc_mdp = LinearGenerator(self.config['fc_mdp']).cuda()
+        self.fc_reward = LinearGenerator(self.config['fc_reward']).cuda()
         self.features = body
 
         self.s_dim = self.config['s_dim']
@@ -156,7 +159,7 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.state_dim = body.state_dim
         self.action_dim = action_dim
         self.noise_sampler = NoiseSampler(
-            dist, self.z_dim, aux_scale=1e-3, particles=self.particles)
+            dist, self.z_dim, aux_scale=1e-5, particles=self.particles)
             # dist, self.z_dim, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)
@@ -169,6 +172,7 @@ class MdpHyperNet(nn.Module, BaseNet):
         model_seed = {
             'features_z': sample_z,
             'mdp_z': sample_z[0],
+            'reward_z': sample_z[0],
         }
         if return_seed:
             return model_seed
@@ -184,6 +188,7 @@ class MdpHyperNet(nn.Module, BaseNet):
             model_seed = {
                 'features_z': batch,
                 'mdp_z': batch[0],
+                'reward_z': batch[0],
             }
             samples.append(model_seed)
         return samples
@@ -203,8 +208,8 @@ class MdpHyperNet(nn.Module, BaseNet):
             batch_indices = range_tensor(phi.shape[1])
             phi = phi[:, batch_indices, :, a]  
             phi = torch.transpose(phi, 0, 1) # [p, bs, feature_dim]
-        delta_x = self.head(phi, seed=seed)
-        return delta_x + x # , rewards
+        delta_x, rewards = self.head(phi, seed=seed)
+        return delta_x + x, rewards
 
     def body(self, x=None, seed=None, theta=None, ensemble_input=False):
         if not isinstance(x, torch.cuda.FloatTensor):
@@ -217,8 +222,9 @@ class MdpHyperNet(nn.Module, BaseNet):
     def head(self, phi, seed=None):
         z = seed if seed != None else self.model_seed
         delta_x = self.fc_mdp(z['mdp_z'], phi)
+        reward = self.fc_reward(z['reward_z'], phi)
         # delta_x, reward = torch.split(mdp_out, [self.state_dim, 1], dim=-1)
-        return delta_x # , reward
+        return delta_x, reward
         
     #def sample_model(self, component='q', seed=None):
     #    seed = seed if seed is not None else self.model_seed
