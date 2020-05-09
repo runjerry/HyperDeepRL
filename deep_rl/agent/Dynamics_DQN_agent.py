@@ -173,7 +173,8 @@ class Dynamics_DQN_Agent(BaseAgent):
         if self.total_steps == self.config.exploration_steps:
             print('pure exploration finished')
             self.train_mdp(train_steps=1000)
-            self.mdp.sample_model_seed(particles=1)
+            self.mdp.sample_model_seed()
+            # self.mdp.sample_model_seed(particles=1)
 
         # models training
         if self.total_steps > self.config.exploration_steps:
@@ -181,7 +182,8 @@ class Dynamics_DQN_Agent(BaseAgent):
 
             ## mdp training
             self.train_mdp()
-            self.mdp.sample_model_seed(particles=1)
+            self.mdp.sample_model_seed()
+            # self.mdp.sample_model_seed(particles=1)
             # if self.actor.mdp_update:
             #     self.train_mdp()
             #     self.actor.mdp_update = False
@@ -221,22 +223,25 @@ class Dynamics_DQN_Agent(BaseAgent):
             
             ## get pred (next_states_rand, rewards_rand) for (states, actions_rand)
             next_states_rand, rewards_rand = self.mdp(
-                states, actions_rand)  # [particles=1, batch, d_output]
-            next_states_rand = next_states_rand.transpose(0, 1).detach()
+                states, actions_rand) # , seed=sample_z)  # [particles, batch, d_output]
+            # next_states_rand = next_states_rand.transpose(0, 1).detach()
+            next_states_rand = next_states_rand.detach()
             next_states = tensor(next_states)
-            next_states_ext = torch.cat([next_states, next_states_rand], dim=0)
+            next_states = gen_ensemble_tensor(next_states, self.config.particles)
+            next_states_ext = torch.cat([next_states, next_states_rand], dim=1)
 
-            rewards_rand = rewards_rand.detach()
+            rewards_rand = rewards_rand.squeeze(-1).detach()
             rewards = tensor(rewards)
-            rewards_ext = torch.cat([rewards, rewards_rand.squeeze()], dim=0)
+            rewards = gen_ensemble_tensor(rewards, self.config.particles)
+            rewards_ext = torch.cat([rewards, rewards_rand.squeeze()], dim=1)
 
             ## get target q values
             # [particles, 2*batch, actions]
             q_next = self.target_network(
-                next_states_ext, seed=sample_z).detach()
+                next_states_ext, seed=sample_z, ensemble_input=True).detach()
             if self.config.double_q:
                 q = self.network(
-                    next_states_ext, seed=sample_z)
+                    next_states_ext, seed=sample_z, ensemble_input=True)
                 best_actions = torch.argmax(
                     q, dim=-1, keepdim=True)  # [particles, 2*batch, 1]
                 q_next = q_next.gather(-1, best_actions).squeeze(-1) # [particles, 2*batch]
