@@ -257,30 +257,36 @@ class Dynamics_DQN_Agent(BaseAgent):
             q_target = q_target.transpose(
                 0, 1).unsqueeze(-1)  # [2*batch, particles, 1]
 
-            # [2*batch, particles/2, 1]
-            q_i, q_j = torch.split(q, self.config.particles//2, dim=1)
-            # [2*batch, particles/2, 1]
-            qi_target, qj_target = torch.split(
-                q_target, self.config.particles//2, dim=1)
-
-            td_loss = (qj_target.detach() - q_j).pow(2).mul(0.5)
-            q_grad = autograd.grad(td_loss.sum(), inputs=q_j)[0]
-            q_grad = q_grad.unsqueeze(2)  # [2*batch, particles//2. 1, 1]
-
-            qi_eps = q_i + torch.rand_like(q_i) * 1e-8
-            qj_eps = q_j + torch.rand_like(q_j) * 1e-8
-
-            # kappa, grad_kappa: [2*batch, particles/2, particles/2, 1]
-            kappa, grad_kappa = batch_rbf_xy(qj_eps, qi_eps)
-            kappa = kappa.unsqueeze(-1)
-
-            # [2*batch, particles/2, particles/2, 1]
-            kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
-            # [2*batch, particles/2, 1]
-            svgd = (kernel_logp + alpha * grad_kappa).mean(1)
-
+            ## standard Q-learning
+            td_loss = (q_target.detach() - q).pow(2).mul(0.5)
             self.optimizer.zero_grad()
-            autograd.backward(q_i, grad_tensors=svgd.detach())
+            td_loss.sum().backward()
+
+            # ## using svgd for Q-learning
+            # # [2*batch, particles/2, 1]
+            # q_i, q_j = torch.split(q, self.config.particles//2, dim=1)
+            # # [2*batch, particles/2, 1]
+            # qi_target, qj_target = torch.split(
+            #     q_target, self.config.particles//2, dim=1)
+
+            # td_loss = (qj_target.detach() - q_j).pow(2).mul(0.5)
+            # q_grad = autograd.grad(td_loss.sum(), inputs=q_j)[0]
+            # q_grad = q_grad.unsqueeze(2)  # [2*batch, particles//2. 1, 1]
+
+            # qi_eps = q_i + torch.rand_like(q_i) * 1e-8
+            # qj_eps = q_j + torch.rand_like(q_j) * 1e-8
+
+            # # kappa, grad_kappa: [2*batch, particles/2, particles/2, 1]
+            # kappa, grad_kappa = batch_rbf_xy(qj_eps, qi_eps)
+            # kappa = kappa.unsqueeze(-1)
+
+            # # [2*batch, particles/2, particles/2, 1]
+            # kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
+            # # [2*batch, particles/2, 1]
+            # svgd = (kernel_logp + alpha * grad_kappa).mean(1)
+
+            # self.optimizer.zero_grad()
+            # autograd.backward(q_i, grad_tensors=svgd.detach())
 
             for param in self.network.parameters():
                 if param.grad is not None:
@@ -293,9 +299,9 @@ class Dynamics_DQN_Agent(BaseAgent):
             with config.lock:
                 self.optimizer.step()
             self.logger.add_scalar('td_loss', td_loss.mean(), self.total_steps)
-            self.logger.add_scalar(
-                'q_grad_kappa', grad_kappa.mean(), self.total_steps)
-            self.logger.add_scalar('q_kappa', kappa.mean(), self.total_steps)
+            # self.logger.add_scalar(
+            #     'q_grad_kappa', grad_kappa.mean(), self.total_steps)
+            # self.logger.add_scalar('q_kappa', kappa.mean(), self.total_steps)
 
         if self.total_steps / self.config.sgd_update_frequency % \
                 self.config.target_network_update_freq == 0:
