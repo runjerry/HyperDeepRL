@@ -159,7 +159,7 @@ class MdpHyperNet(nn.Module, BaseNet):
         self.state_dim = body.state_dim
         self.action_dim = action_dim
         self.noise_sampler = NoiseSampler(
-            dist, self.z_dim, aux_scale=1e-5, particles=self.particles)
+            dist, self.z_dim, aux_scale=1e-6, particles=self.particles)
             # dist, self.z_dim, particles=self.particles)
         self.sample_model_seed()
         self.to(Config.DEVICE)

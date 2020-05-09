@@ -39,7 +39,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'game': game,
             'tb_tag': tag,
             'alpha_i': 10,
-            'alpha_f': 0.1,
+            'alpha_f': 0.01, # 0.1,
             'anneal': 500e3,
             'lr': 1e-4,
             'lr_mdp': 1e-4,
@@ -49,10 +49,11 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'replay_size': int(1e5),
             'replay_bs': 128,
             'dist': 'softmax',
+            # 'dist': 'normal',
             # 'dist': 'multivariate_normal',
             # 'dist_mdp': 'softmax'
-            # 'dist_mdp': 'normal'
-            'dist_mdp': 'multivariate_normal'
+            'dist_mdp': 'normal'
+            # 'dist_mdp': 'multivariate_normal'
         }
         print('Running Config: ')
         for (k, v) in setting.items():
