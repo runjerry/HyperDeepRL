@@ -39,7 +39,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'game': game,
             'tb_tag': tag,
             'alpha_i': 10,
-            'alpha_f': 0.01, # 0.1,
+            'alpha_f': 0.1, # 0.1,
             'anneal': 500e3,
             'lr': 1e-4,
             'lr_mdp': 1e-4,
@@ -49,6 +49,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             'replay_size': int(1e5),
             'replay_bs': 128,
             'dist': 'softmax',
+            'dist_scale': 1e-5,
             # 'dist': 'normal',
             # 'dist': 'multivariate_normal',
             # 'dist_mdp': 'softmax'
@@ -76,6 +77,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
             setting['grad_clip'],
             setting['hidden'],
             setting['dist'],
+            setting['dist_scale'],
             setting['dist_mdp'],
             setting['replay_bs'])
 
@@ -109,6 +111,7 @@ def dqn_feature(**kwargs):
         CartFCHyperBody(config.state_dim, hidden=config.hidden),
         hidden=config.hidden,
         dist=config.dist,
+        dist_scale=config.dist_scale,
         particles=config.particles)
     config.mdp_fn = lambda: MdpHyperNet(
         config.action_dim,
@@ -155,6 +158,6 @@ if __name__ == '__main__':
     # select_device(-1)
     select_device(0)
 
-    tag = 'mdp-r-q-indep_sample-action/p24_sgd'
+    tag = 'mdp-r-q-indep_frozen/p24_sgd'
     game = 'bsuite-cartpole_swingup/0'
     sweep(game, tag, dqn_feature, manual=True, trials=50)
