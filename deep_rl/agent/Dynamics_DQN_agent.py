@@ -106,10 +106,11 @@ class Dynamics_DQN_Agent(BaseAgent):
         self.mdp = config.mdp_fn()
         self.optimizer = config.optimizer_fn(self.network.parameters())
         self.mdp_optimizer = config.mdp_optimizer_fn(self.mdp.parameters())
-        self.alpha_schedule = BaselinesLinearSchedule(
-            config.alpha_anneal, config.alpha_final, config.alpha_init)
-        self.mdp_alpha_schedule = BaselinesLinearSchedule(
-            config.alpha_anneal, config.alpha_final, config.alpha_init)
+        if config.alpha_scheduler == 'linear':
+            self.mdp_alpha_schedule = BaselinesLinearSchedule(
+                config.alpha_anneal, config.alpha_final, config.alpha_init)
+        else:
+            self.mdp_alpha_schedule = OneOverSqrtNSchedule(initial_p=config.alpha_init)
         self.actor.set_network(self.network)
 
         self.total_steps = 0
@@ -178,7 +179,7 @@ class Dynamics_DQN_Agent(BaseAgent):
 
         # models training
         if self.total_steps > self.config.exploration_steps:
-            alpha = self.alpha_schedule.value(self.total_steps)
+            # alpha = self.alpha_schedule.value(self.total_steps)
 
             ## mdp training
             self.train_mdp()
@@ -267,32 +268,6 @@ class Dynamics_DQN_Agent(BaseAgent):
             self.optimizer.zero_grad()
             td_loss.sum().backward()
 
-            # ## using svgd for Q-learning
-            # # [2*batch, particles/2, 1]
-            # q_i, q_j = torch.split(q, self.config.particles//2, dim=1)
-            # # [2*batch, particles/2, 1]
-            # qi_target, qj_target = torch.split(
-            #     q_target, self.config.particles//2, dim=1)
-
-            # td_loss = (qj_target.detach() - q_j).pow(2).mul(0.5)
-            # q_grad = autograd.grad(td_loss.sum(), inputs=q_j)[0]
-            # q_grad = q_grad.unsqueeze(2)  # [2*batch, particles//2. 1, 1]
-
-            # qi_eps = q_i + torch.rand_like(q_i) * 1e-8
-            # qj_eps = q_j + torch.rand_like(q_j) * 1e-8
-
-            # # kappa, grad_kappa: [2*batch, particles/2, particles/2, 1]
-            # kappa, grad_kappa = batch_rbf_xy(qj_eps, qi_eps)
-            # kappa = kappa.unsqueeze(-1)
-
-            # # [2*batch, particles/2, particles/2, 1]
-            # kernel_logp = torch.matmul(kappa.detach(), q_grad)  # [n, 1]
-            # # [2*batch, particles/2, 1]
-            # svgd = (kernel_logp + alpha * grad_kappa).mean(1)
-
-            # self.optimizer.zero_grad()
-            # autograd.backward(q_i, grad_tensors=svgd.detach())
-
             for param in self.network.parameters():
                 if param.grad is not None:
                     param.grad.data *= 1./config.particles
@@ -304,9 +279,6 @@ class Dynamics_DQN_Agent(BaseAgent):
             with config.lock:
                 self.optimizer.step()
             self.logger.add_scalar('td_loss', td_loss.mean(), self.total_steps)
-            # self.logger.add_scalar(
-            #     'q_grad_kappa', grad_kappa.mean(), self.total_steps)
-            # self.logger.add_scalar('q_kappa', kappa.mean(), self.total_steps)
 
         if self.total_steps / self.config.sgd_update_frequency % \
                 self.config.target_network_update_freq == 0:
@@ -332,56 +304,41 @@ class Dynamics_DQN_Agent(BaseAgent):
                 states = states.squeeze(1)
                 next_states = next_states.squeeze(1)
             actions = tensor(actions)
-            next_states = next_states.unsqueeze(1).repeat(
-                1, config.particles, 1).detach()
+            next_states = next_states.unsqueeze(0).repeat(
+                config.particles, 1, 1)
             rewards = tensor(rewards).unsqueeze(-1)
-            rewards = rewards.unsqueeze(1).repeat(1, config.particles, 1).detach()
-            # targets = next_states.unsqueeze(1).repeat(
-            #     1, config.particles, 1).detach()
+            rewards = rewards.unsqueeze(0).repeat(config.particles, 1, 1)
             sample_z = self.mdp.sample_model_seed(return_seed=True)
 
             ## get pred next states and rewards
-            # preds = self.mdp(
-            #     states, actions, seed=sample_z)
-            # # preds = torch.cat([pred_states, pred_rewards], dim=-1)
-            # preds = preds.transpose(0, 1)  # [batch, particles, d_state+1]
             pred_states, pred_rewards = self.mdp(
-                states, actions, seed=sample_z)
-            pred_states = pred_states.transpose(
-                0, 1)  # [batch, particles, d_state]
-            pred_rewards = pred_rewards.transpose(
-                0, 1)  # [batch, particles, 1]
+                states, actions, seed=sample_z) # [particles, batch, d_out]
 
-            # [batch, particles/2, d_state+1]
-            # preds_i, preds_j = torch.split(
-            #     preds, config.particles//2, dim=1)
-            # targets_i, targets_j = torch.split(
-            #     targets, config.particles//2, dim=1)
+            # [particles/2, batch, d_state]
             pred_states_i, pred_states_j = torch.split(
-                pred_states, config.particles//2, dim=1)
+                pred_states, config.particles//2, dim=0)
             pred_rewards_i, pred_rewards_j = torch.split(
-                pred_rewards, config.particles//2, dim=1)
+                pred_rewards, config.particles//2, dim=0)
             target_states_i, target_states_j = torch.split(
-                next_states, config.particles//2, dim=1)
+                next_states, config.particles//2, dim=0)
             target_rewards_i, target_rewards_j = torch.split(
-                rewards, config.particles//2, dim=1)
+                rewards, config.particles//2, dim=0)
 
             ## reward function svgd 
             reward_loss = (target_rewards_j.detach() - pred_rewards_j).pow(2).mul(0.5)
+            # [particles/2, batch, 1]
             reward_grad = autograd.grad(reward_loss.sum(), inputs=pred_rewards_j)[0]
-            reward_grad = reward_grad.unsqueeze(2)  # [batch, particles//2. 1, 1]
 
             pred_rewards_i_eps = pred_rewards_i + torch.rand_like(pred_rewards_i) * 1e-8
             pred_rewards_j_eps = pred_rewards_j + torch.rand_like(pred_rewards_j) * 1e-8
 
-            # kappa, grad_kappa: [batch, particles/2, particles/2, 1]
+            # kappa: [p/2, p/2], grad_kappa: [p/2, p/2, batch, 1]
             kappa_reward, grad_kappa_reward = batch_rbf_xy(pred_rewards_j_eps, pred_rewards_i_eps)
-            kappa_reward = kappa_reward.unsqueeze(-1)
 
-            # [batch, particles/2, particles/2, 1]
-            kernel_reward_grad = torch.matmul(kappa_reward.detach(), reward_grad)  # [n, 1]
-            # [batch, particles/2, 1]
-            svgd_reward = (kernel_reward_grad + alpha * grad_kappa_reward).mean(1)
+            # [particles/2, batch, 1]
+            p_ref = kappa_reward.shape[0]
+            kernel_reward_grad = torch.einsum('ij, ikl->jkl', kappa_reward, reward_grad) / p_ref
+            svgd_reward = (kernel_reward_grad + alpha * grad_kappa_reward.mean(0))
 
             self.mdp_optimizer.zero_grad()
             autograd.backward(
@@ -390,17 +347,15 @@ class Dynamics_DQN_Agent(BaseAgent):
             ## transition function svgd 
             mdp_loss = F.mse_loss(
                 pred_states_j, target_states_j.detach(), reduction='none')
+            # [particles/2, batch, d_state]
             mdp_grad = autograd.grad(mdp_loss.sum(), inputs=pred_states_j)[0]
-            mdp_grad = mdp_grad.unsqueeze(2) # [batch, particles//2, 1, d_state]
 
-            # grad_kappa: [batch, particles/2, particles/2, d_state+1]
+            # kappa: [p/2, p/2], grad_kappa: [p/2, p/2, batch, d_state]
             kappa_mdp, grad_kappa_mdp = batch_rbf_xy(pred_states_j, pred_states_i)
-            kappa_mdp = kappa_mdp.unsqueeze(-1)  # [batch, particles/2, particles/2, 1]
 
-            # [batch, particles/2, particles/2, d_state]
-            kernel_mdp_grad = torch.matmul(kappa_mdp.detach(), mdp_grad)
-            # [batch, particles/2, d_state]
-            svgd_mdp = (kernel_mdp_grad + alpha * grad_kappa_mdp).mean(1)
+            # [particles/2, batch, d_state]
+            kernel_mdp_grad = torch.einsum('ij, ikl->jkl', kappa_mdp, mdp_grad) / p_ref
+            svgd_mdp = (kernel_mdp_grad + alpha * grad_kappa_mdp.mean(0))
 
             autograd.backward(pred_states_i, grad_tensors=svgd_mdp.detach())
 

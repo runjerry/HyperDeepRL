@@ -8,6 +8,8 @@ Each schedule has a function `value(t)` which returns the current value
 of the parameter given the timestep t of the optimization procedure.
 """
 
+import numpy as np
+
 class Schedule(object):
     def value(self, t):
         """Value of the schedule at time t"""
@@ -96,3 +98,14 @@ class BaselinesLinearSchedule(object):
         """See Schedule.value"""
         fraction = min(float(t) / self.schedule_timesteps, 1.0)
         return self.initial_p + fraction * (self.final_p - self.initial_p)
+
+class OneOverSqrtNSchedule(object):
+    def __init__(self, initial_p=1.0):
+        """Decreasing the initial_p following 1/sqrt(step).
+        """
+        self.initial_p = initial_p
+
+    def value(self, t):
+        assert t > 0
+        return  self.initial_p / np.sqrt(t)
+        self.mdp_alpha_schedule = OneOverSqrtNSchedule(initial_p=config.alpha_init)

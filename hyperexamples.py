@@ -38,8 +38,9 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         setting = {
             'game': game,
             'tb_tag': tag,
-            'alpha_i': 10,
-            'alpha_f': 0.1, # 0.1,
+            'alpha_scheduler': 'linear', # 'sqrtN'
+            'alpha_i': 10.,
+            'alpha_f': 0.01, 
             'anneal': 500e3,
             'lr': 1e-4,
             'lr_mdp': 1e-4,
@@ -69,6 +70,7 @@ def sweep(game, tag, model_fn, trials=50, manual=True):
         setting = search_space[idx]
         setting['game'] = game
         tag_append = '_ai{}-af{}-lr{}-f{}-gc{}-h{}-{}-bs{}'.format(
+            setting['alpha_scheduler'],
             setting['alpha_i'],
             setting['alpha_f'],
             setting['lr'],
@@ -137,6 +139,7 @@ def dqn_feature(**kwargs):
     config.max_steps = 500e3
     config.async_actor = False
     # how long to anneal SVGD alpha from init to final
+    config.alpha_scheduler = config.alpha_scheduler
     config.alpha_anneal = config.anneal
     config.alpha_init = config.alpha_i  # SVGD alpha strating value
     config.alpha_final = config.alpha_f  # SVGD alpha end value
